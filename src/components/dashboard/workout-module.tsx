@@ -257,7 +257,7 @@ setTodaysWorkout({
 )}
 
       {/* Start Button */}
-      <Button
+     <Button
   onClick={startWorkout}
   disabled={workoutCompletedTodayed || isTodayRestDayed}
   className={`w-full mb-6 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 text-white text-lg py-6 ${
@@ -273,6 +273,7 @@ setTodaysWorkout({
     ? "Rest Day"
     : "Start Today's Workout"}
 </Button>
+
 
     </div>
   </CardContent>
