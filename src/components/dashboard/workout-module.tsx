@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react"
 import { Play, RotateCcw, Pause, SkipForward, Timer, CheckCircle } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import useFullFitnessPlan from "@/hooks/useFullFitnessPlan";
 
 
 export function WorkoutModule() {
@@ -38,7 +39,10 @@ const [todaysWorkout, setTodaysWorkout] = useState({
   exercises_list: [],
 });
 
-
+ const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
+    
+const todayPlan = parsedFullPlan.find(day => day.isToday);
+const isTodayRestDayed = !todayPlan || todayPlan.exercises.length === 0;
 useEffect(() => {
   const fetchPlan = async () => {
     if (!user?.id) return;
@@ -190,7 +194,7 @@ setTodaysWorkout({
       scheme,
     });
   };
-
+    
   fetchPlan();
 }, [user]);
 
@@ -255,14 +259,21 @@ setTodaysWorkout({
       {/* Start Button */}
       <Button
   onClick={startWorkout}
-  disabled={workoutCompletedTodayed}
+  disabled={workoutCompletedTodayed || isTodayRestDayed}
   className={`w-full mb-6 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 text-white text-lg py-6 ${
-    workoutCompletedTodayed ? "opacity-50 cursor-not-allowed" : "hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600"
+    workoutCompletedTodayed || isTodayRestDayed
+      ? "opacity-50 cursor-not-allowed"
+      : "hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600"
   }`}
 >
   <Play className="h-5 w-5 mr-2" />
-  {workoutCompletedTodayed ? "Workout Completed" : "Start Today's Workout"}
+  {workoutCompletedTodayed
+    ? "Workout Completed"
+    : isTodayRestDayed
+    ? "Rest Day"
+    : "Start Today's Workout"}
 </Button>
+
     </div>
   </CardContent>
 </Card>
