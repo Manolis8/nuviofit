@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
 import { AIChatBox } from "@/components/ai-chat-box"
 import { useUser } from "@clerk/clerk-react"
+import { sendFeedback } from "../lib/sendFeedback";
 
-const feedback_url = import.meta.env.VITE_FEEDBACK_URL!;
+const feedback_url = process.env.FEEDBACK_URL;
 export function AIChatCoach() {
   const [isOpen, setIsOpen] = useState(false)
   const [showFeedback, setShowFeedback] = useState(false)
@@ -134,37 +135,20 @@ useEffect(() => {
 
         <div className="flex gap-2">
           <Button
-            onClick={async () => {
-              setStatus("Sending...");
-              try {
-const formBody = new URLSearchParams({
-  name: formData.name,
-  email: formData.email,
-  message: formData.message,
-}).toString();
-
-const response = await fetch(feedback_url, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded",
-  },
-  body: formBody,
-});
-
-                if (response.ok) {
-                  setStatus("Feedback sent!");
-                  setFormData({ name: "", email: "", message: "" });
-                  setTimeout(() => {
-                    setShowFeedback(false);
-                    setStatus(null);
-                  }, 1500);
-                } else {
-                  setStatus("Failed to send.");
-                }
-              } catch (error) {
-                setStatus("Error sending feedback.");
-              }
-            }}
+onClick={async () => {
+  setStatus("Sending...");
+  try {
+    await sendFeedback(formData);
+    setStatus("Feedback sent!");
+    setFormData({ name: "", email: "", message: "" });
+    setTimeout(() => {
+      setShowFeedback(false);
+      setStatus(null);
+    }, 1500);
+  } catch {
+    setStatus("Failed to send.");
+  }
+}}
             className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200"
           >
             Send Feedback
