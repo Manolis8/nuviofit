@@ -1,28 +1,14 @@
-// src/lib/sendFeedback.ts
-
-export async function sendFeedback({
-  name,
-  email,
-  message,
-}: {
-  name: string;
-  email: string;
-  message: string;
-}) {
-  const feedback_url =
-    import.meta.env?.VITE_FEEDBACK_URL || process.env.FEEDBACK_URL;
-
-  if (!feedback_url) {
-    throw new Error("Feedback URL is not defined in the environment.");
-  }
-
-  const formBody = new URLSearchParams({ name, email, message }).toString();
-
-  const res = await fetch(feedback_url, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: formBody,
+export async function sendFeedback(feedback: string) {
+  const response = await fetch('https://script.google.com/macros/s/AKfycbwbw_VuerpxmTMgl5KTNG5I_DJGDBr_03SyuYpKkCg8vOF-ebres3mCe9sqq3shDhtt/exec', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ feedback }),
   });
 
-  if (!res.ok) throw new Error("Feedback submission failed.");
+  if (!response.ok) {
+    throw new Error('Failed to send feedback');
+  }
+
+  const data = await response.json();
+  return data;
 }
