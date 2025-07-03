@@ -19,7 +19,6 @@ const motivationalQuotes = [
 export function UserWelcomeSection() {
   const [currentQuote, setCurrentQuote] = useState(motivationalQuotes[0])
   const [weeklyProgress] = useState(4)
-    const [weeklyCount, setWeeklyCount] = useState(0);
   const [currentStreak] = useState(6)
   const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
   const { user, isLoaded } = useUser()
@@ -120,22 +119,6 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
   checkAndResetWeeklyCount();
 }, [user]);
 
-  useEffect(() => {
-  const fetchCount = async () => {
-    const { data } = await supabase
-      .from("onboarding_responses")
-      .select("workout_count")
-      .eq("user_id", user.id)
-      .single();
-
-    if (data?.workout_count) {
-      setWeeklyCount(data.workout_count);
-    }
-  };
-
-  if (user?.id) fetchCount();
-}, [user]);
-
 useEffect(() => {
     // Handler to update width
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -149,6 +132,23 @@ useEffect(() => {
     // Cleanup listener on unmount
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { data } = await supabase
+        .from("onboarding_responses")
+        .select("workout_count")
+        .eq("user_id", user.id)
+        .single();
+  
+      if (data?.workout_count) {
+        setWeeklyCount(data.workout_count);
+      }
+    };
+  
+    if (user?.id) fetchCount();
+  }, [user]);
+  
   if (!isLoaded) return null
 
   const displayName =
