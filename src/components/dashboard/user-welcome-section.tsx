@@ -134,21 +134,21 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    const fetchCount = async () => {
-      const { data } = await supabase
-        .from("onboarding_responses")
-        .select("workout_count")
-        .eq("user_id", user.id)
-        .single();
-  
-      if (data?.workout_count) {
-        setWeeklyCount(data.workout_count);
-      }
-    };
-  
-    if (user?.id) fetchCount();
-  }, [user]);
-  
+  const fetchCount = async () => {
+    const { data } = await supabase
+      .from("onboarding_responses")
+      .select("workout_count")
+      .eq("user_id", user.id)
+      .single();
+
+    if (data?.workout_count) {
+      setWeeklyCount(data.workout_count);
+    }
+  };
+
+  if (user?.id) fetchCount();
+}, [user]);
+
   if (!isLoaded) return null
 
   const displayName =
