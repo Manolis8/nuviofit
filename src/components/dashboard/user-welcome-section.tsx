@@ -19,6 +19,7 @@ const motivationalQuotes = [
 export function UserWelcomeSection() {
   const [currentQuote, setCurrentQuote] = useState(motivationalQuotes[0])
   const [weeklyProgress] = useState(4)
+    const [weeklyCount, setWeeklyCount] = useState(0);
   const [currentStreak] = useState(6)
   const [windowWidth, setWindowWidth] = useState<number | undefined>(undefined);
   const { user, isLoaded } = useUser()
