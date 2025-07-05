@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import * as React from "react";
+import { useLocation, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -49,10 +50,23 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 const AuthSplitScreen = () => {
-  const [activeTab, setActiveTab] = useState<"login" | "signup">("signup");
+const location = useLocation();
+
+const initialTab =
+  location.pathname.includes("/login") ? "login" :
+  location.pathname.includes("/sign-up") ? "signup" :
+  "login";
+
+const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
+const navigate = useNavigate()
+useEffect(() => {
+  if (location.pathname === "/auth" || location.pathname === "/auth/") {
+    navigate("/auth/login", { replace: true });
+  }
+}, [location.pathname, navigate]);
+
 
   const { isSignedIn } = useAuth();
-  const navigate = useNavigate();
 
   // Redirect to dashboard if already logged in
   useEffect(() => {
@@ -193,17 +207,19 @@ const AuthSplitScreen = () => {
             )}
           </div>
 
-          <Tabs
-          value={activeTab}
-          onValueChange={(v) => {
-              setActiveTab(v as "login" | "signup");
+<Tabs
+  value={activeTab}
+  onValueChange={(v) => {
+    setActiveTab(v as "login" | "signup");
+    navigate(`/auth/${v}`, { replace: true });
 
     // Reset verification state
-              setPendingVerification(false);
-              setEmailForVerification("");
-          }}
-           className="w-full"
-          >
+    setPendingVerification(false);
+    setEmailForVerification("");
+  }}
+  className="w-full"
+>
+
 
             <TabsList className="grid grid-cols-2 mb-8 w-full">
               <TabsTrigger value="signup" className="text-center">Sign Up</TabsTrigger>
