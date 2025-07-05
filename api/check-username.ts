@@ -1,20 +1,38 @@
-export default async function handler(req, res) {
-  const { username } = req.query;
+export const checkUsernameAvailability = async (
+  usernameToCheck: string
+): Promise<"available" | "taken" | "error"> => {
+  if (!usernameToCheck) return "available";
 
-  if (!username) return res.status(400).json({ availability: "error" });
+  // Only run in production (skip for development/testing)
+  if (import.meta.env.MODE !== "production") {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        if (
+          ["admin", "manolis-2008", "testuser"].includes(usernameToCheck.toLowerCase())
+        ) {
+          resolve("taken");
+        } else {
+          resolve("available");
+        }
+      }, 400);
+    });
+  }
 
   try {
-    const response = await fetch(`https://api.clerk.dev/v1/users?username=${username}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-      },
-    });
+    const res = await fetch(
+      `https://api.clerk.com/v1/users?username=${encodeURIComponent(usernameToCheck)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_CLERK_SECRET_KEY}`, // ✅ Store this securely
+        },
+      }
+    );
 
-    const users = await response.json();
-    const isTaken = users.length > 0;
-    res.status(200).json({ availability: isTaken ? "taken" : "available" });
-  } catch (error) {
-    console.error("Error checking username:", error);
-    res.status(500).json({ availability: "error" });
+    const users = await res.json();
+    if (Array.isArray(users) && users.length > 0) return "taken";
+    return "available";
+  } catch (err) {
+    console.error("Clerk username check error:", err);
+    return "error";
   }
-}
+};
