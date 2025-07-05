@@ -65,7 +65,7 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/user-info" element={<Userinfo />} />
             <Route
-  path="/auth"
+  path="/auth/*"
   element={
     <>
       <SignedOut>
@@ -77,6 +77,7 @@ const App = () => (
     </>
   }
 />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
