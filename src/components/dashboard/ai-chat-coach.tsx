@@ -2,9 +2,12 @@ import { MessageCircle, X, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react";
 import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
+import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
 import { AIChatBox } from "@/components/ai-chat-box"
 import { useUser } from "@clerk/clerk-react"
 import { sendFeedback } from "../lib/sendFeedback";
+import { addDays } from "date-fns";
+import Link from "next/link";
 
 const feedback_url = process.env.FEEDBACK_URL;
 export function AIChatCoach() {
@@ -19,21 +22,24 @@ const [formData, setFormData] = useState({
 const [status, setStatus] = useState<string | null>(null);
   const { user, isLoaded } = useUser();
   const [messagesLeft, setMessagesLeft] = useState<number | null>(null);
+  const { lastResetAt } = useAutoRenewMessages(user.id);
 
-  // Example renewal date (you can calculate or fetch this)
+  // Calculate next renewal date by adding 30 days to lastResetAt
+  const nextRenewalDate = lastResetAt ? addDays(lastResetAt, 30) : null;
   const renewalDate = new Date();
   renewalDate.setMonth(renewalDate.getMonth() + 1); // next month
 
-useEffect(() => {
+  useEffect(() => {
     if (!isLoaded || !user) return;
 
-    async function fetchMessages() {
-      const count = await getMessagesLeft(user.id);
+    const fetchMessages = async () => {
+      const count = await getMessagesLeft(user.id); // should return number
       setMessagesLeft(count);
-    }
+    };
 
     fetchMessages();
   }, [isLoaded, user]);
+  
   return (
     <>
 {/* Floating Action Buttons */}
@@ -90,12 +96,16 @@ useEffect(() => {
       {/* Messages Left Info */}
       <div className="flex flex-col items-center mt-4 px-6 py-3 bg-white rounded-lg shadow-sm text-gray-700 text-sm font-medium">
   <div className="flex items-center space-x-3">
-    <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-      📩 {messagesLeft} messages left
-    </span>
-    <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-      ⏳ Renews on {renewalDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-    </span>
+<Link href="/user-info#ai-messages" scroll={false}>
+  <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium cursor-pointer hover:bg-indigo-200 transition">
+    👉 view messages
+  </span>
+</Link>
+    {nextRenewalDate && (
+  <p>Renewal date: {nextRenewalDate.toLocaleDateString()}</p>
+)}
+
+
   </div>
 </div>
     </div>
