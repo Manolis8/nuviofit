@@ -31,10 +31,11 @@ import { addDays } from "date-fns";
 
 
 export default function UserInfoPage() {
-const navigate = useNavigate()
+  const navigate = useNavigate()
+  const { user, isSignedIn, isLoaded } = useUser();
+
   const [isEditing, setIsEditing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-    const { user, isLoaded} = useUser()
 const [isValidDisplayName, setIsValidDisplayName] = useState(true);
 const [usernameError, setUsernameError] = useState("");
 const [isSaving, setIsSaving] = useState(false); // already present in your code
@@ -100,6 +101,14 @@ const isPasswordStrengthValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPasswo
       const renewalDate = new Date();
   renewalDate.setMonth(renewalDate.getMonth() + 1); // next month
 
+
+
+const handleReauthClick = async () => {
+  await signOut();  
+};
+
+
+
   useEffect(() => {
       if (!isLoaded || !user) return;
   
@@ -126,9 +135,7 @@ const handleReauthRequired = (failedAction) => {
 const performReauthentication = async () => {
   try {
     if (!openReauthentication) {
-      alert("Secure reauthentication is not available. Please sign in again.");
       await clerk.signOut();
-      navigate("/auth/login?redirect_url=/user-info", { replace: true });
       return;
     }
 
@@ -139,31 +146,17 @@ const performReauthentication = async () => {
       await retryAction();
       setRetryAction(null);
     }
+
+    // Redirect after successful reauth & retry:
+    navigate("/user-info", { replace: true });
   } catch (error) {
     console.error("Reauthentication failed or canceled", error);
     alert("Reauthentication failed. Please try again.");
   }
 };
 
-  // Optional: if user becomes null (signed out), redirect to login with redirect_url
-  useEffect(() => {
-    if (!user) {
-      navigate("/auth/login?redirect_url=/user-info", { replace: true });
-    }
-  }, [user, navigate]);
 
 
-const fakeCheckUsernameAvailability = (username: string): Promise<"available" | "taken"> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (username.toLowerCase().includes("taken") || username === "admin") {
-        resolve("taken");
-      } else {
-        resolve("available");
-      }
-    }, 500); // simulate server delay
-  });
-};
 
 useEffect(() => {
   const checkUsername = async () => {
@@ -247,16 +240,17 @@ const handlePasswordChange = async (newPassword) => {
     setNewPassword("");
   } catch (e) {
     if (e.message.includes("additional verification")) {
-      // This sets the retry action so it can be called after reauth
+      // Set the retry action so we can call it again after reauth:
       handleReauthRequired(() => handlePasswordChange(newPassword));
-      // Optionally, immediately prompt the user to reauthenticate:
-      performReauthentication();
+      // Immediately prompt user for reauth:
+      await performReauthentication();
     } else {
       console.error(e);
       alert("Failed to change password");
     }
   }
 };
+
 
 
 
@@ -350,15 +344,16 @@ useEffect(() => {
 
 const { redirectToSignIn } = useClerk();
 
-  const handleLogout = async () => {
-    try {
-      await signOut(); // Clerk sign out
-      console.log("Logging out...");
-      navigate("/auth");
-    } catch (err) {
-      console.error("Logout error:", err);
-    }
-  };
+const handleLogout = async () => {
+  try {
+    await signOut(); // Clerk sign out
+    console.log("Logging out...");
+    navigate("/auth");  // <-- This goes to "/auth" but you want "/auth/login"
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+};
+
 
 const { signIn, setActive: setSignInActive } = useSignIn();
 
@@ -375,17 +370,10 @@ const loginForm = useForm<LoginFormValues>({
   },
 });
 
-const checkUsernameAvailability = async (usernameToCheck: string) => {
-  if (!usernameToCheck) return "available";
-
-  try {
-    const res = await fetch(`/api/check-username?username=${encodeURIComponent(usernameToCheck)}`);
-    const data = await res.json();
-
-    return data.status; // "taken" or "available" or "error"
-  } catch {
-    return "error";
-  }
+const checkUsernameAvailability = async (username: string): Promise<"available" | "taken" | "error"> => {
+  const res = await fetch(`/api/check-username?username=${username}`);
+  const data = await res.json();
+  return data.availability;
 };
 
 
@@ -858,7 +846,16 @@ onBlur={async () => {
     <div className="bg-white rounded-md p-6 max-w-sm w-full shadow-lg">
       <h2 className="text-xl font-semibold mb-4">Reauthentication Required</h2>
       <p className="mb-6">
-        For security reasons, please verify your identity to continue.
+        For security reasons, please verify your identity to continue.<br /><br />
+        Please follow these steps:<br />
+        <ol className="list-decimal list-inside space-y-1 text-sm text-gray-700">
+          <li>Click the <strong>Reauthenticate</strong> button below.</li>
+          <li> Click <strong>Login</strong> in the homepge</li>
+          <li>Log in again with your email and password.</li>
+          <li>After successful login, go to <strong>Profile</strong> page.</li>
+          <li>Then click <strong>Edit Profile Information</strong> to updating your information.</li>
+          <li>Note: This reauthentication is valid for about 5 minutes.</li>
+        </ol>
       </p>
       <div className="flex justify-end gap-4">
         <button
@@ -868,7 +865,7 @@ onBlur={async () => {
           Cancel
         </button>
         <button
-          onClick={performReauthentication}
+          onClick={handleReauthClick}
           className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           Reauthenticate
@@ -877,6 +874,7 @@ onBlur={async () => {
     </div>
   </div>
 )}
+
 
       </div>
     </>
