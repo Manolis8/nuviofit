@@ -483,43 +483,51 @@ type LoginFormValues = z.infer<typeof loginSchema>;
     const newUsername = e.target.value;
     setUserData((prev) => ({ ...prev, username: newUsername }));
 
+    // Reset states
     setUsernameError("");
     setUsernameAvailability(null);
 
+    // Update validity state for local UI check
     const isValid = newUsername.length >= 4 && newUsername.length <= 30;
     setIsValidDisplayName(isValid);
   }}
-onBlur={async () => {
-  const newUsername = userData.username.trim();
+  onBlur={async () => {
+    const newUsername = userData.username.trim();
 
-  if (
-    !newUsername ||
-    newUsername.length < 4 ||
-    newUsername.length > 30 ||
-    newUsername === originalUsername
-  ) {
-    setUsernameAvailability(null);
-    setUsernameError("");
-    return;
-  }
+    // Skip if unchanged or invalid
+    if (
+      !newUsername ||
+      newUsername.length < 4 ||
+      newUsername.length > 30 ||
+      newUsername === originalUsername
+    ) {
+      setUsernameAvailability(null);
+      setUsernameError("");
+      return;
+    }
 
-  setUsernameAvailability("checking");
+    // Show loading state
+    setUsernameAvailability("checking");
 
-  const availability = await checkUsernameAvailability(newUsername);
+    try {
+      const res = await fetch(`/api/check-username?username=${newUsername}`);
+      const data = await res.json();
 
-  if (availability === "taken") {
-    setUsernameAvailability("taken");
-    setUsernameError("Username is already taken.");
-  } else if (availability === "available") {
-    setUsernameAvailability("available");
-    setUsernameError("");
-  } else {
-    setUsernameAvailability(null);
-    setUsernameError("Error checking username. Try again.");
-  }
-}}
-
-
+      if (data.exists === true) {
+        setUsernameAvailability("taken");
+        setUsernameError("Username is already taken.");
+      } else if (data.exists === false) {
+        setUsernameAvailability("available");
+        setUsernameError("");
+      } else {
+        setUsernameAvailability(null);
+        setUsernameError("Unexpected response. Try again.");
+      }
+    } catch (err) {
+      setUsernameAvailability(null);
+      setUsernameError("Error checking username. Try again.");
+    }
+  }}
   maxLength={30}
   disabled={!isEditing}
   className={cn(
@@ -527,6 +535,8 @@ onBlur={async () => {
     usernameError && "border-red-500"
   )}
 />
+
+{/* Availability messages */}
 {usernameAvailability === "checking" && (
   <p className="text-gray-500 text-sm mt-1">Checking availability...</p>
 )}
@@ -539,13 +549,16 @@ onBlur={async () => {
   <p className="text-red-500 text-sm mt-1">❌ Username is taken</p>
 )}
 
+{/* Validation errors */}
 {!isValidDisplayName && isEditing && (
   <p className="text-sm text-red-500 mt-1">
     Username must be between 4 and 30 characters.
   </p>
 )}
 
-
+{usernameError && usernameAvailability !== "taken" && (
+  <p className="text-sm text-red-500 mt-1">{usernameError}</p>
+)}
 
               </div>
             </div>
