@@ -452,13 +452,13 @@ useEffect(() => {
               <div className="text-center text-sm text-gray-500 mt-4">
   <div className="flex justify-center space-x-4">
     <Link
-      to="/terms"
+      to="/terms-of-service"
       className="text-wellness-lavender hover:text-wellness-lavender/90 hover:underline"
     >
       Terms of Service
     </Link>
     <Link
-      to="/privacy"
+      to="/privacy-policy"
       className="text-wellness-lavender hover:text-wellness-lavender/90 hover:underline"
     >
       Privacy Policy
