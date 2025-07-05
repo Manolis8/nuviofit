@@ -268,7 +268,16 @@ const handlePasswordChange = async (newPassword) => {
 };
 
 
-
+const checkUsernameAvailability = async (username: string) => {
+  try {
+    const res = await fetch(`/api/check-username?username=${username}`);
+    const data = await res.json();
+    return data.exists ? "taken" : "available";
+  } catch (error) {
+    console.error("Error checking username:", error);
+    return null;
+  }
+};
 
 const handleDeleteAccount = async () => {
   try {
@@ -385,12 +394,6 @@ const loginForm = useForm<LoginFormValues>({
     password: "",
   },
 });
-
-const checkUsernameAvailability = async (username: string): Promise<"available" | "taken" | "error"> => {
-  const res = await fetch(`/api/check-username?username=${username}`);
-  const data = await res.json();
-  return data.availability;
-};
 
 
 type LoginFormValues = z.infer<typeof loginSchema>;
