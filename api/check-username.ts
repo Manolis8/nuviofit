@@ -1,32 +1,44 @@
-// /pages/api/check-username.ts
-import type { NextApiRequest, NextApiResponse } from "next";
+// server.ts or app.ts (Node.js/Express example)
+import express from 'express';
+import { clerkClient } from '@clerk/clerk-sdk-node';
+import dotenv from 'dotenv';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { username } = req.query;
+dotenv.config();
 
-  if (typeof username !== "string") {
-    return res.status(400).json({ error: "Invalid username" });
+const app = express();
+const port = 3001;
+
+app.get('/api/check-username', async (req, res) => {
+  const username = req.query.username as string | undefined;
+
+  if (!username || username.trim().length === 0) {
+    return res.status(400).json({ error: 'Username is required' });
   }
 
   try {
-    const clerkRes = await fetch(
-      `https://api.clerk.com/v1/users?username=${encodeURIComponent(username)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        },
-      }
-    );
+    // Get users matching the username query
+    const users = await clerkClient.users.getUserList({
+      limit: 10,
+      query: username,
+    }) || [];
 
-    const users = await clerkRes.json();
-
-    if (Array.isArray(users) && users.length > 0) {
-      return res.status(200).json({ status: "taken" });
+    // Defensive check in case `users` is undefined
+    if (!Array.isArray(users)) {
+      return res.status(500).json({ error: 'Invalid data from Clerk API' });
     }
 
-    return res.status(200).json({ status: "available" });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: "error" });
+    // Check if username exists (case-insensitive)
+    const exists = users.some(
+      user => user.username?.toLowerCase() === username.toLowerCase()
+    );
+
+    return res.json({ exists });
+  } catch (err) {
+    console.error('Clerk API error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
-}
+});
+
+app.listen(port, () => {
+  console.log(`Server listening on http://localhost:${port}`);
+});
