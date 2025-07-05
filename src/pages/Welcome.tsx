@@ -188,7 +188,7 @@ const Welcome = () => {
                 <Link to="/auth/login">Log In</Link>
               </Button>
               <Button asChild className="bg-wellness-blue hover:bg-wellness-blue/90">
-                <Link to="/auth/sign-up">Sign Up</Link>
+                <Link to="/auth/signup">Sign Up</Link>
               </Button>
             </div>
             <div className="md:hidden">
