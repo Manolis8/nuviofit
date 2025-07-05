@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { User, Mail, Lock, Bell, Shield, Trash2, LogOut, Edit3, Save, X, ArrowLeft, AlertTriangle } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -33,6 +32,23 @@ import { addDays } from "date-fns";
 export default function UserInfoPage() {
   const navigate = useNavigate()
   const { user, isSignedIn, isLoaded } = useUser();
+
+  const [username, setUsername] = useState('');
+  const [available, setAvailable] = useState<null | boolean>(null);
+
+    useEffect(() => {
+    if (username.length < 3) {
+      setAvailable(null);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      const res = await fetch(`/api/check-username?username=${username}`);
+      const data = await res.json();
+      setAvailable(!data.exists);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [username]);
 
   const [isEditing, setIsEditing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
