@@ -167,7 +167,7 @@ const fakeCheckUsernameAvailability = (username: string): Promise<"available" | 
 
 useEffect(() => {
   const checkUsername = async () => {
-    const username = userData.username.trim();
+    const username = userData.username.trim().toLowerCase();
 
     if (username.length < 4 || username.length > 30) {
       setIsValidDisplayName(false);
@@ -180,25 +180,29 @@ useEffect(() => {
     setUsernameError("");
     setUsernameAvailability("checking");
 
-    const status = await fakeCheckUsernameAvailability(username);
+    const status = await checkUsernameAvailability(username);
 
     if (status === "taken") {
       setUsernameAvailability("taken");
       setUsernameError("Username is already taken.");
-    } else {
+    } else if (status === "available") {
       setUsernameAvailability("available");
       setUsernameError("");
+    } else {
+      setUsernameAvailability(null);
+      setUsernameError("Error checking username. Try again.");
     }
   };
 
   if (isEditing && userData.username.trim()) {
     const timeout = setTimeout(() => {
       checkUsername();
-    }, 400); // debounce delay
+    }, 400); // debounce
 
     return () => clearTimeout(timeout);
   }
 }, [userData.username, isEditing]);
+
 
 
 
