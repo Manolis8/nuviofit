@@ -128,7 +128,7 @@ const performReauthentication = async () => {
     if (!openReauthentication) {
       alert("Secure reauthentication is not available. Please sign in again.");
       await clerk.signOut();
-      navigate("/auth/login", { replace: true });
+      navigate("/auth/login?redirect_url=/user-info", { replace: true });
       return;
     }
 
@@ -144,6 +144,14 @@ const performReauthentication = async () => {
     alert("Reauthentication failed. Please try again.");
   }
 };
+
+  // Optional: if user becomes null (signed out), redirect to login with redirect_url
+  useEffect(() => {
+    if (!user) {
+      navigate("/auth/login?redirect_url=/user-info", { replace: true });
+    }
+  }, [user, navigate]);
+
 
 const fakeCheckUsernameAvailability = (username: string): Promise<"available" | "taken"> => {
   return new Promise((resolve) => {
@@ -235,13 +243,17 @@ const handlePasswordChange = async (newPassword) => {
     setNewPassword("");
   } catch (e) {
     if (e.message.includes("additional verification")) {
+      // This sets the retry action so it can be called after reauth
       handleReauthRequired(() => handlePasswordChange(newPassword));
+      // Optionally, immediately prompt the user to reauthenticate:
+      performReauthentication();
     } else {
       console.error(e);
       alert("Failed to change password");
     }
   }
 };
+
 
 
 const handleDeleteAccount = async () => {
@@ -272,25 +284,6 @@ const handleDeleteAccount = async () => {
       console.error("Deletion failed:", e);
       alert("Failed to delete account");
     }
-  }
-};
-
-const checkUsernameAvailability = async (usernameToCheck: string): Promise<"available" | "taken" | "error"> => {
-  if (!usernameToCheck || usernameToCheck === originalUsername) return "available";
-
-  try {
-    const res = await fetch(`https://api.clerk.dev/v1/users?username=${usernameToCheck}`, {
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_CLERK_SECRET_KEY}`, // use your Clerk secret if calling from server
-      },
-    });
-
-    const users = await res.json();
-    if (users.length > 0) return "taken";
-    return "available";
-  } catch (err) {
-    console.error("Error checking availability", err);
-    return "error";
   }
 };
 
@@ -377,6 +370,12 @@ const loginForm = useForm<LoginFormValues>({
     password: "",
   },
 });
+
+const checkUsernameAvailability = async (username: string): Promise<"available" | "taken" | "error"> => {
+  const res = await fetch(`/api/check-username?username=${username}`);
+  const data = await res.json();
+  return data.availability;
+};
 
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -475,7 +474,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
     const isValid = newUsername.length >= 4 && newUsername.length <= 30;
     setIsValidDisplayName(isValid);
   }}
-onBlur={() => {
+onBlur={async () => {
   const newUsername = userData.username.trim();
 
   if (
@@ -489,15 +488,22 @@ onBlur={() => {
     return;
   }
 
-  // Fake check: if it contains "taken", simulate it's unavailable
-  if (newUsername.toLowerCase().includes("taken")) {
+  setUsernameAvailability("checking");
+
+  const availability = await checkUsernameAvailability(newUsername);
+
+  if (availability === "taken") {
     setUsernameAvailability("taken");
     setUsernameError("Username is already taken.");
-  } else {
+  } else if (availability === "available") {
     setUsernameAvailability("available");
     setUsernameError("");
+  } else {
+    setUsernameAvailability(null);
+    setUsernameError("Error checking username. Try again.");
   }
 }}
+
 
   maxLength={30}
   disabled={!isEditing}
