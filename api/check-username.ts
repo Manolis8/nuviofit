@@ -1,12 +1,7 @@
-
-import { NextApiRequest, NextApiResponse } from "next";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req, res) {
   const { username } = req.query;
 
-  if (!username || typeof username !== "string") {
-    return res.status(400).json({ error: "Missing username" });
-  }
+  if (!username) return res.status(400).json({ availability: "error" });
 
   try {
     const response = await fetch(`https://api.clerk.dev/v1/users?username=${username}`, {
@@ -16,14 +11,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     const users = await response.json();
-
-    if (Array.isArray(users) && users.length > 0) {
-      return res.status(200).json({ available: false });
-    }
-
-    return res.status(200).json({ available: true });
-  } catch (err) {
-    console.error("Check username error:", err);
-    return res.status(500).json({ error: "Server error" });
+    const isTaken = users.length > 0;
+    res.status(200).json({ availability: isTaken ? "taken" : "available" });
+  } catch (error) {
+    console.error("Error checking username:", error);
+    res.status(500).json({ availability: "error" });
   }
 }
