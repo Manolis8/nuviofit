@@ -375,10 +375,17 @@ const loginForm = useForm<LoginFormValues>({
   },
 });
 
-const checkUsernameAvailability = async (username: string): Promise<"available" | "taken" | "error"> => {
-  const res = await fetch(`/api/check-username?username=${username}`);
-  const data = await res.json();
-  return data.availability;
+const checkUsernameAvailability = async (usernameToCheck: string) => {
+  if (!usernameToCheck) return "available";
+
+  try {
+    const res = await fetch(`/api/check-username?username=${encodeURIComponent(usernameToCheck)}`);
+    const data = await res.json();
+
+    return data.status; // "taken" or "available" or "error"
+  } catch {
+    return "error";
+  }
 };
 
 
