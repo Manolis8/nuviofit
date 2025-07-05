@@ -185,10 +185,10 @@ const Welcome = () => {
             <div className="hidden md:flex space-x-4 items-center">
               <Link to="/about" className="hover:text-wellness-blue transition-colors">About Us</Link>
               <Button asChild variant="outline" className="ml-2">
-                <Link to="/auth">Log In</Link>
+                <Link to="/auth/login">Log In</Link>
               </Button>
               <Button asChild className="bg-wellness-blue hover:bg-wellness-blue/90">
-                <Link to="/auth">Sign Up</Link>
+                <Link to="/auth/sign-up">Sign Up</Link>
               </Button>
             </div>
             <div className="md:hidden">
