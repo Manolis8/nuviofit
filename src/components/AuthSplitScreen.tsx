@@ -54,7 +54,7 @@ const location = useLocation();
 
 const initialTab =
   location.pathname.includes("/login") ? "login" :
-  location.pathname.includes("/sign-up") ? "signup" :
+  location.pathname.includes("/signup") ? "signup" :
   "login";
 
 const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
