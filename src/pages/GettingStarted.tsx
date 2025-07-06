@@ -14,7 +14,6 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { fitnessPlanSchema } from "@/components/FitnessQuestionnaire";
 
 export default function OnboardingPage() {
   
@@ -90,7 +89,8 @@ export default function OnboardingPage() {
   WorkoutLevel: "",
   injuries: "",
   recommedations: "",
-  fitnessPlans: ""
+  fitnessPlans: "",
+  username: "",
   
 });
 
@@ -101,6 +101,7 @@ export default function OnboardingPage() {
   const { data, error } = await supabase.from("onboarding_responses").insert([
     {
       user_id,
+      username: formData.username,
       achievements: formData.achievements,
       workout_history: formData.workoutHistory,
       fitness_why: formData.fitnessWhy.join(", "),
@@ -137,6 +138,7 @@ export default function OnboardingPage() {
 };
 
 
+const [usernameError, setUsernameError] = useState("");
 
 
   const prevStep = () => {
@@ -196,7 +198,10 @@ export default function OnboardingPage() {
    if (step === 16) {
     return formData.recommedations?.trim().length > 0;
   }
-
+if (step === 0) {
+  const len = formData.username.trim().length;
+  return len > 4 
+}
 
   return true;
 };
@@ -262,20 +267,57 @@ export default function OnboardingPage() {
                   className="min-h-[300px]"
                 >
 
-                  {step === 0 && (
+{step === 0 && (
   <div className="text-center">
     <h2 className="mb-4 text-3xl font-bold text-slate-900">Welcome to LifeSpark AI! 🎉</h2>
     <p className="text-slate-600 mb-6">
       You're one step away from joining a powerful fitness movement. Let’s build your plan together!
     </p>
+
+    <Input
+      type="text"
+      maxLength={30}
+      value={formData.username}
+      onChange={(e) => {
+        const value = e.target.value;
+        handleChange("username", value);
+
+        if (value.trim().length < 4) {
+          setUsernameError("Username must be at least 4 characters.");
+        } else {
+          setUsernameError("");
+        }
+      }}
+      placeholder="Enter username"
+    />
+    
+    {/* Show character limit info */}
+    <p className="text-sm text-gray-500 mt-1">Max username length: 30 characters</p>
+
+    {/* Show error if exists */}
+    {usernameError && (
+      <p className="text-sm text-red-600 mt-1">{usernameError}</p>
+    )}
+
+    <br />
+
+    {/* Button disabled if username is invalid */}
     <Button
       onClick={nextStep}
-      className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full"
+      disabled={
+        formData.username.trim().length < 4 ||
+        formData.username.trim().length > 30 ||
+        usernameError !== ""
+      }
+      className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
     >
       Let’s Get Started →
     </Button>
   </div>
 )}
+
+
+
 
                  {step === 1 && (
   <div>
@@ -1049,7 +1091,6 @@ export default function OnboardingPage() {
     <Button
       variant="outline"
       onClick={prevStep}
-      disabled={step === 1}
       className="flex items-center gap-2 border-slate-200 px-5"
     >
       <ArrowLeft className="h-4 w-4" />
@@ -1094,8 +1135,6 @@ export default function OnboardingPage() {
     )}
   </div>
 )}
-
-
             </CardContent>
           </Card>
         </div>
