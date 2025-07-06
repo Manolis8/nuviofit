@@ -33,29 +33,10 @@ export default function UserInfoPage() {
   const navigate = useNavigate()
   const { user, isSignedIn, isLoaded } = useUser();
 
-  const [username, setUsername] = useState('');
+
   const [available, setAvailable] = useState<null | boolean>(null);
-
-    useEffect(() => {
-    if (username.length < 3) {
-      setAvailable(null);
-      return;
-    }
-    const timer = setTimeout(async () => {
-      const res = await fetch(`/api/check-username?username=${username}`);
-      const data = await res.json();
-      setAvailable(!data.exists);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [username]);
-
   const [isEditing, setIsEditing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-const [isValidDisplayName, setIsValidDisplayName] = useState(true);
-const [usernameError, setUsernameError] = useState("");
-const [isSaving, setIsSaving] = useState(false); // already present in your code
-const [originalUsername, setOriginalUsername] = useState(user?.username || "");
 const [usernameAvailability, setUsernameAvailability] = useState<"available" | "taken" | "checking" | null>(null);
   const [userData, setUserData] = useState({
     firstName: "",
@@ -68,6 +49,30 @@ const [usernameAvailability, setUsernameAvailability] = useState<"available" | "
   })
 
 const { lastResetAt } = useAutoRenewMessages(user?.id ?? "");
+
+const [fetchedUsername, setFetchedUsername] = useState("");
+
+useEffect(() => {
+  const fetchUsername = async () => {
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching username:", error.message);
+    } else if (data?.username) {
+      setFetchedUsername(data.username);
+      setUserData((prev) => ({
+        ...prev,
+        username: data.username,
+      }));
+    }
+  };
+
+  if (user?.id) fetchUsername();
+}, [user]);
 
 
 useEffect(() => {
@@ -171,81 +176,61 @@ const performReauthentication = async () => {
   }
 };
 
+const updateUsernameInSupabase = async (userId: string, newUsername: string) => {
+  const { data, error } = await supabase
+    .from("onboarding_responses")
+    .update({ username: newUsername })
+    .eq("user_id", userId);
 
-
-
-useEffect(() => {
-  const checkUsername = async () => {
-    const username = userData.username.trim().toLowerCase();
-
-    if (username.length < 4 || username.length > 30) {
-      setIsValidDisplayName(false);
-      setUsernameAvailability(null);
-      setUsernameError("Username must be between 4 and 30 characters.");
-      return;
-    }
-
-    setIsValidDisplayName(true);
-    setUsernameError("");
-    setUsernameAvailability("checking");
-
-    const status = await checkUsernameAvailability(username);
-
-    if (status === "taken") {
-      setUsernameAvailability("taken");
-      setUsernameError("Username is already taken.");
-    } else if (status === "available") {
-      setUsernameAvailability("available");
-      setUsernameError("");
-    } else {
-      setUsernameAvailability(null);
-      setUsernameError("Error checking username. Try again.");
-    }
-  };
-
-  if (isEditing && userData.username.trim()) {
-    const timeout = setTimeout(() => {
-      checkUsername();
-    }, 400); // debounce
-
-    return () => clearTimeout(timeout);
+  if (error) {
+    console.error("Error updating username in Supabase:", error);
+    return { success: false, error };
   }
-}, [userData.username, isEditing]);
 
+  return { success: true, data };
+};
 
-
+const [isSaving, setIsSaving] = useState(false);
+const [isSaved, setIsSaved] = useState(false);
+const [usernameError, setUsernameError] = useState("");
+const [isValidDisplayName, setIsValidDisplayName] = useState(true);
+const [originalUsername, setOriginalUsername] = useState(user?.username || "");
 
 const handleChangeUsername = async (newUsername) => {
-  setIsSaving(true);
-  try {
-    await clerk.user.update({ username: newUsername });
-    alert("Username updated!");
-    setIsEditing(false);
-    setUsernameError("");
-    setUsernameAvailability(null);
-  } catch (e) {
-    const msg = e?.message || "";
+  if (newUsername.length < 4 || newUsername.length > 30) {
+    setUsernameError("Username must be between 4 and 30 characters.");
+    return;
+  }
 
-    if (
-      msg.includes("additional verification") ||
-      e?.errors?.[0]?.code === "session_verification_required"
-    ) {
-      handleReauthRequired(() => handleChangeUsername(newUsername));
-    } else if (
-      e?.errors?.[0]?.message?.includes("reserved") ||
-      e?.errors?.[0]?.message?.includes("taken")
-    ) {
-      setUsernameError("Username is already taken.");
-      setUsernameAvailability("taken");
+  setIsSaving(true);
+  setUsernameError("");
+
+  try {
+    const result = await updateUsernameInSupabase(user.id, newUsername);
+
+    if (result.success) {
+      setIsSaved(true);
+      setOriginalUsername(newUsername);
+      setUserData((prev) => ({ ...prev, username: newUsername }));
     } else {
-      console.error("Update error:", e);
-      alert("Failed to change username");
+      setUsernameError("Failed to save username.");
     }
+  } catch (error) {
+    setUsernameError("Error saving username. Please try again.");
   } finally {
     setIsSaving(false);
   }
 };
 
+// useEffect to react to successful save
+useEffect(() => {
+  if (isSaved) {
+    // Close editing mode, reset error
+    setIsEditing(false);
+    setUsernameError("");
+    setIsSaved(false);
+  }
+}, [isSaved]);
 
 
 const handlePasswordChange = async (newPassword) => {
@@ -268,16 +253,7 @@ const handlePasswordChange = async (newPassword) => {
 };
 
 
-const checkUsernameAvailability = async (username: string) => {
-  try {
-    const res = await fetch(`/api/check-username?username=${username}`);
-    const data = await res.json();
-    return data.exists ? "taken" : "available";
-  } catch (error) {
-    console.error("Error checking username:", error);
-    return null;
-  }
-};
+
 
 const handleDeleteAccount = async () => {
   try {
@@ -367,7 +343,6 @@ useEffect(() => {
   );
 }, [user]);
 
-const { redirectToSignIn } = useClerk();
 
 const handleLogout = async () => {
   try {
@@ -475,121 +450,67 @@ type LoginFormValues = z.infer<typeof loginSchema>;
     )}
   </div>
 </CardHeader>
+<CardContent className="space-y-6">
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-2">
+      <Label htmlFor="username">Username</Label>
+      <Input
+        value={userData.username}
+        onChange={(e) => {
+          const newUsername = e.target.value;
+          setUserData((prev) => ({ ...prev, username: newUsername }));
 
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-<Input
-  value={userData.username}
-  onChange={(e) => {
-    const newUsername = e.target.value;
-    setUserData((prev) => ({ ...prev, username: newUsername }));
+          // Reset error state
+          setUsernameError("");
 
-    // Reset states
-    setUsernameError("");
-    setUsernameAvailability(null);
+          // Local validation only
+          const isValid = newUsername.length >= 4 && newUsername.length <= 30;
+          setIsValidDisplayName(isValid);
+        }}
+        // Remove onBlur for username availability checking
+        maxLength={30}
+        disabled={!isEditing}
+        className={cn(
+          !isEditing ? "bg-gray-50" : "",
+          usernameError && "border-red-500"
+        )}
+      />
 
-    // Update validity state for local UI check
-    const isValid = newUsername.length >= 4 && newUsername.length <= 30;
-    setIsValidDisplayName(isValid);
-  }}
-  onBlur={async () => {
-    const newUsername = userData.username.trim();
+      {/* Validation errors */}
+      {!isValidDisplayName && isEditing && (
+        <p className="text-sm text-red-500 mt-1">
+          Username must be between 4 and 30 characters.
+        </p>
+      )}
 
-    // Skip if unchanged or invalid
-    if (
-      !newUsername ||
-      newUsername.length < 4 ||
-      newUsername.length > 30 ||
-      newUsername === originalUsername
-    ) {
-      setUsernameAvailability(null);
-      setUsernameError("");
-      return;
-    }
+      {/* Keep usernameError only for local errors */}
+      {usernameError && (
+        <p className="text-sm text-red-500 mt-1">{usernameError}</p>
+      )}
+    </div>
+  </div>
 
-    // Show loading state
-    setUsernameAvailability("checking");
+  <Separator />
 
-    try {
-      const res = await fetch(`/api/check-username?username=${newUsername}`);
-      const data = await res.json();
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-2">
+      <Label>Member Since</Label>
+      <div className="p-3 bg-gray-50 rounded-md text-gray-700">
+        {userData.joinDate}
+      </div>
+    </div>
+  </div>
 
-      if (data.exists === true) {
-        setUsernameAvailability("taken");
-        setUsernameError("Username is already taken.");
-      } else if (data.exists === false) {
-        setUsernameAvailability("available");
-        setUsernameError("");
-      } else {
-        setUsernameAvailability(null);
-        setUsernameError("Unexpected response. Try again.");
-      }
-    } catch (err) {
-      setUsernameAvailability(null);
-      setUsernameError("Error checking username. Try again.");
-    }
-  }}
-  maxLength={30}
-  disabled={!isEditing}
-  className={cn(
-    !isEditing ? "bg-gray-50" : "",
-    usernameError && "border-red-500"
-  )}
-/>
-
-{/* Availability messages */}
-{usernameAvailability === "checking" && (
-  <p className="text-gray-500 text-sm mt-1">Checking availability...</p>
-)}
-
-{usernameAvailability === "available" && (
-  <p className="text-green-600 text-sm mt-1">✅ Username is available</p>
-)}
-
-{usernameAvailability === "taken" && (
-  <p className="text-red-500 text-sm mt-1">❌ Username is taken</p>
-)}
-
-{/* Validation errors */}
-{!isValidDisplayName && isEditing && (
-  <p className="text-sm text-red-500 mt-1">
-    Username must be between 4 and 30 characters.
-  </p>
-)}
-
-{usernameError && usernameAvailability !== "taken" && (
-  <p className="text-sm text-red-500 mt-1">{usernameError}</p>
-)}
-
-              </div>
-            </div>
-
-            <Separator />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label>Member Since</Label>
-                <div className="p-3 bg-gray-50 rounded-md text-gray-700">
-                  {userData.joinDate}
-                </div>
-              </div>
-            </div>
-
-            {isEditing && (
-              <div className="flex gap-3 pt-4">
+  {isEditing && (
+    <div className="flex gap-3 pt-4">
 <Button
   onClick={() => handleChangeUsername(userData.username)}
   disabled={
-    !!usernameError ||
-    usernameAvailability === "taken" ||
-    !isValidDisplayName ||
-    isSaving
+    !!usernameError || !isValidDisplayName || isSaving
   }
   className={cn(
     "bg-green-600 hover:bg-green-700",
-    (!!usernameError || usernameAvailability === "taken" || isSaving) &&
+    (!!usernameError || isSaving) &&
       "opacity-50 pointer-events-none"
   )}
 >
@@ -597,25 +518,24 @@ type LoginFormValues = z.infer<typeof loginSchema>;
   {isSaving ? "Saving..." : "Save Changes"}
 </Button>
 
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsEditing(false);
+          setUserData((prev) => ({
+            ...prev,
+            username: user?.username || "",
+          }));
+          setUsernameError("");
+        }}
+      >
+        <X className="w-4 h-4 mr-2" />
+        Cancel
+      </Button>
+    </div>
+  )}
+</CardContent>
 
-
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditing(false);
-                    setUserData((prev) => ({
-                      ...prev,
-                      username: user?.username || "",
-                    }));
-                    setUsernameError("");
-                  }}
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Cancel
-                </Button>
-              </div>
-            )}
-          </CardContent>
         </Card>
       </motion.div>
 
