@@ -31,6 +31,27 @@ export default function ProfilePage() {
 
   const email = user?.primaryEmailAddress?.emailAddress || "Unknown";
 
+const [username, setUsername] = useState("");
+
+useEffect(() => {
+  const fetchUsername = async () => {
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching username:", error.message);
+    } else if (data?.username) {
+      setUsername(data.username);
+    }
+  };
+
+  if (user?.id) fetchUsername();
+}, [user]);
+
+
 useEffect(() => {
   const fetchJoinDate = async () => {
     const { data, error } = await supabase
@@ -129,7 +150,7 @@ useEffect(() => {
                   </Avatar>
 
                   <div className="text-center md:text-left flex-1">
-                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{userData.username}</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{username}</h1>
                     <p className="text-gray-600 dark:text-gray-300 mb-4">{userData.email}</p>
                     <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                       <Badge
