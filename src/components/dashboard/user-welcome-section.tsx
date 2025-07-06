@@ -26,6 +26,11 @@ export function UserWelcomeSection() {
   const [workoutDays, setWorkoutDays] = useState(0);
   const [workoutDaysPerWeek, setWorkoutDaysPerWeek] = useState<number | null>(null);
 
+  
+const [usernameError, setUsernameError] = useState("");
+const [usernameAvailable, setUsernameAvailable] = useState(true);
+const [checkingUsername, setCheckingUsername] = useState(false);
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)])
@@ -119,6 +124,8 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
   checkAndResetWeeklyCount();
 }, [user]);
 
+const [username, setUsername] = useState("");
+
 useEffect(() => {
     // Handler to update width
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -149,6 +156,26 @@ useEffect(() => {
   if (user?.id) fetchCount();
 }, [user]);
 
+
+useEffect(() => {
+  const fetchUsername = async () => {
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Error fetching username:", error.message);
+    } else if (data?.username) {
+      setUsername(data.username);
+    }
+  };
+
+  if (user?.id) fetchUsername();
+}, [user]);
+
+
   if (!isLoaded) return null
 
   const displayName =
@@ -169,8 +196,7 @@ useEffect(() => {
               </Avatar>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold">
-      Welcome back
-      {windowWidth !== undefined && windowWidth >= 540 ? `, ${displayName}` : ""} 👋
+      Welcome back{windowWidth !== undefined && windowWidth >= 540 && username ? `, ${username}` : ""} 👋
     </h1>
                 <motion.p
                   key={currentQuote}
