@@ -28,6 +28,49 @@ const currentWeekDay = jsDay === 0 ? 7 : jsDay;
 
 const startOfWeek = new Date(baseDate);
 startOfWeek.setDate(baseDate.getDate() - currentWeekDay + 1); // Monday
+  useEffect(() => {
+  const checkAndResetWeeklyCount = async () => {
+    if (!user?.id) return;
+
+    const today = new Date();
+    const isMonday = today.getDay() === 1; // Monday = 1
+
+    const weekKey = today.toISOString().slice(0, 10); // e.g., '2025-06-24'
+    const lastReset = localStorage.getItem("last_week_reset");
+
+    if (isMonday && lastReset !== weekKey) {
+      // It's Monday and we haven't reset yet this week
+      const { error } = await supabase
+        .from("onboarding_responses")
+        .update({ workout_count: 0 })
+        .eq("user_id", user.id);
+
+      if (!error) {
+        localStorage.setItem("last_week_reset", weekKey);
+        setWeeklyCount(0);
+        console.log("✅ Workout count reset for the new week");
+      } else {
+        console.error("❌ Failed to reset workout count", error);
+      }
+    } else if (!isMonday) {
+      // Allow next Monday to reset again
+      localStorage.removeItem("last_week_reset");
+    } else {
+      // It's still Monday, already reset — fetch existing count
+      const { data } = await supabase
+        .from("onboarding_responses")
+        .select("workout_count")
+        .eq("user_id", user.id)
+        .single();
+
+      if (data?.workout_count !== undefined) {
+        setWeeklyCount(data.workout_count);
+      }
+    }
+  };
+
+  checkAndResetWeeklyCount();
+}, [user]);
 
 
 const endOfWeek = new Date(startOfWeek);
@@ -98,6 +141,7 @@ useEffect(() => {
 
   if (user?.id) fetchCount();
 }, [user]);
+
   return (
     <Card className="border-none shadow-lg">
       <CardHeader>
