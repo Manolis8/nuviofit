@@ -126,8 +126,10 @@ useEffect(() => {
       });
   
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-  
+  console.log("pendingVerification:", pendingVerification);
+
       setEmailForVerification(data.email);
+        console.log("Form submitted:", data);
       setPendingVerification(true);
       alert("📩 Verification code sent to your email.");
     } catch (err: any) {
