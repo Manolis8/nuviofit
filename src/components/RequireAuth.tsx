@@ -1,31 +1,28 @@
 import { useUser } from "@clerk/clerk-react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useUserContext } from "@/context/UserContext";
-import { Navigate } from "react-router-dom";
 
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isSignedIn, isLoaded } = useUser();
-  const { userProfile, loading } = useUserContext();
+  const { setupFinished } = useUserContext();
+  const location = useLocation();
 
-  // Wait until both Clerk and our custom UserContext have loaded
-  if (!isLoaded || loading) {
-    return <div>Loading...</div>; // You can use a spinner here
-  }
+  if (!isLoaded) return <div>Loading...</div>;
 
   if (!isSignedIn) {
-    return <Navigate to="/auth/sign-in" />;
+    return <Navigate to="/auth/login" replace />;
   }
 
-  // If userProfile doesn't exist yet (still null or undefined)
-  if (!userProfile) {
-    return <div>Loading user profile...</div>;
+  const onGettingStarted = location.pathname === "/getting-started";
+
+  if (!setupFinished && !onGettingStarted) {
+    return <Navigate to="/getting-started" replace />;
   }
 
-  // If the user hasn't completed onboarding
-  if (userProfile.setupFinished === false) {
-    return <Navigate to="/getting-started" />;
+  if (setupFinished && onGettingStarted) {
+    return <Navigate to="/dashboard" replace />;
   }
 
-  // Everything OK – allow access to protected page
   return <>{children}</>;
 };
 
