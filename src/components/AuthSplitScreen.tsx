@@ -143,7 +143,7 @@ useEffect(() => {
 
     if (result.status === "complete" && result.createdSessionId) {
       await setSignUpActive({ session: result.createdSessionId });
-      navigate("/get-started"); // ✅ Redirect to onboarding
+      navigate("/getting-started"); // ✅ Redirect to onboarding
     } else {
       console.log("Result:", result);
       alert("Verification incomplete. Please try again or check your email again.");
