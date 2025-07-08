@@ -26,9 +26,6 @@ const loginSchema = z.object({
 
 
 const signupSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters",
-  }),
   email: z.string().email({
     message: "Please enter a valid email address",
   }),
@@ -66,14 +63,13 @@ useEffect(() => {
 }, [location.pathname, navigate]);
 
 
-  const { isSignedIn } = useAuth();
+const { isLoaded, isSignedIn } = useAuth();
 
-  // Redirect to dashboard if already logged in
-  useEffect(() => {
-    if (isSignedIn) {
-      navigate("/dashboard");
-    }
-  }, [isSignedIn]);
+useEffect(() => {
+  if (isLoaded && isSignedIn) {
+    navigate("/dashboard");
+  }
+}, [isLoaded, isSignedIn]);
 
   const { signUp, setActive: setSignUpActive } = useSignUp();
   const { signIn, setActive: setSignInActive } = useSignIn();
@@ -92,7 +88,6 @@ useEffect(() => {
   const signupForm = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
       termsAccepted: false,
