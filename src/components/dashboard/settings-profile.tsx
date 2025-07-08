@@ -39,8 +39,8 @@ export function SettingsProfile({ onOpenSettings }: SettingsProfileProps) {
 
         {/* App Info */}
         <div className="pt-4 border-t text-center text-xs text-gray-500">
-          <p>LifeSpark AI v2.1.0</p>
-          <p>© 2025 LifeSpark </p>
+          <p>Nuviofit v1.0</p>
+          <p>© 2025 Nuviofit </p>
         </div>
       </CardContent>
     </Card>
