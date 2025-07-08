@@ -47,6 +47,7 @@ const App = () => (
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/about" element={<About />} />
             <Route
               path="/auth/*"
               element={
@@ -107,14 +108,6 @@ const App = () => (
               element={
                 <RequireAuth>
                   <GoalTracker />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/about"
-              element={
-                <RequireAuth>
-                  <About />
                 </RequireAuth>
               }
             />
