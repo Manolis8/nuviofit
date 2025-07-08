@@ -39,6 +39,9 @@ export interface UserProfile {
   additionalNotes?: string;
   email: string;
   workoutStyle?: "traditional" | "circuit" | "hiit" | "split" | "full_body";
+  setupFinished?: boolean,
+  
+
 }
 
 type WorkoutNote = {
@@ -81,6 +84,9 @@ type UserContextType = {
   userProfile: UserProfile | null;
   setUserProfile: (profile: UserProfile) => void;
   fitnessPlan: FitnessPlan | null;
+  isOnboardingComplete: boolean;
+  loading: boolean;
+setLoading: (value: boolean) => void;
   setFitnessPlan: (plan: FitnessPlan) => void;
   nutritionPlan: NutritionPlan | null;
   setNutritionPlan: (plan: NutritionPlan) => void;
@@ -104,6 +110,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [nutritionPlan, setNutritionPlan] = useState<NutritionPlan | null>(null);
   const [workoutNotes, setWorkoutNotes] = useState<WorkoutNote[]>([]);
   const [hasCustomPlan, setHasCustomPlan] = useState<boolean>(false);
+  const isOnboardingComplete = !!userProfile && hasCustomPlan;
+  const [loading, setLoading] = useState(true);
+
 
   const addMoodEntry = (text: string, sentiment: MoodSentiment) => {
     const newEntry: MoodEntry = {
@@ -116,6 +125,16 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     
     // In a real app, we'd save this to Supabase here
   };
+
+React.useEffect(() => {
+  // Simulate fetching user data
+  const timer = setTimeout(() => {
+    setLoading(false);
+  }, 1000); // 1 second delay
+  
+  return () => clearTimeout(timer);
+}, []);
+
 
   const addGoal = (text: string, category: Goal["category"]) => {
     const newGoal: Goal = {
@@ -193,6 +212,9 @@ return (
       addWorkoutNote,
       hasCustomPlan,
       setHasCustomPlan,
+      isOnboardingComplete,
+    loading,
+    setLoading, 
     }}
   >
     {children}
@@ -200,7 +222,7 @@ return (
 );
 };
 
-export const useUser = () => {
+export const useUserContext = () => {
   const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error("useUser must be used within a UserProvider");
