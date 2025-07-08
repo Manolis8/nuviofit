@@ -7,7 +7,7 @@ import { generateFitnessPlan } from "@/components/lib/generateFitnessPlan";
 
 import { supabase } from "@/components/lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
-
+import { useUserContext } from "@/context/UserContext";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
@@ -133,9 +133,38 @@ export default function OnboardingPage() {
 };
 
 
+
   const handleChange = (field: string, value: any) => {
   setFormData((prev) => ({ ...prev, [field]: value }));
 };
+
+const { userProfile, setUserProfile } = useUserContext();
+const { loading } = useUserContext();
+
+
+const handleGeneratePlan = async () => {
+  const success = await handleSubmit();
+  if (!success) return;
+
+  await generatePlan();
+
+  // ✅ Safely update the context
+if (!userProfile) return;
+
+setUserProfile({
+  ...userProfile,
+  setupFinished: true,
+});
+
+
+  navigate("/dashboard");
+};
+
+useEffect(() => {
+  if (userProfile?.setupFinished) {
+    navigate("/dashboard"); // or wherever your main app starts
+  }
+}, [userProfile, navigate]);
 
 
 const [usernameError, setUsernameError] = useState("");
@@ -221,7 +250,7 @@ if (step === 0) {
               />
             </svg>
           </div>
-          <span className="text-xl font-bold text-slate-900">LifeSpark AI</span>
+          <span className="text-xl font-bold text-slate-900">Nuviofit</span>
         </div>
       </header>
 
@@ -269,7 +298,7 @@ if (step === 0) {
 
 {step === 0 && (
   <div className="text-center">
-    <h2 className="mb-4 text-3xl font-bold text-slate-900">Welcome to LifeSpark AI! 🎉</h2>
+    <h2 className="mb-4 text-3xl font-bold text-slate-900">Welcome to Nuviofit! 🎉</h2>
     <p className="text-slate-600 mb-6">
       You're one step away from joining a powerful fitness movement. Let’s build your plan together!
     </p>
@@ -1098,17 +1127,8 @@ if (step === 0) {
     </Button>
 
     {step === 16 ? (
-      <Button
-  onClick={async () => {
-    const success = await handleSubmit(); // ⬅️ this will now be true or false
-
-    if (success) {
-      await generatePlan(); // only generate plan if data was saved
-      nextStep();           // only go next if everything went well
-    } else {
-      alert("Something went wrong while saving your answers.");
-    }
-  }}
+<Button
+  onClick={handleGeneratePlan}
   disabled={!isCurrentStepValid()}
   className="group relative overflow-hidden bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] px-5 text-white transition-all duration-300 hover:shadow-md"
 >
@@ -1118,6 +1138,7 @@ if (step === 0) {
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
+
 
 
     ) : (
