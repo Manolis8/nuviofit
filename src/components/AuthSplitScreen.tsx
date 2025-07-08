@@ -126,10 +126,8 @@ useEffect(() => {
       });
   
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-  console.log("pendingVerification:", pendingVerification);
 
       setEmailForVerification(data.email);
-        console.log("Form submitted:", data);
       setPendingVerification(true);
       alert("📩 Verification code sent to your email.");
     } catch (err: any) {
@@ -304,6 +302,8 @@ useEffect(() => {
                     )}
                   />
                   
+                  <div id="clerk-captcha" className="mt-4" />
+
                   <Button type="submit" className="w-full bg-wellness-teal hover:bg-wellness-teal/90 mt-6">
                     Create Account
                   </Button>
