@@ -1,4 +1,3 @@
-// src/components/GoogleTranslate.tsx
 import { useEffect } from "react";
 
 declare global {
@@ -10,44 +9,31 @@ declare global {
 
 const GoogleTranslate = () => {
   useEffect(() => {
-    const addGoogleTranslateScript = () => {
-      if (document.getElementById("google-translate-script")) return;
+    if (document.getElementById("google-translate-script")) return;
 
-      const script = document.createElement("script");
-      script.id = "google-translate-script";
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      document.body.appendChild(script);
-
-      window.googleTranslateElementInit = () => {
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: "en",
-            includedLanguages: "en,el,es,fr,de,it,zh-CN,ru,ar", // Add/remove languages
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-          },
-          "google_translate_element"
-        );
-      };
+    window.googleTranslateElementInit = () => {
+      new window.google.translate.TranslateElement(
+        {
+          pageLanguage: "en",
+          // You can specify includedLanguages if you want
+          // includedLanguages: "en,el,es,fr,de,it,zh-CN,ru,ar",
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+        },
+        "google_translate_element"
+      );
     };
 
-    addGoogleTranslateScript();
+    const script = document.createElement("script");
+    script.id = "google-translate-script";
+    script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+    script.async = true;
+    document.body.appendChild(script);
   }, []);
 
-  return (
-    <div
-      id="google_translate_element"
-      style={{
-        position: "fixed",
-        top: 10,
-        right: 10,
-        zIndex: 9999,
-        backgroundColor: "white",
-        padding: "4px",
-        borderRadius: "6px",
-      }}
-    />
-  );
+  // IMPORTANT: Do NOT render any <div id="google_translate_element" /> or any UI here
+  // Just load the script and let Google handle the banner and UI.
+
+  return null;
 };
 
 export default GoogleTranslate;
