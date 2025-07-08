@@ -12,7 +12,7 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
 
   if (!isLoaded) return <div>Loading...</div>;
 
-  if (!isSignedIn) return <Navigate to="/auth" replace />;
+  if (!isSignedIn) return <Navigate to="/auth/sign-up" replace />;
 
   return <>{children}</>;
 };
