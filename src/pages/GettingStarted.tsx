@@ -32,7 +32,6 @@ const { setupFinished, setSetupFinished } = useUserContext();
 
   const generatePlan = async () => {
   const user_id = user.id; // test user
-  console.log("User ID:", user_id, "Plan Generated:", planGenerated, "Step:", step);
 
   if (!user_id || planGenerated || step !== 17) return;
 
@@ -126,10 +125,8 @@ const { setupFinished, setSetupFinished } = useUserContext();
   ]);
 
   if (error) {
-    console.error("Error saving onboarding data:", error.message);
     return false; // ⬅️ Tell the button it failed
   } else {
-    console.log("Onboarding data saved:", data);
     return true; // ⬅️ Tell the button it succeeded
   }
 };
@@ -148,25 +145,37 @@ const { userProfile, setUserProfile } = useUserContext();
 const { loading } = useUserContext();
 
 
-const handleGeneratePlan = async () => {
+const handleSaveData = async () => {
   const success = await handleSubmit();
-  if (!success) return;
+  if (!success) {
+    alert("❌ Failed to save data");
+    return;
+  }
 
-  await generatePlan();
-
-
-setSetupFinished(true);
-
-
-
-  navigate("/dashboard");
+  nextStep(); // Move to next step, like step 17
 };
+
+const handleGeneratePlan = async () => {
+  if (planGenerated) return;
+
+  const success = await handleSubmit();
+  if (!success) {
+    alert("❌ Failed to save plan data");
+    return;
+  }
+
+  await generatePlan(); // Your existing plan logic
+
+  setPlanGenerated(true);
+};
+
 
 useEffect(() => {
   if (setupFinished) {
     navigate("/dashboard", { replace: true });
   }
-}, [setupFinished, navigate]);
+}, [setupFinished]);
+
 
 
 
@@ -1078,7 +1087,7 @@ if (step === 0) {
       🎉 You’ve Completed Your Fitness Plan!
     </h2>
     <p className="text-slate-600 mb-4">
-      You’re now officially part of the <span className="font-semibold text-[#56A7F2]">LifeSpark AI</span> community.
+      You’re now officially part of the <span className="font-semibold text-[#56A7F2]">Nuviofit</span> community.
     </p>
     <p className="text-slate-500 italic mb-6">
       We’ve used your answers to build a program tailored just for you. Let’s crush your goals together.
@@ -1098,16 +1107,21 @@ if (step === 0) {
 
     <div className="mt-6">
       <Button
-        onClick={() => navigate('/dashboard')}
-        className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all"
-      >
-        Go to Dashboard →
-      </Button>
+  onClick={() => {
+    setSetupFinished(true); // ✅ unlock all pages
+    navigate("/dashboard"); // 🚀
+  }}
+  disabled={!planGenerated} // ❌ can't continue until plan is ready
+  className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all"
+>
+  Go to Dashboard →
+</Button>
+
       <Button
         onClick={generatePlan}
         className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all"
       >
-        Generate
+        Generate Plan
       </Button>
     </div>
   </div>
@@ -1131,16 +1145,17 @@ if (step === 0) {
 
     {step === 16 ? (
 <Button
-  onClick={handleGeneratePlan}
+  onClick={handleSaveData}
   disabled={!isCurrentStepValid()}
   className="group relative overflow-hidden bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] px-5 text-white transition-all duration-300 hover:shadow-md"
 >
   <span className="relative z-10 flex items-center gap-2">
-    🚀 Generate My Plan
+    Save my data
     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
+
 
 
 
