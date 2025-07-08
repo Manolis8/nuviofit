@@ -25,7 +25,6 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Userinfo from "./pages/user-info";
 import AuthSplitScreen from "./components/AuthSplitScreen";
-import GoogleTranslate from "./components/GoogleTranslate";
 
 // Clerk
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
@@ -42,7 +41,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <GoogleTranslate />
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Welcome />} />
