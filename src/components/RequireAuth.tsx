@@ -1,6 +1,7 @@
 // src/components/RequireAuth.tsx
 import React from 'react';
-import { useUser, RedirectToSignIn } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react';
+import { Navigate } from 'react-router-dom';
 
 type Props = {
   children: React.ReactNode;
@@ -11,7 +12,7 @@ const RequireAuth: React.FC<Props> = ({ children }) => {
 
   if (!isLoaded) return <div>Loading...</div>;
 
-  if (!isSignedIn) return <RedirectToSignIn />;
+  if (!isSignedIn) return <Navigate to="/auth" replace />;
 
   return <>{children}</>;
 };
