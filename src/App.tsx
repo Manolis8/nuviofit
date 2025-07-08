@@ -3,11 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import ForgotPassword from './pages/ForgotPassword';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "@/context/UserContext";
-import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
-import { Navigate } from "react-router-dom";
 import React from "react";
+
+// Pages & Components
 import Welcome from "./pages/Welcome";
 import Profile from "./components/profile/page";
 import Warmup from "./pages/warmup-page";
@@ -25,7 +25,12 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Userinfo from "./pages/user-info";
 import AuthSplitScreen from "./components/AuthSplitScreen";
-import { Import } from "lucide-react";
+
+// Clerk
+import { SignedIn, SignedOut } from "@clerk/clerk-react";
+
+// 🔐 Custom Auth Protection
+import RequireAuth from "./components/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -37,47 +42,116 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Welcome />} />
-            <Route
-  path="/dashboard"
-  element={
-    <>
-      <SignedIn>
-        <Dashboard />
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
-  }
-/>
-            <Route path="/mindset" element={<MoodTracker />} />
-            <Route path="/workout-page" element={<WorkoutPage />} />
-            <Route path="/the-arena" element={<Arena />} />
-            <Route path="/nutrition" element={<Nutrition />} />
-            <Route path="/goals" element={<GoalTracker />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/getting-started" element={<GettingStarted />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/calendar" element={<CalendarView/>} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/user-info" element={<Userinfo />} />
             <Route
-  path="/auth/*"
-  element={
-    <>
-      <SignedOut>
-        <AuthSplitScreen />
-      </SignedOut>
-      <SignedIn>
-        <Navigate to="/dashboard" />
-      </SignedIn>
-    </>
-  }
-/>
+              path="/auth/*"
+              element={
+                <>
+                  <SignedOut>
+                    <AuthSplitScreen />
+                  </SignedOut>
+                  <SignedIn>
+                    <Navigate to="/dashboard" />
+                  </SignedIn>
+                </>
+              }
+            />
 
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <RequireAuth>
+                  <Dashboard />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/mindset"
+              element={
+                <RequireAuth>
+                  <MoodTracker />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/workout-page"
+              element={
+                <RequireAuth>
+                  <WorkoutPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/the-arena"
+              element={
+                <RequireAuth>
+                  <Arena />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/nutrition"
+              element={
+                <RequireAuth>
+                  <Nutrition />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/goals"
+              element={
+                <RequireAuth>
+                  <GoalTracker />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/about"
+              element={
+                <RequireAuth>
+                  <About />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/getting-started"
+              element={
+                <RequireAuth>
+                  <GettingStarted />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <RequireAuth>
+                  <CalendarView />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <RequireAuth>
+                  <Profile />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/user-info"
+              element={
+                <RequireAuth>
+                  <Userinfo />
+                </RequireAuth>
+              }
+            />
+
+            {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -85,6 +159,5 @@ const App = () => (
     </UserProvider>
   </QueryClientProvider>
 );
-
 
 export default App;
