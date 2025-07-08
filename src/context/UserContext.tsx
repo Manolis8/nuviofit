@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Exercise } from "@/components/lib/frontendOpenai" // adjust path if needed
-;
+import { Exercise } from "@/components/lib/frontendOpenai";
+
 
 type MoodSentiment = "happy" | "sad" | "neutral" | "stressed" | "anxious";
 
@@ -40,6 +40,7 @@ export interface UserProfile {
   email: string;
   workoutStyle?: "traditional" | "circuit" | "hiit" | "split" | "full_body";
   setupFinished?: boolean,
+
   
 
 }
@@ -86,7 +87,6 @@ type UserContextType = {
   fitnessPlan: FitnessPlan | null;
   isOnboardingComplete: boolean;
   loading: boolean;
-setLoading: (value: boolean) => void;
   setFitnessPlan: (plan: FitnessPlan) => void;
   nutritionPlan: NutritionPlan | null;
   setNutritionPlan: (plan: NutritionPlan) => void;
@@ -97,6 +97,8 @@ setLoading: (value: boolean) => void;
   updateProfile: (updates: Partial<UserProfile>) => void;
   logout: () => void;
   deleteAccount: () => void;
+  setupFinished: boolean;
+  setSetupFinished: (value: boolean) => void;
 
 };
 
@@ -112,6 +114,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [hasCustomPlan, setHasCustomPlan] = useState<boolean>(false);
   const isOnboardingComplete = !!userProfile && hasCustomPlan;
   const [loading, setLoading] = useState(true);
+const [setupFinished, setSetupFinished] = useState(false);
+
 
 
   const addMoodEntry = (text: string, sentiment: MoodSentiment) => {
@@ -213,8 +217,9 @@ return (
       hasCustomPlan,
       setHasCustomPlan,
       isOnboardingComplete,
-    loading,
-    setLoading, 
+     setupFinished,
+    setSetupFinished,
+    loading: false,
     }}
   >
     {children}
