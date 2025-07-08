@@ -23,7 +23,7 @@ const loginSchema = z.object({
 });
 
 
-
+const [isSubmitting, setIsSubmitting] = useState(false);
 
 const signupSchema = z.object({
   email: z.string().email({
@@ -56,11 +56,13 @@ const initialTab =
 
 const [activeTab, setActiveTab] = useState<"login" | "signup">(initialTab);
 const navigate = useNavigate()
+
 useEffect(() => {
   if (location.pathname === "/auth" || location.pathname === "/auth/") {
-    navigate("/auth/login", { replace: true });
+    navigate(`/auth/${initialTab}`, { replace: true });
   }
-}, [location.pathname, navigate]);
+}, [location.pathname, navigate, initialTab]);
+
 
 
 const { isLoaded, isSignedIn } = useAuth();
@@ -118,22 +120,26 @@ useEffect(() => {
 };
   
 
-  const onSignupSubmit = async (data: SignupFormValues) => {
-    try {
-      await signUp.create({
-        emailAddress: data.email,
-        password: data.password,
-      });
-  
-      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+const onSignupSubmit = async (data: SignupFormValues) => {
+  setIsSubmitting(true); // Start loading
 
-      setEmailForVerification(data.email);
-      setPendingVerification(true);
-      alert("📩 Verification code sent to your email.");
-    } catch (err: any) {
-      alert("Signup failed: " + (err.errors?.[0]?.message || err.message));
-    }
-  };
+  try {
+    await signUp.create({
+      emailAddress: data.email,
+      password: data.password,
+    });
+
+    await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+
+    setEmailForVerification(data.email);
+    setPendingVerification(true);
+  } catch (err: any) {
+    alert("Signup failed: " + (err.errors?.[0]?.message || err.message));
+  } finally {
+    setIsSubmitting(false); // Stop loading
+  }
+};
+
   
   const onVerifySignupCode = async (code: string) => {
   try {
@@ -304,9 +310,14 @@ useEffect(() => {
                   
                   <div id="clerk-captcha" className="mt-4" />
 
-                  <Button type="submit" className="w-full bg-wellness-teal hover:bg-wellness-teal/90 mt-6">
-                    Create Account
-                  </Button>
+<Button
+  type="submit"
+  className="w-full bg-wellness-teal hover:bg-wellness-teal/90 mt-6"
+  disabled={isSubmitting}
+>
+  {isSubmitting ? "Loading..." : "Create Account"}
+</Button>
+
                 </form>
               </Form>
               {pendingVerification && (
