@@ -119,12 +119,11 @@ export default function MindsetPage() {
                   <Heart className="h-6 w-6 text-pink-500" />
                 </div>
                 <blockquote className="text-xl md:text-2xl font-medium text-gray-700 dark:text-gray-200 italic mb-4">
-                  "The mind is everything. What you think you become."
+                  "Your thoughts are the architects of your destiny. Build wisely, and your future stands unshakable."
                 </blockquote>
-                <p className="text-gray-500 dark:text-gray-400">— Buddha</p>
                 <div className="mt-6 text-4xl">🛠️</div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                  Coming Q1 2024 • Meditation • Mindfulness • Mental Wellness
+                  Coming Q1 2025 • Meditation • Mindfulness • Mental Wellness
                 </p>
               </CardContent>
             </Card>
