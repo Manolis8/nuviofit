@@ -22,9 +22,6 @@ const loginSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-
-const [isSubmitting, setIsSubmitting] = useState(false);
-
 const signupSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address",
@@ -73,6 +70,8 @@ useEffect(() => {
   }
 }, [isLoaded, isSignedIn]);
 
+
+const [isSubmitting, setIsSubmitting] = useState(false);
   const { signUp, setActive: setSignUpActive } = useSignUp();
   const { signIn, setActive: setSignInActive } = useSignIn();
   const [pendingVerification, setPendingVerification] = useState(false);
