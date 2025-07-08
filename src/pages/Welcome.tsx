@@ -221,7 +221,7 @@ const Welcome = () => {
             
             <div className="flex flex-col sm:flex-row gap-6 mb-8">
               <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
-                <Link to="/auth">
+                <Link to="/auth/sign-up">
                   Get Started <ArrowRight className="ml-2" />
                 </Link>
               </Button>
@@ -620,7 +620,7 @@ const Welcome = () => {
           
           <div className="mt-12 text-center">
             <Button asChild size="lg" className="bg-wellness-blue hover:bg-wellness-blue/90">
-              <Link to="/dashboard">
+              <Link to="/auth/sign-up">
                 Explore All Features
               </Link>
             </Button>
@@ -667,7 +667,7 @@ const Welcome = () => {
             
             <div className="mt-12 text-center">
               <Button asChild size="lg" className="bg-gradient-to-r from-wellness-mint to-wellness-teal hover:opacity-90 transition-all">
-                <Link to="/dashboard">
+                <Link to="/auth/sign-up">
                   Start Your Journey Today
                 </Link>
               </Button>
