@@ -27,6 +27,8 @@ export default function OnboardingPage() {
   const { user } = useUser();
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
+const { setupFinished, setSetupFinished } = useUserContext();
+
 
   const generatePlan = async () => {
   const user_id = user.id; // test user
@@ -132,7 +134,11 @@ export default function OnboardingPage() {
   }
 };
 
-
+useEffect(() => {
+  if (setupFinished) {
+    navigate("/dashboard", { replace: true });
+  }
+}, [setupFinished]);
 
   const handleChange = (field: string, value: any) => {
   setFormData((prev) => ({ ...prev, [field]: value }));
@@ -148,23 +154,20 @@ const handleGeneratePlan = async () => {
 
   await generatePlan();
 
-  // ✅ Safely update the context
-if (!userProfile) return;
 
-setUserProfile({
-  ...userProfile,
-  setupFinished: true,
-});
+setSetupFinished(true);
+
 
 
   navigate("/dashboard");
 };
 
 useEffect(() => {
-  if (userProfile?.setupFinished) {
-    navigate("/dashboard"); // or wherever your main app starts
+  if (setupFinished) {
+    navigate("/dashboard", { replace: true });
   }
-}, [userProfile, navigate]);
+}, [setupFinished, navigate]);
+
 
 
 const [usernameError, setUsernameError] = useState("");
