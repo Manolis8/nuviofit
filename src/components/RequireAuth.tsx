@@ -1,19 +1,31 @@
-// src/components/RequireAuth.tsx
-import React from 'react';
-import { useUser } from '@clerk/clerk-react';
-import { Navigate } from 'react-router-dom';
+import { useUser } from "@clerk/clerk-react";
+import { useUserContext } from "@/context/UserContext";
+import { Navigate } from "react-router-dom";
 
-type Props = {
-  children: React.ReactNode;
-};
-
-const RequireAuth: React.FC<Props> = ({ children }) => {
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { isSignedIn, isLoaded } = useUser();
+  const { userProfile, loading } = useUserContext();
 
-  if (!isLoaded) return <div>Loading...</div>;
+  // Wait until both Clerk and our custom UserContext have loaded
+  if (!isLoaded || loading) {
+    return <div>Loading...</div>; // You can use a spinner here
+  }
 
-  if (!isSignedIn) return <Navigate to="/auth/sign-up" replace />;
+  if (!isSignedIn) {
+    return <Navigate to="/auth/sign-in" />;
+  }
 
+  // If userProfile doesn't exist yet (still null or undefined)
+  if (!userProfile) {
+    return <div>Loading user profile...</div>;
+  }
+
+  // If the user hasn't completed onboarding
+  if (userProfile.setupFinished === false) {
+    return <Navigate to="/getting-started" />;
+  }
+
+  // Everything OK – allow access to protected page
   return <>{children}</>;
 };
 
