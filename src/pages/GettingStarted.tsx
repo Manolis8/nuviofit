@@ -186,7 +186,7 @@ const handleSaveData = async () => {
     return;
   }
 
-  // 1. Save the new data
+  // 1. Just save the new data
   const success = await handleSubmit();
 
   if (!success) {
@@ -194,20 +194,10 @@ const handleSaveData = async () => {
     return;
   }
 
-  // 2. Delete old data using SQL function
-  const { error: rpcError } = await supabase.rpc("delete_old_duplicates_for_user", {
-    uid: user_id,
-  });
-
-  if (rpcError) {
-    console.error("❌ Failed to delete duplicates:", rpcError);
-    alert("❌ Error removing old entries.");
-    return;
-  }
-
-  // 3. Proceed to next step
+  // 2. Proceed to next step
   nextStep();
 };
+
 
 
 useEffect(() => {
