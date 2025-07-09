@@ -828,9 +828,7 @@ if (step === 0) {
   { value: "Bodyweight / Calisthenics", label: "Bodyweight / Calisthenics — Little equipment, at-home", emoji: "🤸" },
   { value: "Running / Jogging", label: "Running / Jogging — Cardio / solo", emoji: "🏃" },
   { value: "Yoga / Pilates", label: "Yoga / Pilates — Mobility, calm", emoji: "🧘" },
-  { value: "Team Sports", label: "Team Sports — Basketball, football, etc.", emoji: "🏀" },
   { value: "Hiking / Outdoor", label: "Hiking / Outdoor — Natural terrain, relaxing", emoji: "🥾" },
-  { value: "Martial Arts", label: "Martial Arts — Boxing, jiu-jitsu, etc.", emoji: "🥋" },
   { value: "Swimming", label: "Swimming — Low impact, full body", emoji: "🏊" },
   { value: "Rehab / Therapy", label: "Rehab / Therapy — Recovery movements", emoji: "🩺" },
       ].map((item) => {
@@ -1083,20 +1081,6 @@ if (step === 0) {
       placeholder="e.g. I don’t want to train legs, focus on arms, prefer bodyweight workouts, no early mornings..."
       rows={4}
     />
-
-    <div className="mt-6 text-center">
-      <button
-        onClick={() => setIsSaving(true)}
-        disabled={isSaving}
-        className={`px-6 py-3 rounded-full shadow-md transition-all ${
-          isSaving
-            ? "bg-slate-400 cursor-not-allowed text-white"
-            : "bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white hover:shadow-lg"
-        }`}
-      >
-        {isSaving ? "Saving..." : "Save Data & Continue"}
-      </button>
-    </div>
   </div>
 )}
 
@@ -1183,7 +1167,7 @@ if (step === 0) {
   className="group relative overflow-hidden bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] px-5 text-white transition-all duration-300 hover:shadow-md"
 >
   <span className="relative z-10 flex items-center gap-2">
-    Save my data
+    Save Data & Continue
     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
