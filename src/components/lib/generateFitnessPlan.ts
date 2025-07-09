@@ -125,20 +125,38 @@ Main Exercises:
 `;
 
     // ✅ 3. Call your Vercel endpoint
-  const response = await fetch("/api/generate", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      messages: [
-        { role: "system", content: "You are a helpful personal trainer." },
-        { role: "user", content: prompt }
-      ],
-    }),
-  });
+const response = await fetch("/api/generate", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    messages: [
+      { role: "system", content: "You are a helpful personal trainer." },
+      { role: "user", content: prompt }
+    ],
+  }),
+});
 
-  const result = await response.json();
+
+  if (!response.ok) {
+  const text = await response.text(); // capture error as plain text
+  console.error("❌ Server error:", response.status, text);
+  throw new Error(`API Error: ${response.status}`);
+}
+
+let result;
+try {
+  result = await response.json();
+} catch (e) {
+  console.error("❌ Failed to parse JSON:", e);
+  throw new Error("Invalid JSON response from API.");
+}
+
+if (!result.reply) {
+  console.error("❌ No 'reply' in response:", result);
+  throw new Error("No plan returned from backend.");
+}
 
   if (!result.reply) {
     console.error("❌ No response from OpenAI or serverless function:", result);
