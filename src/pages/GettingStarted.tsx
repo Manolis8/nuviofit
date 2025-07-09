@@ -92,8 +92,11 @@ if (insertError) {
   }
 };
 
-  generatePlan();
- [user, step, planGenerated];
+useEffect(() => {
+  if (user?.id && step === 17 && !planGenerated) {
+    generatePlan();
+  }
+}, [user, step, planGenerated]);
 
   const navigate = useNavigate();
 
