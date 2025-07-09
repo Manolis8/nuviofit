@@ -45,57 +45,33 @@ const generatePlan = async () => {
   setIsCompleted(false);
 
   try {
-    // 🔁 Add short delay to allow insert to finish
-    await new Promise((res) => setTimeout(res, 500));
-
-    // 🔎 Check if the onboarding row exists
-    const { data: existingRow, error: selectError } = await supabase
-      .from("onboarding_responses")
-      .select("id")
-      .eq("user_id", user_id)
-      .maybeSingle();
-
-    if (selectError) {
-      console.error("❌ Error checking for existing onboarding response:", selectError);
-      return;
-    }
-
-    if (!existingRow) {
-      console.warn("⚠️ No onboarding data found for user.");
-      throw new Error("No onboarding data found for user.");
-    }
-
-    // 🧠 Generate the plan
+    // 👇 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
     setPlan(result);
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // 🗃 Save locally
-    setFormData((prev) => ({
-      ...prev,
-      fitnessPlans: result,
-    }));
 
-    // 📝 Update fitness plan in the row
-    const { error: updateError } = await supabase
-      .from("onboarding_responses")
-      .update({ fitness_plan: result })
-      .eq("user_id", user_id);
+const { data, error: updateError } = await supabase
+  .from("onboarding_responses")
+  .update({ fitness_plan: formData.fitnessPlans })
+  .eq("user_id", user_id);
 
-    if (updateError) {
-      console.error("❌ Error updating fitness plan:", updateError);
-      alert("❌ Plan update failed: " + updateError.message);
-      return;
-    }
+if (updateError) {
+  console.error("❌ Error updating fitness plan:", updateError);
+  alert("❌ Plan update failed: " + updateError.message);
+  return;
+} else {
+  console.log("✅ Fitness plan updated:", data);
+}
 
-    console.log("✅ Fitness plan updated.");
 
-    // ✅ Navigate after short delay
+
+    // 👇 Delay then navigate to dashboard
     setTimeout(() => {
       setSetupFinished(true);
       navigate("/dashboard");
-    }, 3000);
+    }, 3000); // waits 3 seconds for user to see the plan
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
@@ -104,6 +80,11 @@ const generatePlan = async () => {
   }
 };
 
+useEffect(() => {
+  if (user?.id && step === 17 && !planGenerated) {
+    generatePlan();
+  }
+}, [user, step, planGenerated]);
 
   const navigate = useNavigate();
 
@@ -144,38 +125,44 @@ const generatePlan = async () => {
 const handleSubmit = async () => {
   const user_id = user.id;
 
+  const safe = (val) => {
+    if (Array.isArray(val)) return val.length ? val.join(", ") : "nothing";
+    return val?.trim?.() || "nothing";
+  };
+
   const { data, error } = await supabase.from("onboarding_responses").insert([
     {
       user_id,
-      username: formData.username,
-      achievements: formData.achievements,
-      workout_history: formData.workoutHistory,
-      fitness_why: formData.fitnessWhy.join(", "),
-      other_why: formData.otherWhy || null,
-      future_vision: formData.futureVision,
-      resilience_trigger: formData.resilienceTrigger,
-      pushing_comfort: formData.pushingComfort,
-      consistency_blocker: formData.consistencyBlocker,
-      custom_blocker: formData.customBlocker,
-      support_system: formData.supportSystem,
-      custom_support: formData.customSupport,
-      what_to_imporve: formData.WhatToImprove,
-      training_method: formData.TrainingMethod,
-      training_frequency: formData.TrainingFrequency,
-      training_duration: formData.TrainingDuration,
-      workout_level: formData.WorkoutLevel,
-      injuries: formData.injuries,
-      recommedations: formData.recommedations,
+      username: safe(formData.username),
+      achievements: safe(formData.achievements),
+      workout_history: safe(formData.workoutHistory),
+      fitness_why: safe(formData.fitnessWhy),
+      other_why: safe(formData.otherWhy),
+      future_vision: safe(formData.futureVision),
+      resilience_trigger: safe(formData.resilienceTrigger),
+      pushing_comfort: safe(formData.pushingComfort),
+      consistency_blocker: safe(formData.consistencyBlocker),
+      custom_blocker: safe(formData.customBlocker),
+      support_system: safe(formData.supportSystem),
+      custom_support: safe(formData.customSupport),
+      what_to_imporve: safe(formData.WhatToImprove),
+      training_method: safe(formData.TrainingMethod),
+      training_frequency: safe(formData.TrainingFrequency),
+      training_duration: safe(formData.TrainingDuration),
+      workout_level: safe(formData.WorkoutLevel),
+      injuries: safe(formData.injuries),
+      recommedations: safe(formData.recommedations),
     },
   ]);
 
   if (error) {
-    console.error("❌ Supabase insert error:", error); // 👈 LOG IT!
+    console.error("❌ Supabase insert error:", error);
     return false;
   }
 
   return true;
 };
+
 
 
 useEffect(() => {
@@ -199,9 +186,9 @@ const handleSaveData = async () => {
     alert("❌ No user ID found.");
     return;
   }
+console.log("📦 Submitting formData:", formData);
 
-  console.log("📦 Submitting formData:", formData);
-
+  // 1. Just save the new data
   const success = await handleSubmit();
 
   if (!success) {
@@ -209,14 +196,9 @@ const handleSaveData = async () => {
     return;
   }
 
-  console.log("✅ Data saved, generating plan...");
-
-  // 👉 Explicitly generate plan after successful insert
-  setStep(17); // Sets step first
-  await generatePlan(); // Then calls it directly
+  // 2. Proceed to next step
+  nextStep();
 };
-
-
 
 
 useEffect(() => {
