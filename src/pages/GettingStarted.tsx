@@ -32,6 +32,8 @@ const { setupFinished, setSetupFinished } = useUserContext();
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
 
+const [isSaving, setIsSaving] = useState(false);
+
 
 
   const generatePlan = async () => {
@@ -1067,7 +1069,7 @@ if (step === 0) {
     <label htmlFor="recommedations" className="block text-sm font-medium text-slate-700 mb-2">
       Anything else you'd like us to know?
       <span className="block text-sm text-slate-500 mt-1">
-        (Optional) Let us know any special preferences, restrictions, or training styles you want us to consider.
+        Let us know any special preferences, restrictions, or training styles you want us to consider.
       </span>
     </label>
     <textarea
@@ -1081,8 +1083,23 @@ if (step === 0) {
       placeholder="e.g. I don’t want to train legs, focus on arms, prefer bodyweight workouts, no early mornings..."
       rows={4}
     />
+
+    <div className="mt-6 text-center">
+      <button
+        onClick={() => setIsSaving(true)}
+        disabled={isSaving}
+        className={`px-6 py-3 rounded-full shadow-md transition-all ${
+          isSaving
+            ? "bg-slate-400 cursor-not-allowed text-white"
+            : "bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white hover:shadow-lg"
+        }`}
+      >
+        {isSaving ? "Saving..." : "Save Data & Continue"}
+      </button>
+    </div>
   </div>
 )}
+
 
 
 {step === 17 && (
