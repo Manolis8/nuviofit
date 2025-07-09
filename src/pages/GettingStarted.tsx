@@ -61,21 +61,23 @@ const generatePlan = async () => {
       console.error("❌ Error deleting old data:", deleteError.message);
     }
 
-    // 👇 Insert the new fitness plan
-    const { data, error: insertError } = await supabase
-      .from("onboarding_responses")
-      .insert([
-        {
-          user_id,
-          fitness_plan: formData.fitnessPlans, // adjust this to what you need to save
-        },
-      ]);
+const { data, error: insertError } = await supabase
+  .from("onboarding_responses")
+  .insert([
+    {
+      user_id,
+      fitness_plan: formData.fitnessPlans,
+    },
+  ]);
 
-    if (insertError) {
-      console.error("❌ Error saving new data:", insertError.message);
-    } else {
-      console.log("✅ New fitness data saved:", data);
-    }
+if (insertError) {
+  console.error("❌ Error saving new data:", insertError); // <-- Full object!
+  alert("❌ Plan insert failed: " + insertError.message);   // Optional
+  return; // ⛔ Prevent continuing to dashboard
+} else {
+  console.log("✅ New fitness data saved:", data);
+}
+
 
     // 👇 Delay then navigate to dashboard
     setTimeout(() => {
@@ -187,6 +189,7 @@ const handleSaveData = async () => {
     alert("❌ No user ID found.");
     return;
   }
+console.log("📦 Submitting formData:", formData);
 
   // 1. Just save the new data
   const success = await handleSubmit();
