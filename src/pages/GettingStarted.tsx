@@ -51,15 +51,6 @@ const generatePlan = async () => {
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // 👇 Delete old entries from Supabase for this user
-    const { error: deleteError } = await supabase
-      .from("onboarding_responses")
-      .delete()
-      .eq("user_id", user_id);
-
-    if (deleteError) {
-      console.error("❌ Error deleting old data:", deleteError.message);
-    }
 
 const { data, error: insertError } = await supabase
   .from("onboarding_responses")
