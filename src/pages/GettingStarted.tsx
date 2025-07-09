@@ -152,14 +152,37 @@ const { loading } = useUserContext();
 
 
 const handleSaveData = async () => {
+  const user = supabase.auth.getUser(); // or however you get the user
+  const userId = (await user).data.user?.id;
+
+  if (!userId) {
+    alert("❌ No user ID found.");
+    return;
+  }
+
+  // Delete old entries for this user
+  const { error: deleteError } = await supabase
+    .from("onboarding_responses") // replace with your actual table name
+    .delete()
+    .eq("user_id", userId); // assuming your column is called "user_id"
+
+  if (deleteError) {
+    console.error("❌ Failed to delete old data:", deleteError);
+    alert("❌ Error deleting old data.");
+    return;
+  }
+
+  // Submit and insert new data
   const success = await handleSubmit();
+
   if (!success) {
     alert("❌ Failed to save data");
     return;
   }
 
-  nextStep(); // Move to next step, like step 17
+  nextStep(); // Move to next step
 };
+
 
 const handleGeneratePlan = async () => {
   if (planGenerated) return;
