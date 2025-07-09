@@ -129,8 +129,8 @@ const generatePlan = async () => {
 });
 
 
-  const handleSubmit = async () => {
-  const user_id = user.id; // Replace with real user_id if using Clerk/Auth
+const handleSubmit = async () => {
+  const user_id = user.id;
 
   const { data, error } = await supabase.from("onboarding_responses").insert([
     {
@@ -158,11 +158,13 @@ const generatePlan = async () => {
   ]);
 
   if (error) {
-    return false; // ⬅️ Tell the button it failed
-  } else {
-    return true; // ⬅️ Tell the button it succeeded
+    console.error("❌ Supabase insert error:", error); // 👈 LOG IT!
+    return false;
   }
+
+  return true;
 };
+
 
 useEffect(() => {
   if (setupFinished) {
@@ -197,7 +199,6 @@ const handleSaveData = async () => {
   // 2. Proceed to next step
   nextStep();
 };
-
 
 
 useEffect(() => {
