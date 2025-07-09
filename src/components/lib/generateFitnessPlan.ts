@@ -1,13 +1,6 @@
 import { supabase } from "@/components/lib/supabaseClient";
-import { getOpenAIResponse } from "@/components/lib/frontendOpenai"
 
 export async function generateFitnessPlan(userId: string) {
-  // ✅ Load OpenAI key from .env
-const apiKey = process.env.VITE_OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing OpenAI API key");
-  }
-
   // ✅ 1. Fetch onboarding data
   const { data, error } = await supabase
     .from("onboarding_responses")
@@ -131,32 +124,30 @@ Main Exercises:
 - ALWAYS follow this format exactly. Format must stay consistent and easy to parse in code.
 `;
 
-  // ✅ 3. Call OpenAI
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    // ✅ 3. Call your Vercel endpoint
+  const response = await fetch("/api/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: "gpt-4.1-nano", // If this causes 404, use "gpt-4" or "gpt-3.5-turbo"
       messages: [
         { role: "system", content: "You are a helpful personal trainer." },
         { role: "user", content: prompt }
       ],
-      temperature: 0.7,
     }),
   });
 
   const result = await response.json();
 
-  if (!result.choices || !result.choices[0]?.message?.content) {
-    throw new Error("No plan returned from OpenAI");
+  if (!result.reply) {
+    console.error("❌ No response from OpenAI or serverless function:", result);
+    throw new Error("No plan returned from backend.");
   }
 
-  const generatedPlan = result.choices[0].message.content;
+  const generatedPlan = result.reply;
 
-  // ✅ 4. Save the plan to Supabase
+  // ✅ 4. Save to Supabase
   const { error: updateError } = await supabase
     .from("onboarding_responses")
     .update({ fitness_plan: generatedPlan })
