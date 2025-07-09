@@ -1,4 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import OpenAI from "openai";
+
+// Make sure you have your API key in .env as OPENAI_API_KEY
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -12,12 +16,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Example: using OpenAI's official library
-    const reply = "Fake fitness plan response here"; // Replace with real OpenAI logic
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4", // or "gpt-3.5-turbo" if you're not using GPT-4
+      messages,
+      temperature: 0.7,
+    });
 
-    return res.status(200).json({ reply }); // <- important: must return JSON!
+    const reply = completion.choices[0].message.content;
+    return res.status(200).json({ reply });
   } catch (err) {
-    console.error("Server error:", err);
+    console.error("OpenAI error:", err);
     return res.status(500).json({ error: "Something went wrong." });
   }
 }
