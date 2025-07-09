@@ -52,14 +52,14 @@ Warm-up:
 Workout Focus:  
 {muscle groups or body areas emphasized — e.g. Upper Body or Legs + Core}  
 Main Exercises:  
-{emoji} - {exercise name} - {reps OR duration} x {sets} sets - {rest time othrwise type 0} - {short clear instruction on how to perform it} - {estimated calories for that exercise}
+{emoji} - {exercise name} - {reps OR duration} x {sets} sets - {rest time otherwise type 0} - {short clear instruction on how to perform it} - {estimated calories for that exercise}
 
 Example:  
 💪 - Push ups - 15 reps x 3 sets - 45 sec rest - Keep your back straight, lower to 90°, push up. - 100
 
 Mindset Tip:  
 {short motivational sentence related to goals or identity}  
-Total Exercises: {count the exercises under "Main Exercises", be extremely carefull to coutn exaxlty the nmber fo exercises}  
+Total Exercises: {count the exercises under "Main Exercises", be extremely careful to count exactly the number of exercises}  
 Duration: {estimated session duration in minutes, e.g., 40 min}  
 Calories: {sum of the calories for all exercises — just a number, no units}
 
@@ -84,7 +84,7 @@ Main Exercises:
 - For other forms like stretching or planks, use the same format:
 🧘 - Plank hold - 1 min x 2 sets - 30 sec rest - Maintain straight line, engage core. - 60
 
-- Focus on quality over quantity — 2 to 4 main exercises is typical.
+- Focus on quality and volume — include up to 10 main exercises if appropriate.
 - "Reps OR duration" means use either like "15 reps" or "2 min" — then follow with x 3 sets.
 
 --- FORMAT RULES (STRICT) ---
@@ -116,13 +116,14 @@ Main Exercises:
   Main Exercises:
   😴 - Rest Day - No resttime applicable
 
-- In rest time section do it liek this:
-1 minute 30 sec rest
-30 sec rest
+- In rest time section do it like this:
+1 minute 30 sec rest  
+30 sec rest  
 1 minute rest
 
 - ALWAYS follow this format exactly. Format must stay consistent and easy to parse in code.
 `;
+
 
     // ✅ 3. Call your Vercel endpoint
 const response = await fetch("/api/generate", {
