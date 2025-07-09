@@ -155,8 +155,8 @@ useEffect(() => {
 const handleSubmit = async () => {
   const user_id = user.id;
 
-  const { data, error } = await supabase.from("onboarding_responses").upsert([
-  {
+  const { data, error } = await supabase.from("onboarding_responses").insert([
+    {
       user_id,
       username: formData.username,
       achievements: formData.achievements,
@@ -178,7 +178,7 @@ const handleSubmit = async () => {
       injuries: formData.injuries,
       recommedations: formData.recommedations,
     },
-  ], { onConflict: "user_id" }) 
+  ]);
 
   if (error) {
     console.error("❌ Supabase insert error:", error); // 👈 LOG IT!
