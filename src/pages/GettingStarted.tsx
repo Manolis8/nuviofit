@@ -45,33 +45,37 @@ const generatePlan = async () => {
   setIsCompleted(false);
 
   try {
-    // 👇 Generate the fitness plan
+    // 1. Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
     setPlan(result);
     setPlanGenerated(true);
     setIsCompleted(true);
 
+    // 2. Save the plan to formData (optional)
+    setFormData((prev) => ({
+      ...prev,
+      fitnessPlans: result,
+    }));
 
-const { data, error: updateError } = await supabase
-  .from("onboarding_responses")
-  .update({ fitness_plan: formData.fitnessPlans })
-  .eq("user_id", user_id);
+    // 3. Update the existing row in Supabase
+    const { data, error: updateError } = await supabase
+      .from("onboarding_responses")
+      .update({ fitness_plan: result })
+      .eq("user_id", user_id);
 
-if (updateError) {
-  console.error("❌ Error updating fitness plan:", updateError);
-  alert("❌ Plan update failed: " + updateError.message);
-  return;
-} else {
-  console.log("✅ Fitness plan updated:", data);
-}
+    if (updateError) {
+      console.error("❌ Error updating fitness plan:", updateError);
+      alert("❌ Plan update failed: " + updateError.message);
+      return;
+    }
 
+    console.log("✅ Fitness plan saved:", data);
 
-
-    // 👇 Delay then navigate to dashboard
+    // 4. Delay, then navigate
     setTimeout(() => {
       setSetupFinished(true);
       navigate("/dashboard");
-    }, 3000); // waits 3 seconds for user to see the plan
+    }, 3000);
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
@@ -79,6 +83,7 @@ if (updateError) {
     setIsGenerating(false);
   }
 };
+
 
 useEffect(() => {
   if (user?.id && step === 17 && !planGenerated) {
