@@ -1,8 +1,9 @@
 import { supabase } from "@/components/lib/supabaseClient";
+import { getOpenAIResponse } from "@/components/lib/frontendOpenai"
 
 export async function generateFitnessPlan(userId: string) {
   // ✅ Load OpenAI key from .env
-  const apiKey = import.meta.env.OPENAI_API_KEY;
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing OpenAI API key");
   }
