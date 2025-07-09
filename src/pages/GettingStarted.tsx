@@ -45,20 +45,40 @@ const generatePlan = async () => {
   setIsCompleted(false);
 
   try {
-    // 1. Generate the fitness plan
+    // 🔁 Add short delay to allow insert to finish
+    await new Promise((res) => setTimeout(res, 500));
+
+    // 🔎 Check if the onboarding row exists
+    const { data: existingRow, error: selectError } = await supabase
+      .from("onboarding_responses")
+      .select("id")
+      .eq("user_id", user_id)
+      .maybeSingle();
+
+    if (selectError) {
+      console.error("❌ Error checking for existing onboarding response:", selectError);
+      return;
+    }
+
+    if (!existingRow) {
+      console.warn("⚠️ No onboarding data found for user.");
+      throw new Error("No onboarding data found for user.");
+    }
+
+    // 🧠 Generate the plan
     const result = await generateFitnessPlan(user_id);
     setPlan(result);
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // 2. Save the plan to formData (optional)
+    // 🗃 Save locally
     setFormData((prev) => ({
       ...prev,
       fitnessPlans: result,
     }));
 
-    // 3. Update the existing row in Supabase
-    const { data, error: updateError } = await supabase
+    // 📝 Update fitness plan in the row
+    const { error: updateError } = await supabase
       .from("onboarding_responses")
       .update({ fitness_plan: result })
       .eq("user_id", user_id);
@@ -69,9 +89,9 @@ const generatePlan = async () => {
       return;
     }
 
-    console.log("✅ Fitness plan saved:", data);
+    console.log("✅ Fitness plan updated.");
 
-    // 4. Delay, then navigate
+    // ✅ Navigate after short delay
     setTimeout(() => {
       setSetupFinished(true);
       navigate("/dashboard");
@@ -83,6 +103,7 @@ const generatePlan = async () => {
     setIsGenerating(false);
   }
 };
+
 
 
 useEffect(() => {
@@ -185,9 +206,10 @@ const handleSaveData = async () => {
     alert("❌ No user ID found.");
     return;
   }
-console.log("📦 Submitting formData:", formData);
 
-  // 1. Just save the new data
+  console.log("📦 Submitting formData:", formData);
+
+  // 1. Ensure data is saved before moving on
   const success = await handleSubmit();
 
   if (!success) {
@@ -195,9 +217,13 @@ console.log("📦 Submitting formData:", formData);
     return;
   }
 
-  // 2. Proceed to next step
+  // ✅ Make sure the row exists now
+  console.log("✅ Data saved, moving to next step");
+
+  // 2. Move to next step (step 17 triggers generatePlan)
   nextStep();
 };
+
 
 
 useEffect(() => {
@@ -1184,6 +1210,9 @@ if (step === 0) {
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
+
+
+
 
     ) : (
       <Button
