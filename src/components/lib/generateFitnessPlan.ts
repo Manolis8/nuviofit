@@ -3,7 +3,7 @@ import { getOpenAIResponse } from "@/components/lib/frontendOpenai"
 
 export async function generateFitnessPlan(userId: string) {
   // ✅ Load OpenAI key from .env
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+const apiKey = process.env.VITE_OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing OpenAI API key");
   }
