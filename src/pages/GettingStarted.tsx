@@ -1185,9 +1185,6 @@ if (step === 0) {
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
 
-
-
-
     ) : (
       <Button
         onClick={nextStep}
