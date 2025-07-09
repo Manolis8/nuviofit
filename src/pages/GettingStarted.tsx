@@ -36,30 +36,57 @@ const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
 
-  const generatePlan = async () => {
-  const user_id = user.id; // test user
+const generatePlan = async () => {
+  const user_id = user.id;
 
   if (!user_id || planGenerated || step !== 17) return;
 
+  setIsGenerating(true);
+  setIsCompleted(false);
+
   try {
+    // 👇 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
     setPlan(result);
     setPlanGenerated(true);
+    setIsCompleted(true);
 
-    const { data, error } = await supabase.from("onboarding_responses").insert([
-      {
-        user_id,
-        fitness_plan: formData.fitnessPlans,
-      },
-    ]);
+    // 👇 Delete old entries from Supabase for this user
+    const { error: deleteError } = await supabase
+      .from("onboarding_responses")
+      .delete()
+      .eq("user_id", user_id);
 
-    if (error) {
-      console.error("Error saving fitness data:", error.message);
-    } else {
-      console.log("✅ Fitness data saved:", data);
+    if (deleteError) {
+      console.error("❌ Error deleting old data:", deleteError.message);
     }
+
+    // 👇 Insert the new fitness plan
+    const { data, error: insertError } = await supabase
+      .from("onboarding_responses")
+      .insert([
+        {
+          user_id,
+          fitness_plan: formData.fitnessPlans, // adjust this to what you need to save
+        },
+      ]);
+
+    if (insertError) {
+      console.error("❌ Error saving new data:", insertError.message);
+    } else {
+      console.log("✅ New fitness data saved:", data);
+    }
+
+    // 👇 Delay then navigate to dashboard
+    setTimeout(() => {
+      setSetupFinished(true);
+      navigate("/dashboard");
+    }, 3000); // waits 3 seconds for user to see the plan
+
   } catch (err) {
-    console.error("Failed to generate plan:", err);
+    console.error("❌ Failed to generate plan:", err);
+  } finally {
+    setIsGenerating(false);
   }
 };
 
@@ -152,19 +179,18 @@ const { loading } = useUserContext();
 
 
 const handleSaveData = async () => {
-  const user = supabase.auth.getUser(); // or however you get the user
-  const userId = (await user).data.user?.id;
+  const userId = user?.id; // Clerk user ID
 
   if (!userId) {
     alert("❌ No user ID found.");
     return;
   }
 
-  // Delete old entries for this user
+  // 1. Delete previous entries
   const { error: deleteError } = await supabase
-    .from("onboarding_responses") // replace with your actual table name
+    .from("your_table_name") // 👈 replace with your actual table
     .delete()
-    .eq("user_id", userId); // assuming your column is called "user_id"
+    .eq("user_id", userId); // 👈 replace with actual column name
 
   if (deleteError) {
     console.error("❌ Failed to delete old data:", deleteError);
@@ -172,7 +198,7 @@ const handleSaveData = async () => {
     return;
   }
 
-  // Submit and insert new data
+  // 2. Save the new data
   const success = await handleSubmit();
 
   if (!success) {
@@ -180,23 +206,11 @@ const handleSaveData = async () => {
     return;
   }
 
-  nextStep(); // Move to next step
+  // 3. Proceed to next step
+  nextStep();
 };
 
 
-const handleGeneratePlan = async () => {
-  if (planGenerated) return;
-
-  const success = await handleSubmit();
-  if (!success) {
-    alert("❌ Failed to save plan data");
-    return;
-  }
-
-  await generatePlan(); // Your existing plan logic
-
-  setPlanGenerated(true);
-};
 
 
 useEffect(() => {
@@ -1153,16 +1167,6 @@ if (step === 0) {
     : "Generate My Plan"}
 </Button>
 
-      <Button
-        onClick={() => {
-          setSetupFinished(true);
-          navigate("/dashboard");
-        }}
-        disabled={!planGenerated}
-        className="bg-slate-800 text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all w-full max-w-xs"
-      >
-        Go to Dashboard →
-      </Button>
     </div>
   </div>
 )}
