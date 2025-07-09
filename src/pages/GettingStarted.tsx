@@ -1108,13 +1108,6 @@ if (step === 0) {
       </div>
     )}
 
-    {/* ✅ Confirmation after plan is ready */}
-    {planGenerated && (
-      <div className="mb-4 text-green-600 font-semibold flex items-center justify-center gap-2">
-        <span className="text-2xl">✅</span> Your plan is ready!
-      </div>
-    )}
-
     {/* 📄 Display plan content */}
     <div className="text-left bg-white border border-slate-300 rounded-lg p-4 shadow-sm whitespace-pre-wrap text-sm max-h-[400px] overflow-y-auto mb-6">
       {plan
