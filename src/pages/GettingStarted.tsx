@@ -105,13 +105,6 @@ const generatePlan = async () => {
 };
 
 
-
-useEffect(() => {
-  if (user?.id && step === 17 && !planGenerated) {
-    generatePlan();
-  }
-}, [user, step, planGenerated]);
-
   const navigate = useNavigate();
 
   const nextStep = () => {
@@ -209,7 +202,6 @@ const handleSaveData = async () => {
 
   console.log("📦 Submitting formData:", formData);
 
-  // 1. Ensure data is saved before moving on
   const success = await handleSubmit();
 
   if (!success) {
@@ -217,12 +209,13 @@ const handleSaveData = async () => {
     return;
   }
 
-  // ✅ Make sure the row exists now
-  console.log("✅ Data saved, moving to next step");
+  console.log("✅ Data saved, generating plan...");
 
-  // 2. Move to next step (step 17 triggers generatePlan)
-  nextStep();
+  // 👉 Explicitly generate plan after successful insert
+  setStep(17); // Sets step first
+  await generatePlan(); // Then calls it directly
 };
+
 
 
 
