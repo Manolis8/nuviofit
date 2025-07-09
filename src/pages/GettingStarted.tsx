@@ -65,6 +65,8 @@ if (updateError) {
   console.log("✅ Fitness plan updated:", data);
 }
 
+
+
     // 👇 Delay then navigate to dashboard
     setTimeout(() => {
       setSetupFinished(true);
