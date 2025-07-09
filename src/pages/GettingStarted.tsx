@@ -33,7 +33,7 @@ const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
 
 const [isSaving, setIsSaving] = useState(false);
-
+  const [isCompleted, setIsCompleted] = useState(false);
 
 
   const generatePlan = async () => {
@@ -827,6 +827,7 @@ if (step === 0) {
   { value: "Gym workouts", label: "Gym workouts — Machines, weights", emoji: "🏋" },
   { value: "Bodyweight / Calisthenics", label: "Bodyweight / Calisthenics — Little equipment, at-home", emoji: "🤸" },
   { value: "Running / Jogging", label: "Running / Jogging — Cardio / solo", emoji: "🏃" },
+  { value: "Biking", label: "Biking — Cardio", emoji: "🚴" },
   { value: "Yoga / Pilates", label: "Yoga / Pilates — Mobility, calm", emoji: "🧘" },
   { value: "Hiking / Outdoor", label: "Hiking / Outdoor — Natural terrain, relaxing", emoji: "🥾" },
   { value: "Swimming", label: "Swimming — Low impact, full body", emoji: "🏊" },
@@ -1117,13 +1118,17 @@ if (step === 0) {
 
     {/* 🎯 Buttons */}
     <div className="mt-6 flex flex-col gap-4 items-center">
-      <Button
-        onClick={generatePlan}
-        disabled={isGenerating}
-        className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all w-full max-w-xs"
-      >
-        {isGenerating ? "Generating..." : "Generate My Plan"}
-      </Button>
+<Button
+  onClick={generatePlan}
+  disabled={isGenerating}
+  className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all w-full max-w-xs"
+>
+  {isGenerating
+    ? "Generating..."
+    : isCompleted
+    ? "Plan Completed ✅"
+    : "Generate My Plan"}
+</Button>
 
       <Button
         onClick={() => {
