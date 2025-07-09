@@ -52,23 +52,18 @@ const generatePlan = async () => {
     setIsCompleted(true);
 
 
-const { data, error: insertError } = await supabase
+const { data, error: updateError } = await supabase
   .from("onboarding_responses")
-  .insert([
-    {
-      user_id,
-      fitness_plan: formData.fitnessPlans,
-    },
-  ]);
+  .update({ fitness_plan: formData.fitnessPlans })
+  .eq("user_id", user_id);
 
-if (insertError) {
-  console.error("❌ Error saving new data:", insertError); // <-- Full object!
-  alert("❌ Plan insert failed: " + insertError.message);   // Optional
-  return; // ⛔ Prevent continuing to dashboard
+if (updateError) {
+  console.error("❌ Error updating fitness plan:", updateError);
+  alert("❌ Plan update failed: " + updateError.message);
+  return;
 } else {
-  console.log("✅ New fitness data saved:", data);
+  console.log("✅ Fitness plan updated:", data);
 }
-
 
     // 👇 Delay then navigate to dashboard
     setTimeout(() => {
