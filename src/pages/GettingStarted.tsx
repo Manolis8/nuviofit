@@ -57,11 +57,37 @@ const generatePlan = async () => {
       fitnessPlans: result,
     }));
 
-    // 3. Update the existing row in Supabase
-    const { data, error: updateError } = await supabase
-      .from("onboarding_responses")
-      .update({ fitness_plan: result })
-      .eq("user_id", user_id);
+// Check if the row exists first
+const { data: existingRow, error: selectError } = await supabase
+  .from("onboarding_responses")
+  .select("id")
+  .eq("user_id", user_id)
+  .maybeSingle();
+
+if (selectError) {
+  console.error("❌ Error checking row:", selectError);
+  return;
+}
+
+if (!existingRow) {
+  console.warn("⚠️ No existing onboarding response found for this user.");
+  return;
+}
+
+// Now safely update
+const { error: updateError } = await supabase
+  .from("onboarding_responses")
+  .update({ fitness_plan: result })
+  .eq("user_id", user_id);
+
+if (updateError) {
+  console.error("❌ Error updating fitness plan:", updateError);
+  alert("❌ Plan update failed: " + updateError.message);
+  return;
+}
+
+console.log("✅ Fitness plan updated for user:", user_id);
+
 
     if (updateError) {
       console.error("❌ Error updating fitness plan:", updateError);
@@ -69,7 +95,6 @@ const generatePlan = async () => {
       return;
     }
 
-    console.log("✅ Fitness plan saved:", data);
 
     // 4. Delay, then navigate
     setTimeout(() => {
