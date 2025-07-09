@@ -179,9 +179,9 @@ const { loading } = useUserContext();
 
 
 const handleSaveData = async () => {
-  const userId = user?.id; // Clerk user ID
+  const user_id = user.id;
 
-  if (!userId) {
+  if (!user_id) {
     alert("❌ No user ID found.");
     return;
   }
@@ -190,7 +190,7 @@ const handleSaveData = async () => {
   const { error: deleteError } = await supabase
     .from("your_table_name") // 👈 replace with your actual table
     .delete()
-    .eq("user_id", userId); // 👈 replace with actual column name
+    .eq("user_id", user_id); // 👈 replace with actual column name
 
   if (deleteError) {
     console.error("❌ Failed to delete old data:", deleteError);
