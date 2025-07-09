@@ -188,7 +188,7 @@ const handleSaveData = async () => {
 
   // 1. Delete previous entries
   const { error: deleteError } = await supabase
-    .from("your_table_name") // 👈 replace with your actual table
+    .from("onboarding_responses") // 👈 replace with your actual table
     .delete()
     .eq("user_id", user_id); // 👈 replace with actual column name
 
