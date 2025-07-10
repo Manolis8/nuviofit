@@ -64,7 +64,7 @@ const generatePlan = async () => {
       }
 
       retryCount++;
-      await new Promise((r) => setTimeout(r, 300)); // wait a bit
+      await new Promise((r) => setTimeout(r, 300));
     }
 
     if (!onboardingData) {
@@ -86,10 +86,10 @@ const generatePlan = async () => {
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // ✅ Update the row with the generated plan (IMPORTANT fix here)
+    // ✅ Update the row with the generated plan
     const { data: updateData, error: updateError } = await supabase
       .from("onboarding_responses")
-      .update({ fitness_plan: result })  // Use generated plan, not formData.fitnessPlans
+      .update({ fitness_plan: result })
       .eq("user_id", user_id);
 
     if (updateError) {
@@ -109,6 +109,7 @@ const generatePlan = async () => {
     setIsGenerating(false);
   }
 };
+
 
 
 
