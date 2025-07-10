@@ -54,6 +54,10 @@ const generatePlan = async () => {
         .eq("user_id", user_id)
         .maybeSingle();
 
+      if (error) {
+        console.warn(`Attempt ${retryCount + 1}: Error fetching onboarding data:`, error);
+      }
+
       if (data) {
         onboardingData = data;
         break;
@@ -65,19 +69,27 @@ const generatePlan = async () => {
 
     if (!onboardingData) {
       console.error("❌ Still no onboarding data found after retries");
+      setIsGenerating(false);
       return;
     }
 
     // ✅ Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
+
+    if (!result) {
+      console.error("❌ generateFitnessPlan returned no result");
+      setIsGenerating(false);
+      return;
+    }
+
     setPlan(result);
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // ✅ Update the row
+    // ✅ Update the row with the generated plan (IMPORTANT fix here)
     const { data: updateData, error: updateError } = await supabase
       .from("onboarding_responses")
-      .update({ fitness_plan: formData.fitnessPlans })
+      .update({ fitness_plan: result })  // Use generated plan, not formData.fitnessPlans
       .eq("user_id", user_id);
 
     if (updateError) {
@@ -90,13 +102,14 @@ const generatePlan = async () => {
       setSetupFinished(true);
       navigate("/dashboard");
     }, 3000);
-
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
+    alert("Failed to generate plan: " + (err.message || err));
   } finally {
     setIsGenerating(false);
   }
 };
+
 
 
 useEffect(() => {
@@ -111,14 +124,6 @@ const nextStep = async () => {
   if (step < totalSteps - 1) {
     setStep(step + 1);
   } else if (step === totalSteps - 1) {
-    const success = await handleSaveData();
-
-    if (success) {
-      // ✅ Only now run generation after data is saved
-      setStep(17); // This will trigger the `useEffect` for generatePlan
-    }
-  } else {
-    navigate("/dashboard");
   }
 };
 
