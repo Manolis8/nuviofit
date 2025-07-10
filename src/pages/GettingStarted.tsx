@@ -161,38 +161,45 @@ const handleSubmit = async () => {
     return val?.trim?.() || "nothing";
   };
 
-  const { data, error } = await supabase.from("onboarding_responses").insert([
-    {
-      user_id,
-      username: safe(formData.username),
-      achievements: safe(formData.achievements),
-      workout_history: safe(formData.workoutHistory),
-      fitness_why: safe(formData.fitnessWhy),
-      other_why: safe(formData.otherWhy),
-      future_vision: safe(formData.futureVision),
-      resilience_trigger: safe(formData.resilienceTrigger),
-      pushing_comfort: safe(formData.pushingComfort),
-      consistency_blocker: safe(formData.consistencyBlocker),
-      custom_blocker: safe(formData.customBlocker),
-      support_system: safe(formData.supportSystem),
-      custom_support: safe(formData.customSupport),
-      what_to_imporve: safe(formData.WhatToImprove),
-      training_method: safe(formData.TrainingMethod),
-      training_frequency: safe(formData.TrainingFrequency),
-      training_duration: safe(formData.TrainingDuration),
-      workout_level: safe(formData.WorkoutLevel),
-      injuries: safe(formData.injuries),
-      recommedations: safe(formData.recommedations),
-    },
-  ]);
+  const { data, error } = await supabase
+    .from("onboarding_responses")
+    .upsert(
+      [
+        {
+          user_id,
+          username: safe(formData.username),
+          achievements: safe(formData.achievements),
+          workout_history: safe(formData.workoutHistory),
+          fitness_why: safe(formData.fitnessWhy),
+          other_why: safe(formData.otherWhy),
+          future_vision: safe(formData.futureVision),
+          resilience_trigger: safe(formData.resilienceTrigger),
+          pushing_comfort: safe(formData.pushingComfort),
+          consistency_blocker: safe(formData.consistencyBlocker),
+          custom_blocker: safe(formData.customBlocker),
+          support_system: safe(formData.supportSystem),
+          custom_support: safe(formData.customSupport),
+          what_to_imporve: safe(formData.WhatToImprove),
+          training_method: safe(formData.TrainingMethod),
+          training_frequency: safe(formData.TrainingFrequency),
+          training_duration: safe(formData.TrainingDuration),
+          workout_level: safe(formData.WorkoutLevel),
+          injuries: safe(formData.injuries),
+          recommedations: safe(formData.recommedations),
+          // Don't include fitness_plan here — generated separately
+        },
+      ],
+      { onConflict: "user_id" } // <--- important: upsert on user_id
+    );
 
   if (error) {
-    console.error("❌ Supabase insert error:", error);
+    console.error("❌ Supabase upsert error:", error);
     return false;
   }
 
   return true;
 };
+
 
 
 
