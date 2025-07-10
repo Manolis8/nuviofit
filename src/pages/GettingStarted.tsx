@@ -42,11 +42,16 @@ const generatePlan = async () => {
   const user_id = user.id;
   if (!user_id || planGenerated || step !== 17) return;
 
+  if (!isDataSaved) {
+    alert("⚠️ Please save your data before generating the plan.");
+    return;
+  }
+
   setIsGenerating(true);
   setIsCompleted(false);
 
   try {
-    // 🔁 Confirm onboarding data exists
+    // 🔁 Retry to fetch the onboarding data
     let retryCount = 0;
     let onboardingData = null;
     while (retryCount < 3 && !onboardingData) {
@@ -71,6 +76,7 @@ const generatePlan = async () => {
 
     if (!onboardingData) {
       console.error("❌ Still no onboarding data found after retries");
+      alert("No saved data found. Please save your data first.");
       setIsGenerating(false);
       return;
     }
@@ -88,28 +94,28 @@ const generatePlan = async () => {
     setPlanGenerated(true);
     setIsCompleted(true);
 
-    // ✅ Update the row with the generated plan
-const updatedRow = {
-  ...onboardingData,
-  fitness_plan: result,
-};
+    // ✅ Upsert the fitness plan into the existing row
+    const updatedRow = {
+      ...onboardingData,
+      fitness_plan: result,
+    };
 
-const { data: upsertData, error: upsertError } = await supabase
-  .from("onboarding_responses")
-  .upsert(updatedRow, { onConflict: "user_id" });
+    const { data: upsertData, error: upsertError } = await supabase
+      .from("onboarding_responses")
+      .upsert(updatedRow, { onConflict: "user_id" });
 
-if (upsertError) {
-  console.error("❌ Error updating fitness plan:", upsertError);
-} else {
-  console.log("✅ Fitness plan updated:", upsertData);
-}
+    if (upsertError) {
+      console.error("❌ Error updating fitness plan:", upsertError);
+    } else {
+      console.log("✅ Fitness plan updated:", upsertData);
+    }
 
-setTimeout(() => {
-  setSetupFinished(true);
-  localStorage.setItem("setupFinished", "true");
-  navigate("/dashboard");
-}, 3000);
-
+    // 🎉 Final navigation
+    setTimeout(() => {
+      setSetupFinished(true);
+      localStorage.setItem("setupFinished", "true");
+      navigate("/dashboard");
+    }, 3000);
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
@@ -117,6 +123,7 @@ setTimeout(() => {
     setIsGenerating(false);
   }
 };
+
 
 
   const navigate = useNavigate();
@@ -200,6 +207,7 @@ const handleSubmit = async () => {
   return true;
 };
 
+const [isDataSaved, setIsDataSaved] = useState(false);
 
 
 
@@ -222,7 +230,7 @@ const handleSaveData = async () => {
 
   if (!user_id) {
     alert("❌ No user ID found.");
-    return false;
+    return;
   }
 
   console.log("📦 Submitting formData:", formData);
@@ -231,14 +239,14 @@ const handleSaveData = async () => {
 
   if (!success) {
     alert("❌ Failed to save data");
-    return false;
+    return;
   }
 
-  // ✅ Save was successful — now go to next step
-  nextStep();
-
-  return true; // Optional: still returns true if needed elsewhere
+  setIsDataSaved(true); // ✅ Mark data as saved
+  nextStep(); // ✅ Go to next step
 };
+
+
 
 
 
@@ -1226,6 +1234,7 @@ if (step === 0) {
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
+
 
 
 
