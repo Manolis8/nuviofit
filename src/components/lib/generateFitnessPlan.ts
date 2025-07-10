@@ -24,7 +24,7 @@ You are a certified fitness coach, exercise scientist, and mindset mentor.
 Use the following onboarding data to perform 3 tasks:
 1. Write a short, accurate "fitness persona" (4–6 sentences) based on their mindset, preferences, and background.
 2. Generate a 7-day fitness program using the exact structure below. It must be consistent and parseable.
-3. Add a unique motivational "Mindset Tip" for each day.
+
 
 --- USER PROFILE ---
 - Workout Level: ${data.WorkoutLevel}
@@ -168,9 +168,12 @@ if (!result.reply) {
 
   // ✅ 4. Save to Supabase
   const { error: updateError } = await supabase
-    .from("onboarding_responses")
-    .update({ fitness_plan: generatedPlan })
-    .eq("user_id", userId);
+  .from("onboarding_responses")
+  .upsert({
+    user_id: userId,
+    fitness_plan: generatedPlan
+  }, { onConflict: "user_id" });
+
 
   if (updateError) {
     console.error("❌ Failed to save plan to Supabase:", updateError.message);
