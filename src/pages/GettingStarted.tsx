@@ -94,6 +94,11 @@ const generatePlan = async () => {
     setPlanGenerated(true);
     setIsCompleted(true);
 
+    setFitnessPlan(result); // ← sets it globally
+setSetupFinished(true); // ← context value
+updateProfile({ setupFinished: true }); // ← keeps userProfile in sync
+
+
     // ✅ Upsert the fitness plan into the existing row
     const updatedRow = {
       ...onboardingData,
