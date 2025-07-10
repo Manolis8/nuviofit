@@ -88,14 +88,20 @@ useEffect(() => {
 
   const navigate = useNavigate();
 
-  const nextStep = () => {
-    if (step < totalSteps - 1) {
-      setStep(step + 1)
-    } else {
-      navigate("/dashboard");
+const nextStep = async () => {
+  if (step < totalSteps - 1) {
+    setStep(step + 1);
+  } else if (step === totalSteps - 1) {
+    const success = await handleSaveData();
 
+    if (success) {
+      // ✅ Only now run generation after data is saved
+      setStep(17); // This will trigger the `useEffect` for generatePlan
     }
+  } else {
+    navigate("/dashboard");
   }
+};
 
   const [formData, setFormData] = useState({
   achievements: "",
@@ -184,21 +190,21 @@ const handleSaveData = async () => {
 
   if (!user_id) {
     alert("❌ No user ID found.");
-    return;
+    return false;
   }
-console.log("📦 Submitting formData:", formData);
 
-  // 1. Just save the new data
+  console.log("📦 Submitting formData:", formData);
+
   const success = await handleSubmit();
 
   if (!success) {
     alert("❌ Failed to save data");
-    return;
+    return false;
   }
 
-  // 2. Proceed to next step
-  nextStep();
+  return true; // ✅ signal successful save
 };
+
 
 
 useEffect(() => {
