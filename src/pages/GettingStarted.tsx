@@ -87,16 +87,20 @@ const generatePlan = async () => {
     setIsCompleted(true);
 
     // ✅ Update the row with the generated plan
-    const { data: updateData, error: updateError } = await supabase
-      .from("onboarding_responses")
-      .update({ fitness_plan: result })
-      .eq("user_id", user_id);
+const updatedRow = {
+  ...onboardingData,
+  fitness_plan: result,
+};
 
-    if (updateError) {
-      console.error("❌ Error updating fitness plan:", updateError);
-    } else {
-      console.log("✅ Fitness plan updated:", updateData);
-    }
+const { data: upsertData, error: upsertError } = await supabase
+  .from("onboarding_responses")
+  .upsert(updatedRow, { onConflict: "user_id" });
+
+if (upsertError) {
+  console.error("❌ Error updating fitness plan:", upsertError);
+} else {
+  console.log("✅ Fitness plan updated:", upsertData);
+}
 
     setTimeout(() => {
       setSetupFinished(true);
