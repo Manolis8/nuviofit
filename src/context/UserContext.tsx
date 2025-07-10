@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Exercise } from "@/components/lib/frontendOpenai";
-
+import { supabase } from "@/components/lib/supabaseClient";
+import { useUser } from "@clerk/clerk-react";
 
 type MoodSentiment = "happy" | "sad" | "neutral" | "stressed" | "anxious";
 
@@ -116,7 +117,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 const [setupFinished, setSetupFinished] = useState(false);
 
-
+  const { user } = useUser();
 
   const addMoodEntry = (text: string, sentiment: MoodSentiment) => {
     const newEntry: MoodEntry = {
@@ -130,13 +131,35 @@ const [setupFinished, setSetupFinished] = useState(false);
     // In a real app, we'd save this to Supabase here
   };
 
+
 React.useEffect(() => {
-  // Simulate fetching user data
-  const timer = setTimeout(() => {
-    setLoading(false);
-  }, 1000); // 1 second delay
-  
-  return () => clearTimeout(timer);
+  const fetchUserData = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(); // safely get current user
+
+    if (!user?.id) return;
+
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching onboarding data:", error);
+      return;
+    }
+
+    if (data) {
+      setFitnessPlan(data.fitness_plan || null);
+      setSetupFinished(data.setupFinished || false);
+    }
+
+    setLoading(false); // once data is fetched, stop loading
+  };
+
+  fetchUserData();
 }, []);
 
 
