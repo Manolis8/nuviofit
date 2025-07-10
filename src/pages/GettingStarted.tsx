@@ -221,7 +221,10 @@ const handleSaveData = async () => {
     return false;
   }
 
-  return true; // ✅ signal successful save
+  // ✅ Save was successful — now go to next step
+  nextStep();
+
+  return true; // Optional: still returns true if needed elsewhere
 };
 
 
