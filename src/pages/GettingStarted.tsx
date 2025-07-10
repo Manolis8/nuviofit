@@ -38,40 +38,58 @@ const [isSaving, setIsSaving] = useState(false);
 
 const generatePlan = async () => {
   const user_id = user.id;
-
   if (!user_id || planGenerated || step !== 17) return;
 
   setIsGenerating(true);
   setIsCompleted(false);
 
   try {
-    // 👇 Generate the fitness plan
+    // 🔁 Confirm onboarding data exists
+    let retryCount = 0;
+    let onboardingData = null;
+    while (retryCount < 3 && !onboardingData) {
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("*")
+        .eq("user_id", user_id)
+        .maybeSingle();
+
+      if (data) {
+        onboardingData = data;
+        break;
+      }
+
+      retryCount++;
+      await new Promise((r) => setTimeout(r, 300)); // wait a bit
+    }
+
+    if (!onboardingData) {
+      console.error("❌ Still no onboarding data found after retries");
+      return;
+    }
+
+    // ✅ Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
     setPlan(result);
     setPlanGenerated(true);
     setIsCompleted(true);
 
+    // ✅ Update the row
+    const { data: updateData, error: updateError } = await supabase
+      .from("onboarding_responses")
+      .update({ fitness_plan: formData.fitnessPlans })
+      .eq("user_id", user_id);
 
-const { data, error: updateError } = await supabase
-  .from("onboarding_responses")
-  .update({ fitness_plan: formData.fitnessPlans })
-  .eq("user_id", user_id);
+    if (updateError) {
+      console.error("❌ Error updating fitness plan:", updateError);
+    } else {
+      console.log("✅ Fitness plan updated:", updateData);
+    }
 
-if (updateError) {
-  console.error("❌ Error updating fitness plan:", updateError);
-  alert("❌ Plan update failed: " + updateError.message);
-  return;
-} else {
-  console.log("✅ Fitness plan updated:", data);
-}
-
-
-
-    // 👇 Delay then navigate to dashboard
     setTimeout(() => {
       setSetupFinished(true);
       navigate("/dashboard");
-    }, 3000); // waits 3 seconds for user to see the plan
+    }, 3000);
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
@@ -79,6 +97,7 @@ if (updateError) {
     setIsGenerating(false);
   }
 };
+
 
 useEffect(() => {
   if (user?.id && step === 17 && !planGenerated) {
@@ -88,20 +107,14 @@ useEffect(() => {
 
   const navigate = useNavigate();
 
-const nextStep = async () => {
+const nextStep = () => {
   if (step < totalSteps - 1) {
     setStep(step + 1);
-  } else if (step === totalSteps - 1) {
-    const success = await handleSaveData();
-
-    if (success) {
-      // ✅ Only now run generation after data is saved
-      setStep(17); // This will trigger the `useEffect` for generatePlan
-    }
   } else {
     navigate("/dashboard");
   }
 };
+
 
   const [formData, setFormData] = useState({
   achievements: "",
@@ -136,10 +149,8 @@ const handleSubmit = async () => {
     return val?.trim?.() || "nothing";
   };
 
-  const { data, error } = await supabase.from("onboarding_responses").insert([
-    {
-      user_id,
-      username: safe(formData.username),
+  const { error } = await supabase.from("onboarding_responses")
+    .update({
       achievements: safe(formData.achievements),
       workout_history: safe(formData.workoutHistory),
       fitness_why: safe(formData.fitnessWhy),
@@ -158,16 +169,17 @@ const handleSubmit = async () => {
       workout_level: safe(formData.WorkoutLevel),
       injuries: safe(formData.injuries),
       recommedations: safe(formData.recommedations),
-    },
-  ]);
+    })
+    .eq("user_id", user_id);
 
   if (error) {
-    console.error("❌ Supabase insert error:", error);
+    console.error("❌ Supabase update error:", error);
     return false;
   }
 
   return true;
 };
+
 
 
 
@@ -185,15 +197,42 @@ const { userProfile, setUserProfile } = useUserContext();
 const { loading } = useUserContext();
 
 
+const handleInitialCreate = async () => {
+  const user_id = user?.id;
+  const username = formData.username.trim();
+
+  if (!user_id || !username) {
+    alert("❌ User ID or username missing.");
+    return;
+  }
+
+  if (username.length < 4 || username.length > 30) {
+    alert("Username must be between 4–30 characters.");
+    return;
+  }
+
+  const { error } = await supabase
+    .from("onboarding_responses")
+    .upsert([{ user_id, username }]);
+
+  if (error) {
+    console.error("❌ Error creating row:", error);
+    alert("Something went wrong. Try again.");
+    return;
+  }
+
+  alert("✅ Profile created!");
+  // OPTIONAL: Go to next step here
+  // setStep(step + 1);
+};
+
+
 const handleSaveData = async () => {
   const user_id = user.id;
-
   if (!user_id) {
     alert("❌ No user ID found.");
     return false;
   }
-
-  console.log("📦 Submitting formData:", formData);
 
   const success = await handleSubmit();
 
@@ -202,8 +241,11 @@ const handleSaveData = async () => {
     return false;
   }
 
-  return true; // ✅ signal successful save
+  setStep(17); // This triggers generatePlan()
+  return true;
 };
+
+
 
 
 
@@ -380,17 +422,23 @@ if (step === 0) {
     <br />
 
     {/* Button disabled if username is invalid */}
-    <Button
-      onClick={nextStep}
-      disabled={
-        formData.username.trim().length < 4 ||
-        formData.username.trim().length > 30 ||
-        usernameError !== ""
-      }
-      className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      Let’s Get Started →
-    </Button>
+<Button
+  onClick={async () => {
+    const success = await handleInitialInsert(); // or handleInitialRow
+    if (success) {
+      nextStep(); // only go next if insert was successful
+    }
+  }}
+  disabled={
+    formData.username.trim().length < 4 ||
+    formData.username.trim().length > 30 ||
+    usernameError !== ""
+  }
+  className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  Let’s Get Started →
+</Button>
+
   </div>
 )}
 
