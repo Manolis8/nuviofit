@@ -24,6 +24,8 @@ export default function OnboardingPage() {
   const questionStepIndex = step < 8 ? step : step - 1;
   const progress = (questionStepIndex / totalQuestionSteps) * 100;
 
+
+  const { setFitnessPlan, updateProfile } = useUserContext();
   const { user } = useUser();
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
@@ -35,84 +37,45 @@ const [isGenerating, setIsGenerating] = useState(false);
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
-
 const generatePlan = async () => {
-  const user_id = user.id;
-  if (!user_id || planGenerated || step !== 17) return;
+    const user_id = user.id;
+    if (!user_id || planGenerated || step !== 17) return;
 
-  setIsGenerating(true);
-  setIsCompleted(false);
+    setIsGenerating(true);
+    setIsCompleted(false);
 
-  try {
-    // 🔁 Confirm onboarding data exists
-    let retryCount = 0;
-    let onboardingData = null;
-    while (retryCount < 3 && !onboardingData) {
-      const { data, error } = await supabase
-        .from("onboarding_responses")
-        .select("*")
-        .eq("user_id", user_id)
-        .maybeSingle();
+    try {
+      // Fetch onboardingData as you do...
+      // ...
 
-      if (error) {
-        console.warn(`Attempt ${retryCount + 1}: Error fetching onboarding data:`, error);
+      const result = await generateFitnessPlan(user_id);
+      if (!result) {
+        setIsGenerating(false);
+        return;
       }
 
-      if (data) {
-        onboardingData = data;
-        break;
-      }
+      setPlan(result);
+      setPlanGenerated(true);
+      setIsCompleted(true);
 
-      retryCount++;
-      await new Promise((r) => setTimeout(r, 300));
-    }
+      // Update supabase as you do...
 
-    if (!onboardingData) {
-      console.error("❌ Still no onboarding data found after retries");
-      setIsGenerating(false);
-      return;
-    }
-
-    // ✅ Generate the fitness plan
-    const result = await generateFitnessPlan(user_id);
-
-    if (!result) {
-      console.error("❌ generateFitnessPlan returned no result");
-      setIsGenerating(false);
-      return;
-    }
-
-    setPlan(result);
-    setPlanGenerated(true);
-    setIsCompleted(true);
-
-    // ✅ Update the row with the generated plan
-const updatedRow = {
-  ...onboardingData,
-  fitness_plan: result,
-};
-
-const { data: upsertData, error: upsertError } = await supabase
-  .from("onboarding_responses")
-  .upsert(updatedRow, { onConflict: "user_id" });
-
-if (upsertError) {
-  console.error("❌ Error updating fitness plan:", upsertError);
-} else {
-  console.log("✅ Fitness plan updated:", upsertData);
-}
-
-    setTimeout(() => {
+      // --- NEW: update context here ---
+      setFitnessPlan(result);
       setSetupFinished(true);
-      navigate("/dashboard");
-    }, 3000);
-  } catch (err) {
-    console.error("❌ Failed to generate plan:", err);
-    alert("Failed to generate plan: " + (err.message || err));
-  } finally {
-    setIsGenerating(false);
-  }
-};
+      updateProfile({ setupFinished: true });
+
+      setTimeout(() => {
+        localStorage.setItem("setupFinished", "true");
+        navigate("/dashboard");
+      }, 3000);
+    } catch (err) {
+      console.error("Failed to generate plan:", err);
+      alert("Failed to generate plan: " + (err.message || err));
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
 
   const navigate = useNavigate();
