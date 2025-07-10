@@ -100,10 +100,11 @@ updateProfile({ setupFinished: true }); // ← keeps userProfile in sync
 
 
     // ✅ Upsert the fitness plan into the existing row
-    const updatedRow = {
-      ...onboardingData,
-      fitness_plan: result,
-    };
+const updatedRow = {
+  ...onboardingData,
+  fitness_plan: result,
+  setupFinished: true, // ✅ NEW
+};
 
     const { data: upsertData, error: upsertError } = await supabase
       .from("onboarding_responses")
@@ -163,6 +164,13 @@ const nextStep = async () => {
   username: "",
   
 });
+
+
+useEffect(() => {
+  if (setupFinished) {
+    navigate("/dashboard");
+  }
+}, [setupFinished]);
 
 
 const handleSubmit = async () => {
