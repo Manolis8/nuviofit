@@ -115,14 +115,6 @@ if (upsertError) {
 };
 
 
-
-
-useEffect(() => {
-  if (user?.id && step === 17 && !planGenerated) {
-    generatePlan();
-  }
-}, [user, step, planGenerated]);
-
   const navigate = useNavigate();
 
 const nextStep = async () => {
