@@ -36,7 +36,6 @@ const [isGenerating, setIsGenerating] = useState(false);
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 const {
-  setFitnessPlan,
   updateProfile,
   setupFinished,
   setSetupFinished,
@@ -120,17 +119,9 @@ const generatePlan = async () => {
       console.error("Error updating profile setup status:", profileError);
     }
 
-    // ✅ Update context
-    setFitnessPlan(result);
-    setPlan(result);
-    setPlanGenerated(true);
-    setIsCompleted(true);
-    setSetupFinished(true);
-    updateProfile({ setupFinished: true });
 
     // 🎉 Navigate to dashboard
     setTimeout(() => {
-      localStorage.setItem("setupFinished", "true");
       navigate("/dashboard");
     }, 3000);
   } catch (err) {
@@ -140,8 +131,6 @@ const generatePlan = async () => {
     setIsGenerating(false);
   }
 };
-
-
 
 
   const navigate = useNavigate();
