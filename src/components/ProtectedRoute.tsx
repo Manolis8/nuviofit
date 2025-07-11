@@ -1,32 +1,35 @@
+import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useUser } from "@clerk/clerk-react";
-import { useNavigate } from "react-router-dom";
-import { useUserContext } from "@/context/UserContext";
+import { useUserContext } from "@/context/UserContext"; // adjust if needed
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
+  requireOnboardingComplete?: boolean;
 };
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isSignedIn, isLoaded } = useUser();
-  const { loadingUser, isOnboardingComplete } = useUserContext();
-  const navigate = useNavigate();
+export const ProtectedRoute = ({ children, requireOnboardingComplete = true }: ProtectedRouteProps) => {
+  const router = useRouter();
+  const { userProfile, isOnboardingComplete } = useUserContext();
 
   useEffect(() => {
-    if (!isLoaded) return;
-
-    if (!isSignedIn) {
-      navigate("/auth/login", { replace: true });
+    // If not signed in, redirect to /getting-started
+    if (!userProfile) {
+      router.replace("/getting-started");
     }
-  }, [isLoaded, isSignedIn, navigate]);
+    // If onboarding not complete, redirect to /getting-started
+    else if (requireOnboardingComplete && !isOnboardingComplete) {
+      router.replace("/getting-started");
+    }
+    // If trying to access /getting-started after onboarding, redirect to /dashboard
+    else if (router.pathname === "/getting-started" && isOnboardingComplete) {
+      router.replace("/dashboard");
+    }
+  }, [userProfile, isOnboardingComplete, router, requireOnboardingComplete]);
 
-  // Don’t render anything until Clerk is ready
-  if (!isLoaded) return null;
-
-  // Optional: If you're using onboarding flow
-  if (loadingUser) return null;
+  // Show nothing while redirecting
+  if (!userProfile || (requireOnboardingComplete && !isOnboardingComplete && router.pathname !== "/getting-started")) {
+    return null;
+  }
 
   return <>{children}</>;
 };
-
-export default ProtectedRoute;
