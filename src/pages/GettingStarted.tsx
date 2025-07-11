@@ -23,19 +23,27 @@ export default function OnboardingPage() {
   const isProgressStep = step > 0 && step < 17 && step !== 8;
   const questionStepIndex = step < 8 ? step : step - 1;
   const progress = (questionStepIndex / totalQuestionSteps) * 100;
+const [isDataSaved, setIsDataSaved] = useState(false);
 
 
-  const { setFitnessPlan, updateProfile } = useUserContext();
   const { user } = useUser();
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
-const { setupFinished, setSetupFinished } = useUserContext();
 
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
 
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+const {
+  setFitnessPlan,
+  updateProfile,
+  setupFinished,
+  setSetupFinished,
+  userProfile,
+  setUserProfile,
+  loading
+} = useUserContext();
 
 
 const generatePlan = async () => {
@@ -168,9 +176,10 @@ const nextStep = async () => {
 
 useEffect(() => {
   if (setupFinished) {
-    navigate("/dashboard");
+    navigate("/dashboard", { replace: true });
   }
 }, [setupFinished]);
+
 
 
 const handleSubmit = async () => {
@@ -220,22 +229,11 @@ const handleSubmit = async () => {
   return true;
 };
 
-const [isDataSaved, setIsDataSaved] = useState(false);
-
-
-
-useEffect(() => {
-  if (setupFinished) {
-    navigate("/dashboard", { replace: true });
-  }
-}, [setupFinished]);
 
   const handleChange = (field: string, value: any) => {
   setFormData((prev) => ({ ...prev, [field]: value }));
 };
 
-const { userProfile, setUserProfile } = useUserContext();
-const { loading } = useUserContext();
 
 
 const handleSaveData = async () => {
@@ -258,16 +256,6 @@ const handleSaveData = async () => {
   setIsDataSaved(true); // ✅ Mark data as saved
   nextStep(); // ✅ Go to next step
 };
-
-
-
-
-
-useEffect(() => {
-  if (setupFinished) {
-    navigate("/dashboard", { replace: true });
-  }
-}, [setupFinished]);
 
 
 
