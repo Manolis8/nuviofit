@@ -1,7 +1,6 @@
-// src/components/ProtectedRoute.tsx
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/UserContext";
 
 type ProtectedRouteProps = {
@@ -9,25 +8,23 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { isSignedIn, isLoaded, user } = useUser();
-  const { userProfile, isOnboardingComplete, loadingUser } = useUserContext();
-
-  const location = useLocation();
+  const { isSignedIn, isLoaded } = useUser();
+  const { loadingUser, isOnboardingComplete } = useUserContext();
   const navigate = useNavigate();
 
-  const [redirecting, setRedirecting] = useState(false);
-
   useEffect(() => {
-    if (!isLoaded || loadingUser) return;
+    if (!isLoaded) return;
 
-    // User not signed in
     if (!isSignedIn) {
       navigate("/auth/login", { replace: true });
-      return;
     }
-});
+  }, [isLoaded, isSignedIn, navigate]);
 
-  if (!isLoaded || loadingUser || redirecting) return <div>Loading...</div>;
+  // Don’t render anything until Clerk is ready
+  if (!isLoaded) return null;
+
+  // Optional: If you're using onboarding flow
+  if (loadingUser) return null;
 
   return <>{children}</>;
 };
