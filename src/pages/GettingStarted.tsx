@@ -49,7 +49,7 @@ if (!userProfile) return <div>Loading...</div>;
 
 
 const generatePlan = async () => {
-  const user_id = user.id;
+  const user_id = userProfile.id;
   if (!user_id || planGenerated || step !== 17) return;
 
   if (!isDataSaved) {
