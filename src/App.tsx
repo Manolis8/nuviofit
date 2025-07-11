@@ -30,7 +30,7 @@ import AuthSplitScreen from "./components/AuthSplitScreen";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 // 🔐 Custom Auth Protection
-import  ProtectedRoute  from "./components/ProtectedRoute";
+import  {ProtectedRoute}  from "./components/ProtectedRoute";
 
 
 const queryClient = new QueryClient();
