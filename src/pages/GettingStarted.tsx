@@ -49,7 +49,8 @@ const {
 if (!isLoaded) return <div>Loading...</div>;
 
 const generatePlan = async () => {
-  const user_id = user.id;
+  const { user } = useUser(); // Clerk user
+  const user_id = user?.id;
   if (!user_id || planGenerated || step !== 17) return;
 
   if (!isDataSaved) {
@@ -61,74 +62,74 @@ const generatePlan = async () => {
   setIsCompleted(false);
 
   try {
-    // 🔁 Retry to fetch the onboarding data
-    let retryCount = 0;
+    // 🔁 Retry fetching onboarding responses
     let onboardingData = null;
-    while (retryCount < 3 && !onboardingData) {
+    for (let i = 0; i < 3; i++) {
       const { data, error } = await supabase
         .from("onboarding_responses")
         .select("*")
         .eq("user_id", user_id)
         .maybeSingle();
 
-      if (error) {
-        console.warn(`Attempt ${retryCount + 1}: Error fetching onboarding data:`, error);
-      }
-
       if (data) {
         onboardingData = data;
         break;
       }
 
-      retryCount++;
-      await new Promise((r) => setTimeout(r, 300));
+      console.warn(`Attempt ${i + 1} failed:`, error);
+      await new Promise((res) => setTimeout(res, 300));
     }
 
     if (!onboardingData) {
-      console.error("❌ Still no onboarding data found after retries");
-      alert("No saved data found. Please save your data first.");
+      alert("❌ No saved data found. Please save your data first.");
       setIsGenerating(false);
       return;
     }
 
-    // ✅ Generate the fitness plan
+    // 🛠 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
 
     if (!result) {
-      console.error("❌ generateFitnessPlan returned no result");
+      alert("❌ Plan generation failed. Please try again.");
       setIsGenerating(false);
       return;
     }
 
-    setPlan(result);
-    setPlanGenerated(true);
-    setIsCompleted(true);
+    // ✅ Update onboarding_responses
+    const updatedRow = {
+      ...onboardingData,
+      fitness_plan: result,
+      setupFinished: true,
+    };
 
-    setFitnessPlan(result); // ← sets it globally
-setSetupFinished(true); // ← context value
-updateProfile({ setupFinished: true }); // ← keeps userProfile in sync
-
-
-    // ✅ Upsert the fitness plan into the existing row
-const updatedRow = {
-  ...onboardingData,
-  fitness_plan: result,
-  setupFinished: true, // ✅ NEW
-};
-
-    const { data: upsertData, error: upsertError } = await supabase
+    const { error: upsertError } = await supabase
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
 
     if (upsertError) {
-      console.error("❌ Error updating fitness plan:", upsertError);
-    } else {
-      console.log("✅ Fitness plan updated:", upsertData);
+      console.error("Error saving fitness plan:", upsertError);
     }
 
-    // 🎉 Final navigation
+    // ✅ Update main profile
+    const { error: profileError } = await supabase
+      .from("onboarding_responses")
+      .update({ setupFinished: true })
+      .eq("user_id", user_id);
+
+    if (profileError) {
+      console.error("Error updating profile setup status:", profileError);
+    }
+
+    // ✅ Update context
+    setFitnessPlan(result);
+    setPlan(result);
+    setPlanGenerated(true);
+    setIsCompleted(true);
+    setSetupFinished(true);
+    updateProfile({ setupFinished: true });
+
+    // 🎉 Navigate to dashboard
     setTimeout(() => {
-      setSetupFinished(true);
       localStorage.setItem("setupFinished", "true");
       navigate("/dashboard");
     }, 3000);
@@ -139,6 +140,7 @@ const updatedRow = {
     setIsGenerating(false);
   }
 };
+
 
 
 
