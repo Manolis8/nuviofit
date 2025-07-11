@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -19,39 +19,22 @@ export const ProtectedRoute = ({
     loadingUser,
   } = useUserContext();
 
-  const [redirecting, setRedirecting] = useState(false);
-
   useEffect(() => {
     if (loadingUser) return;
 
-    // User not signed in: redirect to /auth/login or /getting-started
     if (!userProfile) {
-      setRedirecting(true);
+      console.log("🔒 Redirecting to /getting-started (not signed in)");
       navigate("/getting-started", { replace: true });
-      return;
-    }
-
-    // Onboarding incomplete and route requires it
-    if (requireOnboardingComplete && !isOnboardingComplete) {
-      setRedirecting(true);
-      // Save the intended path so we can redirect there after onboarding
-      navigate("/getting-started", {
-        replace: true,
-        state: { from: location.pathname },
-      });
-      return;
-    }
-
-    // If onboarding is complete and user tries to access /getting-started, redirect to saved path or dashboard
-    if (
+    } else if (requireOnboardingComplete && !isOnboardingComplete) {
+      console.log("🔒 Redirecting to /getting-started (onboarding not complete)");
+      navigate("/getting-started", { replace: true });
+    } else if (
+      !requireOnboardingComplete &&
       isOnboardingComplete &&
       location.pathname === "/getting-started"
     ) {
-      setRedirecting(true);
-      // Try to redirect to original requested page stored in state, else fallback to dashboard
-      const from = location.state?.from || "/dashboard";
-      navigate(from, { replace: true });
-      return;
+      console.log("✅ Redirecting to /dashboard (already onboarded)");
+      navigate("/dashboard", { replace: true });
     }
   }, [
     userProfile,
@@ -59,10 +42,17 @@ export const ProtectedRoute = ({
     loadingUser,
     requireOnboardingComplete,
     navigate,
-    location,
+    location.pathname,
   ]);
 
-  if (loadingUser || redirecting) return <div>Loading...</div>;
+  // Render a loading state while user is being fetched
+  if (loadingUser) return <div>Loading...</div>;
+
+  // Block render if no user (router will redirect)
+  if (!userProfile) return null;
+
+  // Block render if onboarding is required but not done
+  if (requireOnboardingComplete && !isOnboardingComplete) return null;
 
   return <>{children}</>;
 };
