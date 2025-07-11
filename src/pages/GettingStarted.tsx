@@ -109,16 +109,6 @@ const generatePlan = async () => {
       console.error("Error saving fitness plan:", upsertError);
     }
 
-    // ✅ Update main profile
-    const { error: profileError } = await supabase
-      .from("onboarding_responses")
-      .update({ setupFinished: true })
-      .eq("user_id", user_id);
-
-    if (profileError) {
-      console.error("Error updating profile setup status:", profileError);
-    }
-
 
     // 🎉 Navigate to dashboard
     setTimeout(() => {
