@@ -13,9 +13,11 @@ export async function generateFitnessPlan(userId: string) {
     console.error("Supabase error:", error.message, error.details || "");
     throw new Error(`Supabase error: ${error.message}`);
   }
-  if (!data) {
-    throw new Error("No onboarding data found for user.");
-  }
+if (!data) {
+  console.warn("⚠️ No onboarding data found for user:", userId);
+  return null;
+}
+
 
   // ✅ 2. Build dynamic prompt
 const prompt = `
