@@ -7,7 +7,10 @@ type ProtectedRouteProps = {
   requireOnboardingComplete?: boolean;
 };
 
-export const ProtectedRoute = ({ children, requireOnboardingComplete = true }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({
+  children,
+  requireOnboardingComplete = true,
+}: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { userProfile, isOnboardingComplete } = useUserContext();
@@ -15,18 +18,12 @@ export const ProtectedRoute = ({ children, requireOnboardingComplete = true }: P
   useEffect(() => {
     if (!userProfile) {
       navigate("/getting-started", { replace: true });
-      return;
-    }
-
-    if (requireOnboardingComplete && !isOnboardingComplete) {
+    } else if (requireOnboardingComplete && !isOnboardingComplete) {
       navigate("/getting-started", { replace: true });
-      return;
-    }
-
-    if (location.pathname === "/getting-started" && isOnboardingComplete) {
+    } else if (location.pathname === "/getting-started" && isOnboardingComplete) {
       navigate("/dashboard", { replace: true });
     }
-  }, [userProfile, isOnboardingComplete, navigate, location, requireOnboardingComplete]);
+  }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
 
   if (
     !userProfile ||
