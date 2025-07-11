@@ -23,14 +23,17 @@ export const ProtectedRoute = ({
     if (loadingUser) return;
 
     if (!userProfile) {
+      console.log("🔒 Redirecting to /getting-started (not signed in)");
       navigate("/getting-started", { replace: true });
     } else if (requireOnboardingComplete && !isOnboardingComplete) {
+      console.log("🔒 Redirecting to /getting-started (onboarding not complete)");
       navigate("/getting-started", { replace: true });
     } else if (
       !requireOnboardingComplete &&
       isOnboardingComplete &&
       location.pathname === "/getting-started"
     ) {
+      console.log("✅ Redirecting to /dashboard (already onboarded)");
       navigate("/dashboard", { replace: true });
     }
   }, [
@@ -42,7 +45,13 @@ export const ProtectedRoute = ({
     location.pathname,
   ]);
 
-  if (loadingUser || !userProfile) return null;
+  // Render a loading state while user is being fetched
+  if (loadingUser) return <div>Loading...</div>;
+
+  // Block render if no user (router will redirect)
+  if (!userProfile) return null;
+
+  // Block render if onboarding is required but not done
   if (requireOnboardingComplete && !isOnboardingComplete) return null;
 
   return <>{children}</>;
