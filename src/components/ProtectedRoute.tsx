@@ -1,68 +1,58 @@
+// src/components/ProtectedRoute.tsx
 import { useEffect, useState } from "react";
-import { useUserContext } from "@/context/UserContext";
+import { useUser } from "@clerk/clerk-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useUserContext } from "@/context/UserContext";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
-  requireOnboardingComplete?: boolean;
 };
 
-export const ProtectedRoute = ({
-  children,
-  requireOnboardingComplete = true,
-}: ProtectedRouteProps) => {
-  const navigate = useNavigate();
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { isSignedIn, isLoaded, user } = useUser();
+  const { userProfile, isOnboardingComplete, loadingUser } = useUserContext();
+
   const location = useLocation();
-  const {
-    userProfile,
-    isOnboardingComplete,
-    loadingUser,
-  } = useUserContext();
+  const navigate = useNavigate();
 
   const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
-    if (loadingUser) return;
+    if (!isLoaded || loadingUser) return;
 
-    // User not signed in: redirect to /auth/login or /getting-started
-    if (!userProfile) {
-      setRedirecting(true);
-      navigate("/getting-started", { replace: true });
+    // User not signed in
+    if (!isSignedIn) {
+      navigate("/auth/login", { replace: true });
       return;
     }
 
-    // Onboarding incomplete and route requires it
-    if (requireOnboardingComplete && !isOnboardingComplete) {
-      setRedirecting(true);
-      // Save the intended path so we can redirect there after onboarding
-      navigate("/getting-started", {
-        replace: true,
-        state: { from: location.pathname },
-      });
+    // Accessing /getting-started when already onboarded → send to dashboard
+    if (location.pathname === "/getting-started" && isOnboardingComplete) {
+      navigate("/dashboard", { replace: true });
       return;
     }
 
-    // If onboarding is complete and user tries to access /getting-started, redirect to saved path or dashboard
+    // Trying to access a protected route but not finished onboarding
     if (
-      isOnboardingComplete &&
-      location.pathname === "/getting-started"
+      location.pathname !== "/getting-started" &&
+      !isOnboardingComplete
     ) {
-      setRedirecting(true);
-      // Try to redirect to original requested page stored in state, else fallback to dashboard
-      const from = location.state?.from || "/dashboard";
-      navigate(from, { replace: true });
+      navigate("/getting-started", { replace: true, state: { from: location } });
       return;
     }
   }, [
-    userProfile,
+    isSignedIn,
+    isLoaded,
+    user,
     isOnboardingComplete,
-    loadingUser,
-    requireOnboardingComplete,
-    navigate,
     location,
+    navigate,
+    loadingUser,
   ]);
 
-  if (loadingUser || redirecting) return <div>Loading...</div>;
+  if (!isLoaded || loadingUser || redirecting) return <div>Loading...</div>;
 
   return <>{children}</>;
 };
+
+export default ProtectedRoute;
