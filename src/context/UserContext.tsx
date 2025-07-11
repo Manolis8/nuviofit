@@ -88,6 +88,7 @@ type UserContextType = {
   fitnessPlan: FitnessPlan | null;
   isOnboardingComplete: boolean;
   loading: boolean;
+  loadingUser: boolean;
   setFitnessPlan: (plan: FitnessPlan) => void;
   nutritionPlan: NutritionPlan | null;
   setNutritionPlan: (plan: NutritionPlan) => void;
@@ -116,6 +117,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const isOnboardingComplete = !!userProfile && hasCustomPlan;
   const [loading, setLoading] = useState(true);
 const [setupFinished, setSetupFinished] = useState(false);
+const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
 
   const { user } = useUser();
 
@@ -134,10 +136,6 @@ const [setupFinished, setSetupFinished] = useState(false);
 
 React.useEffect(() => {
   const fetchUserData = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(); // safely get current user
-
     if (!user?.id) return;
 
     const { data, error } = await supabase
@@ -156,11 +154,14 @@ React.useEffect(() => {
       setSetupFinished(data.setupFinished || false);
     }
 
-    setLoading(false); // once data is fetched, stop loading
+    setLoading(false);
   };
 
-  fetchUserData();
-}, []);
+  if (user) {
+    fetchUserData();
+  }
+}, [user]);
+
 
 
   const addGoal = (text: string, category: Goal["category"]) => {
@@ -201,6 +202,7 @@ React.useEffect(() => {
     setUserProfile((prev) => (prev ? { ...prev, ...updates } : null));
   };
 
+  
   const logout = () => {
     setUserProfile(null);
     setGoals([]);
@@ -224,6 +226,7 @@ return (
       moodEntries,
       addMoodEntry,
       updateProfile,
+       loadingUser,
       logout,
       deleteAccount,
       goals,
@@ -242,7 +245,7 @@ return (
       isOnboardingComplete,
      setupFinished,
     setSetupFinished,
-    loading: false,
+    loading,
     }}
   >
     {children}
