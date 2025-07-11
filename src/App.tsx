@@ -30,7 +30,7 @@ import AuthSplitScreen from "./components/AuthSplitScreen";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 // 🔐 Custom Auth Protection
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import  ProtectedRoute  from "./components/ProtectedRoute";
 
 
 const queryClient = new QueryClient();
@@ -67,7 +67,7 @@ const App = () => (
             <Route
               path="/dashboard"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <Dashboard />
                     </ProtectedRoute>
               }
@@ -75,7 +75,7 @@ const App = () => (
             <Route
               path="/mindset"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <MoodTracker />
                     </ProtectedRoute>
               }
@@ -83,7 +83,7 @@ const App = () => (
             <Route
               path="/workout-page"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <WorkoutPage />
                     </ProtectedRoute>
               }
@@ -91,7 +91,7 @@ const App = () => (
             <Route
               path="/the-arena"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <Arena />
                     </ProtectedRoute>
               }
@@ -99,7 +99,7 @@ const App = () => (
             <Route
               path="/nutrition"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <Nutrition />
                     </ProtectedRoute>
               }
@@ -107,7 +107,7 @@ const App = () => (
             <Route
               path="/goals"
               element={
-                   <ProtectedRoute requireOnboardingComplete={false}>
+                   <ProtectedRoute>
                   <GoalTracker />
                     </ProtectedRoute>
               }
@@ -115,7 +115,7 @@ const App = () => (
             <Route
               path="/getting-started"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <GettingStarted />
                     </ProtectedRoute>
               }
@@ -123,7 +123,7 @@ const App = () => (
             <Route
               path="/calendar"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <CalendarView />
                     </ProtectedRoute>
               }
@@ -131,7 +131,7 @@ const App = () => (
             <Route
               path="/profile"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <Profile />
                     </ProtectedRoute>
               }
@@ -139,7 +139,7 @@ const App = () => (
             <Route
               path="/user-info"
               element={
-                   <ProtectedRoute requireOnboardingComplete={false}>
+                   <ProtectedRoute>
                   <Userinfo />
                     </ProtectedRoute>
               }
