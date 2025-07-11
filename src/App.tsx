@@ -30,8 +30,7 @@ import AuthSplitScreen from "./components/AuthSplitScreen";
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 // 🔐 Custom Auth Protection
-import { ProtectedRoute } from "./components/ProtectedRoute";
-
+import RequireAuth from "./components/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -67,81 +66,81 @@ const App = () => (
             <Route
               path="/dashboard"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <Dashboard />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/mindset"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <MoodTracker />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/workout-page"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <WorkoutPage />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/the-arena"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <Arena />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/nutrition"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <Nutrition />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/goals"
               element={
-                   <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <GoalTracker />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/getting-started"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <GettingStarted />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/calendar"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <CalendarView />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/profile"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <Profile />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
             <Route
               path="/user-info"
               element={
-                   <ProtectedRoute requireOnboardingComplete={false}>
+                <RequireAuth>
                   <Userinfo />
-                    </ProtectedRoute>
+                </RequireAuth>
               }
             />
 
