@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { useUserContext } from "@/context/UserContext"; // adjust if needed
+import { useUserContext } from "@/context/UserContext";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -8,26 +8,30 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute = ({ children, requireOnboardingComplete = true }: ProtectedRouteProps) => {
-  const router = useRouter();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { userProfile, isOnboardingComplete } = useUserContext();
 
   useEffect(() => {
-    // If not signed in, redirect to /getting-started
     if (!userProfile) {
-      router.replace("/getting-started");
+      navigate("/getting-started", { replace: true });
+      return;
     }
-    // If onboarding not complete, redirect to /getting-started
-    else if (requireOnboardingComplete && !isOnboardingComplete) {
-      router.replace("/getting-started");
-    }
-    // If trying to access /getting-started after onboarding, redirect to /dashboard
-    else if (router.pathname === "/getting-started" && isOnboardingComplete) {
-      router.replace("/dashboard");
-    }
-  }, [userProfile, isOnboardingComplete, router, requireOnboardingComplete]);
 
-  // Show nothing while redirecting
-  if (!userProfile || (requireOnboardingComplete && !isOnboardingComplete && router.pathname !== "/getting-started")) {
+    if (requireOnboardingComplete && !isOnboardingComplete) {
+      navigate("/getting-started", { replace: true });
+      return;
+    }
+
+    if (location.pathname === "/getting-started" && isOnboardingComplete) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [userProfile, isOnboardingComplete, navigate, location, requireOnboardingComplete]);
+
+  if (
+    !userProfile ||
+    (requireOnboardingComplete && !isOnboardingComplete && location.pathname !== "/getting-started")
+  ) {
     return null;
   }
 
