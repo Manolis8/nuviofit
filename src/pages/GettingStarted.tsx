@@ -26,7 +26,7 @@ export default function OnboardingPage() {
 const [isDataSaved, setIsDataSaved] = useState(false);
 
 
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
 
@@ -45,11 +45,11 @@ const {
   loading
 } = useUserContext();
 
-if (!userProfile) return <div>Loading...</div>;
 
+if (!isLoaded) return <div>Loading...</div>;
 
 const generatePlan = async () => {
-  const user_id = userProfile.id;
+  const user_id = user.id;
   if (!user_id || planGenerated || step !== 17) return;
 
   if (!isDataSaved) {
