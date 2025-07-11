@@ -45,6 +45,8 @@ const {
   loading
 } = useUserContext();
 
+if (!userProfile) return <div>Loading...</div>;
+
 
 const generatePlan = async () => {
   const user_id = user.id;
