@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/UserContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -19,14 +19,18 @@ export const ProtectedRoute = ({
     loadingUser,
   } = useUserContext();
 
+  const [redirecting, setRedirecting] = useState(false);
+
   useEffect(() => {
     if (loadingUser) return;
 
     if (!userProfile) {
       console.log("🔒 Redirecting to /getting-started (not signed in)");
+      setRedirecting(true);
       navigate("/getting-started", { replace: true });
     } else if (requireOnboardingComplete && !isOnboardingComplete) {
       console.log("🔒 Redirecting to /getting-started (onboarding not complete)");
+      setRedirecting(true);
       navigate("/getting-started", { replace: true });
     } else if (
       !requireOnboardingComplete &&
@@ -34,6 +38,7 @@ export const ProtectedRoute = ({
       location.pathname === "/getting-started"
     ) {
       console.log("✅ Redirecting to /dashboard (already onboarded)");
+      setRedirecting(true);
       navigate("/dashboard", { replace: true });
     }
   }, [
@@ -45,14 +50,7 @@ export const ProtectedRoute = ({
     location.pathname,
   ]);
 
-  // Render a loading state while user is being fetched
-  if (loadingUser) return <div>Loading...</div>;
-
-  // Block render if no user (router will redirect)
-  if (!userProfile) return null;
-
-  // Block render if onboarding is required but not done
-  if (requireOnboardingComplete && !isOnboardingComplete) return null;
+  if (loadingUser || redirecting) return <div>Loading...</div>;
 
   return <>{children}</>;
 };
