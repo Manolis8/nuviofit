@@ -15,19 +15,39 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 
-const { data, error } = await supabase
-    .from("onboarding_responses")
-    .select("*")
-    .limit(1)
-    .maybeSingle();
 
-  if (error) {
-    console.error("Supabase error:", error.message, error.details || "");
-    throw new Error(`Supabase error: ${error.message}`);
-  }
-  if (!data) {
-    throw new Error("No onboarding data found for user.");
-  }
+export default function WorkoutPage() {
+
+
+const [onboardingData, setOnboardingData] = useState(null);
+  const { user, isLoaded } = useUser();
+    const user_id = user?.id;
+useEffect(() => {
+  if (!user_id) return; // wait for user
+
+  const fetchData = async () => {
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("*")
+      .eq("user_id", user_id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Supabase error:", error);
+      return;
+    }
+
+    if (!data) {
+      console.warn("No onboarding data found for user", user_id);
+      return;
+    }
+
+    setOnboardingData(data);
+  };
+
+  fetchData();
+}, [user_id]);
+
 
 const baseDate = new Date();
 const jsDay = baseDate.getDay(); // 0 = Sunday
@@ -55,7 +75,7 @@ const progressData = {
   totalWorkouts: 5,
 }
 
-export default function WorkoutPage() {
+
       const todayKey = new Date().toDateString();
 const workoutCompletedTodayed = localStorage.getItem("workout_done_" + todayKey) === "true";
    const [fullPlan, setFullPlan] = useState([]);
@@ -63,7 +83,6 @@ const [activeTab, setActiveTab] = useState("today")
   const [exercises, setExercises] = useState([]); // ✅ Start with empty array
   const [expandedWorkouts, setExpandedWorkouts] = useState<string[]>([])
   const [warmUpCompleted, setWarmUpCompleted] = useState(false)
-  const { user } = useUser()
   const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
   const [warmUpExercises, setWarmUpExercises] = useState<
   { name: string; duration: string; description?: string }[]
