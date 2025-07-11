@@ -1,6 +1,6 @@
-import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -11,32 +11,38 @@ export const ProtectedRoute = ({
   children,
   requireOnboardingComplete = true,
 }: ProtectedRouteProps) => {
-  const router = useRouter();
-  const { userProfile, isOnboardingComplete, loadingUser } = useUserContext(); // Add `loadingUser`
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {
+    userProfile,
+    isOnboardingComplete,
+    loadingUser,
+  } = useUserContext();
 
   useEffect(() => {
-    if (loadingUser) return; // wait for user to load
+    if (loadingUser) return;
 
-    // Not signed in → go to getting started
     if (!userProfile) {
-      router.replace("/getting-started");
+      navigate("/getting-started", { replace: true });
+    } else if (requireOnboardingComplete && !isOnboardingComplete) {
+      navigate("/getting-started", { replace: true });
+    } else if (
+      !requireOnboardingComplete &&
+      isOnboardingComplete &&
+      location.pathname === "/getting-started"
+    ) {
+      navigate("/dashboard", { replace: true });
     }
+  }, [
+    userProfile,
+    isOnboardingComplete,
+    loadingUser,
+    requireOnboardingComplete,
+    navigate,
+    location.pathname,
+  ]);
 
-    // User signed in but hasn't completed onboarding
-    else if (requireOnboardingComplete && !isOnboardingComplete) {
-      router.replace("/getting-started");
-    }
-
-    // User has finished onboarding but tries to go back to getting started
-    else if (!requireOnboardingComplete && isOnboardingComplete && router.pathname === "/getting-started") {
-      router.replace("/dashboard");
-    }
-  }, [userProfile, isOnboardingComplete, loadingUser, router, requireOnboardingComplete]);
-
-  // Don’t flash content while deciding
   if (loadingUser || !userProfile) return null;
-
-  // Prevent showing getting-started during onboarding
   if (requireOnboardingComplete && !isOnboardingComplete) return null;
 
   return <>{children}</>;
