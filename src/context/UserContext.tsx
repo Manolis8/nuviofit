@@ -135,34 +135,41 @@ const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
 
 
 React.useEffect(() => {
+  console.log("Fetching user data, user:", user);
   const fetchUserData = async () => {
     if (!user?.id) {
-      setLoadingUser(false);  // No user, stop loading here
+      console.log("No user id found, stopping loading.");
+      setLoadingUser(false);
+      setLoading(false);
       return;
     }
 
-    const { data, error } = await supabase
-      .from("onboarding_responses")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    try {
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    if (error) {
-      console.error("Error fetching onboarding data:", error);
-      setLoadingUser(false);  // Stop loading on error too
-      return;
+      if (error) {
+        console.error("Error fetching onboarding data:", error);
+      } else if (data) {
+        console.log("Fetched onboarding data:", data);
+        setFitnessPlan(data.fitness_plan || null);
+        setSetupFinished(data.setupFinished ?? false);
+      }
+    } catch (err) {
+      console.error("Unexpected error:", err);
+    } finally {
+      console.log("Fetch done, stopping loading.");
+      setLoadingUser(false);
+      setLoading(false);
     }
-
-    if (data) {
-      setFitnessPlan(data.fitness_plan || null);
-      setSetupFinished(data.setupFinished || false);
-    }
-
-    setLoadingUser(false); // Finally stop loading when done
   };
 
   fetchUserData();
 }, [user]);
+
 
 
 
