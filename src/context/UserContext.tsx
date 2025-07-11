@@ -136,7 +136,10 @@ const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
 
 React.useEffect(() => {
   const fetchUserData = async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setLoadingUser(false);  // No user, stop loading here
+      return;
+    }
 
     const { data, error } = await supabase
       .from("onboarding_responses")
@@ -146,6 +149,7 @@ React.useEffect(() => {
 
     if (error) {
       console.error("Error fetching onboarding data:", error);
+      setLoadingUser(false);  // Stop loading on error too
       return;
     }
 
@@ -154,13 +158,12 @@ React.useEffect(() => {
       setSetupFinished(data.setupFinished || false);
     }
 
-    setLoading(false);
+    setLoadingUser(false); // Finally stop loading when done
   };
 
-  if (user) {
-    fetchUserData();
-  }
+  fetchUserData();
 }, [user]);
+
 
 
 
