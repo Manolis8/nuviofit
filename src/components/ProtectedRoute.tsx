@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
 
@@ -8,29 +8,28 @@ type ProtectedRouteProps = {
 };
 
 export const ProtectedRoute = ({ children, requireOnboardingComplete = true }: ProtectedRouteProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
   const { userProfile, isOnboardingComplete } = useUserContext();
 
   useEffect(() => {
     if (!userProfile) {
-      navigate("/getting-started", { replace: true });
+      router.replace("/getting-started");
       return;
     }
 
     if (requireOnboardingComplete && !isOnboardingComplete) {
-      navigate("/getting-started", { replace: true });
+      router.replace("/getting-started");
       return;
     }
 
-    if (location.pathname === "/getting-started" && isOnboardingComplete) {
-      navigate("/dashboard", { replace: true });
+    if (router.pathname === "/getting-started" && isOnboardingComplete) {
+      router.replace("/dashboard");
     }
-  }, [userProfile, isOnboardingComplete, navigate, location, requireOnboardingComplete]);
+  }, [userProfile, isOnboardingComplete, router, requireOnboardingComplete]);
 
   if (
     !userProfile ||
-    (requireOnboardingComplete && !isOnboardingComplete && location.pathname !== "/getting-started")
+    (requireOnboardingComplete && !isOnboardingComplete && router.pathname !== "/getting-started")
   ) {
     return null;
   }
