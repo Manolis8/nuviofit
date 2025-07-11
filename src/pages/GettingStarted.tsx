@@ -88,17 +88,16 @@ const generatePlan = async () => {
     // 🛠 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
 
-    if (!result) {
-      alert("❌ Plan generation failed. Please try again.");
-      setIsGenerating(false);
-      return;
-    }
+if (!result) {
+  alert("❌ Plan generation failed. Please try again.");
+  setIsGenerating(false);
+  return;
+}
 
     // ✅ Update onboarding_responses
     const updatedRow = {
       ...onboardingData,
       fitness_plan: result,
-      setupFinished: true,
     };
 
     const { error: upsertError } = await supabase
