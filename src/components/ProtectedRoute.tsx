@@ -25,30 +25,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
       navigate("/auth/login", { replace: true });
       return;
     }
-
-    // Accessing /getting-started when already onboarded → send to dashboard
-    if (location.pathname === "/getting-started" && isOnboardingComplete) {
-      navigate("/dashboard", { replace: true });
-      return;
-    }
-
-    // Trying to access a protected route but not finished onboarding
-    if (
-      location.pathname !== "/getting-started" &&
-      !isOnboardingComplete
-    ) {
-      navigate("/getting-started", { replace: true, state: { from: location } });
-      return;
-    }
-  }, [
-    isSignedIn,
-    isLoaded,
-    user,
-    isOnboardingComplete,
-    location,
-    navigate,
-    loadingUser,
-  ]);
+});
 
   if (!isLoaded || loadingUser || redirecting) return <div>Loading...</div>;
 
