@@ -6,7 +6,7 @@ type ProtectedRouteProps = {
   children: React.ReactNode;
   requireOnboardingComplete?: boolean;
 };
- 
+
 export const ProtectedRoute = ({
   children,
   requireOnboardingComplete = true,
@@ -16,35 +16,21 @@ export const ProtectedRoute = ({
   const { userProfile, isOnboardingComplete } = useUserContext();
 
   useEffect(() => {
-    // If no user, redirect to onboarding
     if (!userProfile) {
       navigate("/getting-started", { replace: true });
-      return;
-    }
-    // If onboarding is required and incomplete, redirect to onboarding
-    if (requireOnboardingComplete && !isOnboardingComplete) {
+    } else if (requireOnboardingComplete && !isOnboardingComplete) {
       navigate("/getting-started", { replace: true });
-      return;
-    }
-
-    // If onboarding is complete but user is on the onboarding page, redirect to dashboard
-    if (location.pathname === "/getting-started" && isOnboardingComplete) {
+    } else if (location.pathname === "/getting-started" && isOnboardingComplete) {
       navigate("/dashboard", { replace: true });
-      return;
     }
   }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
- // 
 
-  const shouldBlockRender =
+  if (
     !userProfile ||
-    (requireOnboardingComplete &&
-      !isOnboardingComplete &&
-      location.pathname !== "/getting-started") ||
-    (requireOnboardingComplete &&
-      isOnboardingComplete &&
-      location.pathname === "/getting-started");
-
-  if (shouldBlockRender) return null;
+    (requireOnboardingComplete && !isOnboardingComplete && location.pathname !== "/getting-started")
+  ) {
+    return null;
+  }
 
   return <>{children}</>;
 };
