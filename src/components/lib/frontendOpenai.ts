@@ -7,7 +7,7 @@ export async function getOpenAIResponse(messages: any) {
       Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "gpt-4.1-nano",
+      model: "gpt-4.1-nano", 
       messages,
     }),
   });
