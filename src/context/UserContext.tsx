@@ -114,13 +114,15 @@ const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
 
 React.useEffect(() => {
   const fetchUserData = async () => {
-    if (!user?.id) return;
+if (!user) return;
+const userId = user.id;
 
-    const { data, error } = await supabase
-      .from("onboarding_responses")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
+const { data, error } = await supabase
+  .from("onboarding_responses")
+  .select("*")
+  .eq("user_id", userId)
+  .maybeSingle();
+
 
     if (error) {
       console.error("Error fetching onboarding data:", error);
