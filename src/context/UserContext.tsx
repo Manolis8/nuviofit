@@ -66,22 +66,22 @@ const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
   const { user } = useUser();
 
 
-
 React.useEffect(() => {
   const fetchUserData = async () => {
-if (!user) return;
-const userId = user.id;
+    if (!user) {
+      setLoading(false);
+      setLoadingUser(false); // ✅ <-- Mark user loading as done even if user is null
+      return;
+    }
 
-const { data, error } = await supabase
-  .from("onboarding_responses")
-  .select("*")
-  .eq("user_id", userId)
-  .maybeSingle();
-
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
     if (error) {
       console.error("Error fetching onboarding data:", error);
-      return;
     }
 
     if (data) {
@@ -90,12 +90,12 @@ const { data, error } = await supabase
     }
 
     setLoading(false);
+    setLoadingUser(false); // ✅ <-- Mark loadingUser as done
   };
 
-  if (user) {
-    fetchUserData();
-  }
+  fetchUserData();
 }, [user]);
+
 
 
 if (loadingUser) return <div>Loading...</div>;
