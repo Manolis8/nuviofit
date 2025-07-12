@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
 
 type ProtectedRouteProps = {
-  children: React.ReactNode;
+  children: React.ReactNode; 
   requireOnboardingComplete?: boolean;
 };
 
