@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
 
+
 type ProtectedRouteProps = {
   children: React.ReactNode;
   requireOnboardingComplete?: boolean;
