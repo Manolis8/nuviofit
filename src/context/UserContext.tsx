@@ -35,7 +35,7 @@ export const ProtectedRoute = ({
     }
   }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
 
-  // Block rendering children until user is available and passes checks
+
   const shouldBlockRender =
     !userProfile ||
     (requireOnboardingComplete &&
