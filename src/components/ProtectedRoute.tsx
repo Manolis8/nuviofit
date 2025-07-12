@@ -18,19 +18,30 @@ export const ProtectedRoute = ({
   useEffect(() => {
     if (!userProfile) {
       navigate("/getting-started", { replace: true });
-    } else if (requireOnboardingComplete && !isOnboardingComplete) {
+      return;
+    }
+
+    if (requireOnboardingComplete && !isOnboardingComplete) {
       navigate("/getting-started", { replace: true });
-    } else if (location.pathname === "/getting-started" && isOnboardingComplete) {
+      return;
+    }
+
+    if (location.pathname === "/getting-started" && isOnboardingComplete) {
       navigate("/dashboard", { replace: true });
+      return;
     }
   }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
 
-  if (
+  const shouldBlockRender =
     !userProfile ||
-    (requireOnboardingComplete && !isOnboardingComplete && location.pathname !== "/getting-started")
-  ) {
-    return null;
-  }
+    (requireOnboardingComplete &&
+      !isOnboardingComplete &&
+      location.pathname !== "/getting-started") ||
+    (requireOnboardingComplete &&
+      isOnboardingComplete &&
+      location.pathname === "/getting-started");
+
+  if (shouldBlockRender) return null;
 
   return <>{children}</>;
 };
