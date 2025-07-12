@@ -33,7 +33,7 @@ export const ProtectedRoute = ({
       return;
     }
   }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
-
+ // 
 
   const shouldBlockRender =
     !userProfile ||
