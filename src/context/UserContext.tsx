@@ -6,7 +6,7 @@ type ProtectedRouteProps = {
   children: React.ReactNode;
   requireOnboardingComplete?: boolean;
 };
-
+ 
 export const ProtectedRoute = ({
   children,
   requireOnboardingComplete = true,
