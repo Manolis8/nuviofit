@@ -143,6 +143,12 @@ const { data, error } = await supabase
 }, [user]);
 
 
+if (loadingUser) return <div>Loading...</div>;
+
+if (!userProfile) return <div>Something went wrong</div>;
+
+// Now safe to access userProfile fields
+
 
   const addGoal = (text: string, category: Goal["category"]) => {
     const newGoal: Goal = {
