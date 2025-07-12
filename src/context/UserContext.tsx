@@ -16,21 +16,36 @@ export const ProtectedRoute = ({
   const { userProfile, isOnboardingComplete } = useUserContext();
 
   useEffect(() => {
+    // If no user, redirect to onboarding
     if (!userProfile) {
       navigate("/getting-started", { replace: true });
-    } else if (requireOnboardingComplete && !isOnboardingComplete) {
+      return;
+    }
+
+    // If onboarding is required and incomplete, redirect to onboarding
+    if (requireOnboardingComplete && !isOnboardingComplete) {
       navigate("/getting-started", { replace: true });
-    } else if (location.pathname === "/getting-started" && isOnboardingComplete) {
+      return;
+    }
+
+    // If onboarding is complete but user is on the onboarding page, redirect to dashboard
+    if (location.pathname === "/getting-started" && isOnboardingComplete) {
       navigate("/dashboard", { replace: true });
+      return;
     }
   }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
 
-  if (
+  // Block rendering children until user is available and passes checks
+  const shouldBlockRender =
     !userProfile ||
-    (requireOnboardingComplete && !isOnboardingComplete && location.pathname !== "/getting-started")
-  ) {
-    return null;
-  }
+    (requireOnboardingComplete &&
+      !isOnboardingComplete &&
+      location.pathname !== "/getting-started") ||
+    (requireOnboardingComplete &&
+      isOnboardingComplete &&
+      location.pathname === "/getting-started");
+
+  if (shouldBlockRender) return null;
 
   return <>{children}</>;
 };
