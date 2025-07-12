@@ -21,7 +21,6 @@ export const ProtectedRoute = ({
       navigate("/getting-started", { replace: true });
       return;
     }
-
     // If onboarding is required and incomplete, redirect to onboarding
     if (requireOnboardingComplete && !isOnboardingComplete) {
       navigate("/getting-started", { replace: true });
