@@ -1,6 +1,8 @@
 import { ArrowLeft, ArrowRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react";
+import React, { useRef } from "react";
+
 
 import { useUser } from "@clerk/clerk-react";
 import { generateFitnessPlan } from "@/components/lib/generateFitnessPlan";
@@ -63,8 +65,17 @@ if (!isLoaded) return <div>Loading...</div>;
     navigate("/dashboard");
   };
 
+  const isMounted = React.useRef(true);
+
+useEffect(() => {
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
+
+
 const generatePlan = async () => {
-  const { user } = useUser(); // Clerk user
+  const { user } = useUser();
   const user_id = user?.id;
   if (!user_id || planGenerated || step !== 17) return;
 
@@ -73,11 +84,10 @@ const generatePlan = async () => {
     return;
   }
 
-  setIsGenerating(true);
-  setIsCompleted(false);
+  if (isMounted.current) setIsGenerating(true);
+  if (isMounted.current) setIsCompleted(false);
 
   try {
-    // 🔁 Retry fetching onboarding responses
     let onboardingData = null;
     for (let i = 0; i < 3; i++) {
       const { data, error } = await supabase
@@ -90,27 +100,23 @@ const generatePlan = async () => {
         onboardingData = data;
         break;
       }
-
-      console.warn(`Attempt ${i + 1} failed:`, error);
       await new Promise((res) => setTimeout(res, 300));
     }
 
     if (!onboardingData) {
       alert("❌ No saved data found. Please save your data first.");
-      setIsGenerating(false);
+      if (isMounted.current) setIsGenerating(false);
       return;
     }
 
-    // 🛠 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
 
     if (!result) {
       alert("❌ Plan generation failed. Please try again.");
-      setIsGenerating(false);
+      if (isMounted.current) setIsGenerating(false);
       return;
     }
 
-    // ✅ Update onboarding_responses with the fitness plan
     const updatedRow = {
       ...onboardingData,
       fitness_plan: result,
@@ -124,16 +130,16 @@ const generatePlan = async () => {
       console.error("Error saving fitness plan:", upsertError);
     }
 
-    // 🔑 Call your function to mark onboarding complete
     await handleCompleteOnboarding();
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
   } finally {
-    setIsGenerating(false);
+    if (isMounted.current) setIsGenerating(false);
   }
 };
+
 
 
   const navigate = useNavigate();
