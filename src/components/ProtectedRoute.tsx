@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
-
+import { useUser } from "@clerk/clerk-react";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -14,35 +14,29 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { userProfile, isOnboardingComplete } = useUserContext();
+  const { user } = useUser();
+  const { isOnboardingComplete, loadingUser } = useUserContext();
 
   useEffect(() => {
-    if (!userProfile) {
+    if (loadingUser) return;
+
+    if (!user) {
+      navigate("/sign-in", { replace: true });
+      return;
+    }
+
+    if (!isOnboardingComplete && location.pathname !== "/getting-started") {
       navigate("/getting-started", { replace: true });
       return;
     }
 
-    if (requireOnboardingComplete && !isOnboardingComplete) {
-      navigate("/getting-started", { replace: true });
-      return;
-    }
-
-    if (location.pathname === "/getting-started" && isOnboardingComplete) {
+    if (isOnboardingComplete && location.pathname === "/getting-started") {
       navigate("/dashboard", { replace: true });
       return;
     }
-  }, [userProfile, isOnboardingComplete, location.pathname, navigate, requireOnboardingComplete]);
+  }, [user, isOnboardingComplete, loadingUser, location.pathname, navigate]);
 
-  const shouldBlockRender =
-    !userProfile ||
-    (requireOnboardingComplete &&
-      !isOnboardingComplete &&
-      location.pathname !== "/getting-started") ||
-    (requireOnboardingComplete &&
-      isOnboardingComplete &&
-      location.pathname === "/getting-started");
-
-  if (shouldBlockRender) return null;
+  if (loadingUser || !user) return null;
 
   return <>{children}</>;
 };
