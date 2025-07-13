@@ -158,59 +158,58 @@ const handleSubmit = async (e: React.FormEvent) => {
       <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
       <p className="text-gray-600 mb-4">Choose which features you look forward to launch!</p>
 
-      <div className="flex gap-2">
-
-{waitlistOptions.map((option, idx) => (
-    <div key={idx} className="flex items-center space-x-2">
-        <input
-            type="checkbox"
-            id={`option-${idx}`}
-            checked={selectedOptions.includes(option)}
-            onChange={() => handleCheckboxChange(option)}
-        />
-        <label htmlFor={`option-${idx}`}>{option}</label>
+<div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3">
+        {waitlistOptions.map((option, idx) => (
+            <div key={idx} className="flex items-center gap-2">
+                <input
+                    type="checkbox"
+                    id={`option-${idx}`}
+                    checked={selectedOptions.includes(option)}
+                    onChange={() => handleCheckboxChange(option)}
+                />
+                <label htmlFor={`option-${idx}`}>{option}</label>
+            </div>
+        ))}
     </div>
-))}
 
-<Button
-    onClick={async () => {
-        if (formData.selectedOptions.length === 0) {
-            setStatus("Please select at least one option.");
-            return;
-        }
+    <div className="flex flex-col gap-2">
+        <Button
+            onClick={async () => {
+                if (selectedOptions.length === 0) {
+                    setError("Please select at least one option.");
+                    return;
+                }
 
-        setStatus("Sending...");
-
-        const updatedFormData = {
-            name: username,
-            email: email,
-            message: formData.selectedOptions.join(", "), // Send options as comma-separated string
-        };
-
-        try {
-            await sendWaitlist(updatedFormData);
-            setStatus("Success! We'll notify you.");
-            setFormData({ selectedOptions: [] });
-            setTimeout(() => {
-                setShowPopup(false);
-                setStatus(null);
-            }, 1500);
-        } catch {
-            setStatus("Failed to send.");
-        }
-    }}
->
-    Join Waitlist
-</Button>
+                setLoading(true);
+                try {
+                    await sendWaitlist({
+                        name: username,
+                        email: email,
+                        message: selectedOptions.join(", "),
+                    });
+                    setError("");
+                    setShowPopup(false);
+                    alert("You successfully joined the waitlist!");
+                } catch {
+                    setError("Failed to send.");
+                } finally {
+                    setLoading(false);
+                }
+            }}
+        >
+            Join Waitlist
+        </Button>
 
         <Button
-          variant="outline"
-          className="flex-1"
-          onClick={() => setShowPopup(false)}
+            variant="outline"
+            onClick={() => setShowPopup(false)}
         >
-          Cancel
+            Cancel
         </Button>
-      </div>
+    </div>
+</div>
+
 
       {status && <p className="text-sm text-center mt-2">{status}</p>}
     </div>
