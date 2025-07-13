@@ -21,7 +21,7 @@ export const ProtectedRoute = ({
     if (loadingUser) return;
 
     if (!user) {
-      navigate("/sign-in", { replace: true });
+      navigate("/auth/login", { replace: true });
       return;
     }
 
