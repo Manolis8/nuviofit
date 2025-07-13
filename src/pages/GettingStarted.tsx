@@ -65,14 +65,6 @@ if (!isLoaded) return <div>Loading...</div>;
     navigate("/dashboard");
   };
 
-  const isMounted = React.useRef(true);
-
-useEffect(() => {
-  return () => {
-    isMounted.current = false;
-  };
-}, []);
-
 
 const generatePlan = async () => {
   const { user } = useUser();
@@ -83,9 +75,6 @@ const generatePlan = async () => {
     alert("⚠️ Please save your data before generating the plan.");
     return;
   }
-
-  if (isMounted.current) setIsGenerating(true);
-  if (isMounted.current) setIsCompleted(false);
 
   try {
     let onboardingData = null;
@@ -105,7 +94,7 @@ const generatePlan = async () => {
 
     if (!onboardingData) {
       alert("❌ No saved data found. Please save your data first.");
-      if (isMounted.current) setIsGenerating(false);
+  
       return;
     }
 
@@ -113,7 +102,7 @@ const generatePlan = async () => {
 
     if (!result) {
       alert("❌ Plan generation failed. Please try again.");
-      if (isMounted.current) setIsGenerating(false);
+      
       return;
     }
 
@@ -136,7 +125,6 @@ const generatePlan = async () => {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
   } finally {
-    if (isMounted.current) setIsGenerating(false);
   }
 };
 
