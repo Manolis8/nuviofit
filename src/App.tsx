@@ -115,7 +115,7 @@ const App = () => (
             <Route
               path="/getting-started"
               element={
-                    <ProtectedRoute requireOnboardingComplete={false}>
+                    <ProtectedRoute>
                   <GettingStarted />
                     </ProtectedRoute>
               }
