@@ -180,10 +180,10 @@ const Welcome = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="font-bold text-xl text-wellness-blue">LifeSpark AI</Link>
+              <Link to="/" className="font-bold text-xl text-wellness-blue">Nuviofit</Link>
             </div>
             <div className="hidden md:flex space-x-4 items-center">
-              <Link to="/about/login" className="hover:text-wellness-blue transition-colors">About Us</Link>
+              <Link to="/about" className="hover:text-wellness-blue transition-colors">About Us</Link>
               <Button asChild variant="outline" className="ml-2">
                 <Link to="/auth">Log In</Link>
               </Button>
@@ -212,7 +212,7 @@ const Welcome = () => {
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-wellness-teal via-wellness-blue to-wellness-lavender">
               Transform Your Mind 
               <br />
-              and Body with LifeSpark AI
+              and Body with Nuviofit
             </h1>
             
             <p className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl">
@@ -301,7 +301,7 @@ const Welcome = () => {
                   </p>
                   
                   <p className="text-lg md:text-xl mb-6">
-                    When you invest in your health with LifeSpark AI, you're giving a gift not just to yourself, but to everyone who cares about you. You're promising them more quality time, more memorable moments, and a longer future together.
+                    When you invest in your health with Nuviofit, you're giving a gift not just to yourself, but to everyone who cares about you. You're promising them more quality time, more memorable moments, and a longer future together.
                   </p>
                   
                   <div className="flex flex-wrap gap-3 mt-8">
@@ -328,7 +328,7 @@ const Welcome = () => {
               "
             </div>
             <p className="text-2xl md:text-3xl font-light leading-relaxed text-gray-700 italic">
-              The greatest wealth is health. LifeSpark AI doesn't just track your wellness—it transforms it, 
+              The greatest wealth is health. Nuviofit doesn't just track your wellness—it transforms it, 
               <span className="font-medium"> one personalized insight at a time</span>.
             </p>
             <div className="mt-6 flex items-center justify-center space-x-1">
@@ -419,7 +419,7 @@ const Welcome = () => {
             
             <div className="mt-12 text-center">
               <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-                LifeSpark AI combines cutting-edge artificial intelligence with the latest in behavioral science to create a wellness companion that truly understands <span className="font-semibold">you</span> — your preferences, your challenges, and your individual journey to better health.
+                Nuviofit combines cutting-edge artificial intelligence with the latest in behavioral science to create a wellness companion that truly understands <span className="font-semibold">you</span> — your preferences, your challenges, and your individual journey to better health.
               </p>
             </div>
           </div>
@@ -436,7 +436,7 @@ const Welcome = () => {
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">Experience Transformative Outcomes</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              What our users achieve with consistent use of LifeSpark AI
+              What our users achieve with consistent use of Nuviofit
             </p>
           </div>
           
@@ -464,7 +464,7 @@ const Welcome = () => {
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">What Makes Us Different</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              See how LifeSpark AI compares to traditional health apps
+              See how Nuviofit compares to traditional health apps
             </p>
           </div>
 
@@ -474,7 +474,7 @@ const Welcome = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-1/2">Feature</TableHead>
-                    <TableHead className="text-center">LifeSpark AI</TableHead>
+                    <TableHead className="text-center">Nuviofit</TableHead>
                     <TableHead className="text-center">Other Health Apps</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -522,7 +522,7 @@ const Welcome = () => {
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-6">Be Part of The Wellness Revolution</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-12">
-              LifeSpark AI isn't just an app—it's a growing community of people committed to transforming their health and supporting each other along the way.
+              Nuviofit isn't just an app—it's a growing community of people committed to transforming their health and supporting each other along the way.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -636,7 +636,7 @@ const Welcome = () => {
               <Clock className="text-wellness-mint mr-2 h-5 w-5" />
               <span className="text-sm font-medium">Simple Process</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">How LifeSpark AI Works</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4">How Nuviofit Works</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
               Getting started on your personalized wellness journey takes just minutes
             </p>
@@ -686,7 +686,7 @@ const Welcome = () => {
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">Real Results from Real People</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              See how LifeSpark AI has transformed the lives of our users
+              See how Nuviofit has transformed the lives of our users
             </p>
           </div>
 
@@ -733,7 +733,7 @@ const Welcome = () => {
             </Button>
             
             <div className="mt-8 text-sm text-gray-600">
-              Join thousands of users already experiencing the LifeSpark AI difference
+              Join thousands of users already experiencing the Nuviofit difference
             </div>
           </div>
         </div>
@@ -744,7 +744,7 @@ const Welcome = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">LifeSpark AI</h3>
+              <h3 className="text-xl font-bold mb-4">Nuviofit</h3>
               <p className="text-gray-400">Your personalized wellness companion powered by artificial intelligence.</p>
             </div>
             <div>
@@ -790,7 +790,7 @@ const Welcome = () => {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400">© {new Date().getFullYear()} LifeSpark AI. All rights reserved.</p>
+            <p className="text-gray-400">© {new Date().getFullYear()} Nuviofit. All rights reserved.</p>
             <p className="text-gray-400 mt-4 md:mt-0">Made with 💖 for a healthier world</p>
           </div>
         </div>
