@@ -79,7 +79,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     fetchUserData();
   }, [user]);
 
-  if (loadingUser) return <div>Loading...</div>;
+
 
   return (
     <UserContext.Provider
