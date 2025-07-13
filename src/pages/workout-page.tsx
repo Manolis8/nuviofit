@@ -245,7 +245,7 @@ useEffect(() => {
     }
 
     // Set user profile
-    setUserProfile({
+    if (isMounted.current) setUserProfile({
       goal: data.fitness_why,
       trainingStyle: data.training_method,
       timePerDay: data.training_duration,
@@ -255,7 +255,6 @@ useEffect(() => {
     });
 
     const planText = (data.fitness_plan ?? "").replace(/\r\n/g, "\n")
-
 
 
     
