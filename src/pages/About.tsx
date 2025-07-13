@@ -1,13 +1,11 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Lightbulb, Users, Target, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import DashboardLayout from "@/components/DashboardLayout";
 
 const AboutPage = () => {
   return (
-    <DashboardLayout title="About Us">
+    <div className="p-6 md:p-10">
       {/* Hero Section */}
       <section className="mb-16">
         <div className="bg-gradient-to-br from-wellness-lavender/30 via-wellness-blue/20 to-wellness-teal/20 rounded-2xl p-10 text-center">
@@ -186,7 +184,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-    </DashboardLayout>
+    </div>
   );
 };
 
