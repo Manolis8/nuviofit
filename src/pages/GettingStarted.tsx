@@ -47,23 +47,6 @@ const {
 
 if (!isLoaded) return <div>Loading...</div>;
 
-  const handleCompleteOnboarding = async () => {
-    if (!user) return;
-
-    const { error } = await supabase
-      .from('onboarding_responses')
-      .update({ setupFinished: true })
-      .eq('user_id', user.id);
-
-    if (error) {
-      console.error("Failed to update onboarding status:", error);
-      return;
-    }
-
-    setSetupFinished(true);
-    navigate("/dashboard");
-  };
-
 
 const generatePlan = async () => {
 
@@ -117,8 +100,6 @@ const generatePlan = async () => {
     if (upsertError) {
       console.error("Error saving fitness plan:", upsertError);
     }
-
-    await handleCompleteOnboarding();
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
