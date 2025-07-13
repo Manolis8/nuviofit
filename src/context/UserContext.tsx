@@ -3,30 +3,9 @@ import { Exercise } from "@/components/lib/frontendOpenai";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/clerk-react";
 
-
-
-type FitnessGoal = "lose_weight" | "build_muscle" | "improve_endurance" | "general_fitness";
-
 export interface UserProfile {
-  fitnessGoal: FitnessGoal;
-  fitnessFrequency: number;
-  preferredActivities?: string[];
-  timePerWorkout?: number;
-  name: string;
-  fitnessInjuries?: string;
-  additionalNotes?: string;
-  email: string;
-  setupFinished?: boolean,
-
-  
-
+  setupFinished?: boolean;
 }
-
-type WorkoutNote = {
-  exerciseId: string;
-  note: string;
-  createdAt: Date;
-};
 
 type FitnessPlan = {
   exercises: Exercise[];
@@ -35,7 +14,6 @@ type FitnessPlan = {
   notes?: string[];
   recommendations?: string[];
 };
-
 
 type UserContextType = {
   userProfile: UserProfile | null;
@@ -49,7 +27,6 @@ type UserContextType = {
   setHasCustomPlan: (value: boolean) => void;
   setupFinished: boolean;
   setSetupFinished: (value: boolean) => void;
-
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -60,69 +37,69 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [hasCustomPlan, setHasCustomPlan] = useState<boolean>(false);
   const isOnboardingComplete = !!userProfile && hasCustomPlan;
   const [loading, setLoading] = useState(true);
-const [setupFinished, setSetupFinished] = useState(false);
-const [loadingUser, setLoadingUser] = useState(true); // ✅ add this
+  const [setupFinished, setSetupFinished] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(true);
 
   const { user } = useUser();
 
+  React.useEffect(() => {
+    const fetchUserData = async () => {
+      if (!user) {
+        setLoading(false);
+        setLoadingUser(false);
+        return;
+      }
 
-React.useEffect(() => {
-  const fetchUserData = async () => {
-    if (!user) {
+      const userId = user.id;
+
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching onboarding data:", error);
+        setLoading(false);
+        setLoadingUser(false);
+        return;
+      }
+
+      if (data) {
+        setFitnessPlan(data.fitness_plan || null);
+        setSetupFinished(data.setupFinished || false);
+        // If you later expand UserProfile, you could set real data here
+        setUserProfile({ setupFinished: data.setupFinished });
+      }
+
       setLoading(false);
-      setLoadingUser(false); // ✅ <-- Mark user loading as done even if user is null
-      return;
-    }
+      setLoadingUser(false);
+    };
 
-    const { data, error } = await supabase
-      .from("onboarding_responses")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    fetchUserData();
+  }, [user]);
 
-    if (error) {
-      console.error("Error fetching onboarding data:", error);
-    }
+  if (loadingUser) return <div>Loading...</div>;
 
-    if (data) {
-      setFitnessPlan(data.fitness_plan || null);
-      setSetupFinished(data.setupFinished || false);
-    }
-
-    setLoading(false);
-    setLoadingUser(false); // ✅ <-- Mark loadingUser as done
-  };
-
-  fetchUserData();
-}, [user]);
-
-
-
-if (loadingUser) return <div>Loading...</div>;
-
-if (!userProfile) return <div>Something went wrong</div>;
-
-
-
-return (
-  <UserContext.Provider
-    value={{
-      loadingUser,
-      userProfile,
-      setUserProfile,
-      fitnessPlan,
-      setFitnessPlan,
-      hasCustomPlan,
-      setHasCustomPlan,
-      isOnboardingComplete,
-     setupFinished,
-    setSetupFinished,
-    loading,
-    }}
-  >
-    {children}
-  </UserContext.Provider>
-);
+  return (
+    <UserContext.Provider
+      value={{
+        loadingUser,
+        userProfile,
+        setUserProfile,
+        fitnessPlan,
+        setFitnessPlan,
+        hasCustomPlan,
+        setHasCustomPlan,
+        isOnboardingComplete,
+        setupFinished,
+        setSetupFinished,
+        loading,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUserContext = () => {
