@@ -14,9 +14,18 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useUserContext } from "@/context/UserContext";
+import React, { useRef } from "react";
 
 
 export default function WorkoutPage() {
+
+const isMounted = useRef(true);
+
+useEffect(() => {
+  return () => {
+    isMounted.current = false;
+  };
+}, []);
 
 
 const [onboardingData, setOnboardingData] = useState(null);
@@ -193,7 +202,9 @@ useEffect(() => {
       return workoutDays.length;
     };
 
-    setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
+    if (isMounted.current) {
+    setWorkoutDaysPerWeek(countWorkoutDays(planText));
+}
 
     if (!planText) {
       console.warn("⚠️ No plan text found");
@@ -201,7 +212,9 @@ useEffect(() => {
     }
 
     const workoutCount = countWorkoutDays(planText);
+    if (isMounted.current) {
     setWorkoutDays(workoutCount);
+}
   };
 
   fetchPlan();
