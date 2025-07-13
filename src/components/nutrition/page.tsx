@@ -110,14 +110,6 @@ const handleSubmit = async (e: React.FormEvent) => {
 };
 
 
-  // Checkbox options example
-  const options = [
-    "Low Carb",
-    "High Protein",
-    "Vegetarian",
-    "Gluten Free",
-  ];
-
   return (
     <>
       <Navbar />
@@ -167,24 +159,6 @@ const handleSubmit = async (e: React.FormEvent) => {
       <p className="text-gray-600 mb-4">Enter your details below to get notified!</p>
 
       <div className="flex gap-2">
-
-
-        {waitlistOptions.map((option, idx) => (
-    <div key={idx} className="flex items-center space-x-2">
-        <input
-            type="checkbox"
-            id={`option-${idx}`}
-            checked={formData.selectedOptions.includes(option)}
-            onChange={(e) => {
-                const updated = e.target.checked
-                    ? [...formData.selectedOptions, option]
-                    : formData.selectedOptions.filter((item) => item !== option);
-                setFormData({ ...formData, selectedOptions: updated });
-            }}
-        />
-        <label htmlFor={`option-${idx}`}>{option}</label>
-    </div>
-))}
 
 {waitlistOptions.map((option, idx) => (
     <div key={idx} className="flex items-center space-x-2">
