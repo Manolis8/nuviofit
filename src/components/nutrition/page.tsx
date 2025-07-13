@@ -43,28 +43,26 @@ async function sendWaitlist(data: { name: string; email: string; message: string
   const [loading, setLoading] = useState(false);
 
   // Fetch username from Supabase table onboarding_responses
-  useEffect(() => {
-    async function fetchUsername() {
-      if (!user) return;
+useEffect(() => {
+        async function fetchUsername() {
+            if (!user) return;
+            setEmail(user.emailAddresses[0]?.emailAddress || "");
 
-      setEmail(user.emailAddresses[0]?.emailAddress || "");
+            const { data, error } = await supabase
+                .from("onboarding_responses")
+                .select("username")
+                .eq("email", user.emailAddresses[0]?.emailAddress)
+                .single();
 
-      // Query supabase for username by email or user id
-      const { data, error } = await supabase
-        .from("onboarding_responses")
-        .select("username")
-        .eq("email", user.emailAddresses[0]?.emailAddress)
-        .single();
+            if (error) {
+                console.error("Error fetching username:", error.message);
+            } else if (data?.username) {
+                setUsername(data.username);
+            }
+        }
 
-      if (error) {
-        console.error("Error fetching username:", error.message);
-      } else if (data?.username) {
-        setUsername(data.username);
-      }
-    }
-
-    fetchUsername();
-  }, [user]);
+        fetchUsername();
+    }, [user]);
 
   // Checkbox change handler
   const handleCheckboxChange = (option: string) => {
