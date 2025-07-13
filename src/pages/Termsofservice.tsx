@@ -4,7 +4,8 @@ const TermsOfService = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10 text-gray-800">
       <h1 className="text-3xl font-bold mb-6">Terms of Service</h1>
-      <p className="mb-4">Effective Date: Nuviofit</p>
+      <p className="mb-4">Effective Date: 13/07/2025</p>
+      <p className="mb-4">Website Owner: Nuviofit</p>
       <p className="mb-4">Location: Greece</p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">1. Acceptance of Terms</h2>
