@@ -1,13 +1,34 @@
-"use client"
-
 import { motion } from "framer-motion"
 import { Bell, ChefHat, Utensils, Apple } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import React, { useState } from "react";
 
 export default function NutritionPage() {
+    const [showPopup, setShowPopup] = useState(false);
+const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  message: "",
+});
+const [status, setStatus] = useState<string | null>(null);
+
+async function sendWaitlist(data: typeof formData) {
+  try {
+    const res = await fetch("http://localhost:5000/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Failed to send");
+    return await res.json();
+  } catch (err) {
+    throw err;
+  }
+}
+
   return (
     <>
       <Navbar />
@@ -40,12 +61,80 @@ export default function NutritionPage() {
                 <CardDescription>Be the first to know when nutrition features launch</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input type="email" placeholder="Enter your email" className="text-center" />
-                <Button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white">
-                  🔔 Notify me when it's ready
-                </Button>
+<Button
+  onClick={() => setShowPopup(true)}
+  className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
+>
+  🔔 Notify me when it's ready
+</Button>
+
               </CardContent>
             </Card>
+
+            {showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
+      <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
+      <p className="text-gray-600 mb-4">Enter your details below to get notified!</p>
+
+      <Input
+        type="text"
+        value={formData.name}
+        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+        placeholder="Your Name"
+        className="mb-3"
+      />
+
+      <Input
+        type="email"
+        value={formData.email}
+        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+        placeholder="Your Email"
+        className="mb-3"
+      />
+
+      <textarea
+        value={formData.message}
+        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+        placeholder="Any message (optional)"
+        className="w-full p-3 border rounded-lg h-24 resize-none mb-4"
+      />
+
+      <div className="flex gap-2">
+        <Button
+          onClick={async () => {
+            setStatus("Sending...");
+            try {
+              await sendWaitlist(formData);
+              setStatus("Success! We'll notify you.");
+              setFormData({ name: "", email: "", message: "" });
+              setTimeout(() => {
+                setShowPopup(false);
+                setStatus(null);
+              }, 1500);
+            } catch {
+              setStatus("Failed to send.");
+            }
+          }}
+          className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg rounded-lg"
+        >
+          Join Waitlist
+        </Button>
+
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={() => setShowPopup(false)}
+        >
+          Cancel
+        </Button>
+      </div>
+
+      {status && <p className="text-sm text-center mt-2">{status}</p>}
+    </div>
+  </div>
+)}
+
           </motion.div>
 
           {/* Preview Features */}
