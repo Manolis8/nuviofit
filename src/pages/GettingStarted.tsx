@@ -27,7 +27,6 @@ export default function OnboardingPage() {
   const progress = (questionStepIndex / totalQuestionSteps) * 100;
 const [isDataSaved, setIsDataSaved] = useState(false);
 
-
   const { user, isLoaded } = useUser();
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
@@ -67,7 +66,7 @@ if (!isLoaded) return <div>Loading...</div>;
 
 
 const generatePlan = async () => {
-  const { user } = useUser();
+
   const user_id = user?.id;
   if (!user_id || planGenerated || step !== 17) return;
 
