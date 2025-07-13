@@ -9,18 +9,18 @@ type ProtectedRouteProps = {
 export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
 
   useEffect(() => {
-    if (!user) {
+    if (isLoaded && !user) {
       navigate("/auth/login", {
         replace: true,
         state: { from: location.pathname },
       });
     }
-  }, [user, navigate, location.pathname]);
+  }, [user, isLoaded, navigate, location.pathname]);
 
-  if (!user) return null;
+  if (!isLoaded || !user) return null;
 
   return <>{children}</>;
 };
