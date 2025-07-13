@@ -3,31 +3,122 @@ import { Bell, ChefHat, Utensils, Apple } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useUser } from "@clerk/clerk-react"; 
+import { supabase } from "@/components/lib/supabaseClient";
+import { Input } from "@/components/ui/input";
+
 
 export default function NutritionPage() {
     const [showPopup, setShowPopup] = useState(false);
 const [formData, setFormData] = useState({
-  name: "",
-  email: "",
-  message: "",
+    selectedOptions: [] as string[],
 });
+
+
 const [status, setStatus] = useState<string | null>(null);
 
-async function sendWaitlist(data: typeof formData) {
-  try {
-    const res = await fetch("http://localhost:5000/api/waitlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to send");
-    return await res.json();
-  } catch (err) {
-    throw err;
-  }
+async function sendWaitlist(data: { name: string; email: string; message: string }) {
+    try {
+        const { error } = await supabase.from("waitlist").insert([
+            {
+                name: data.name,
+                email: data.email,
+                message: data.message,
+            },
+        ]);
+        if (error) throw error;
+    } catch (err) {
+        throw err;
+    }
 }
+
+
+
+  const { user } = useUser(); // Get authenticated Clerk user info
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Fetch username from Supabase table onboarding_responses
+  useEffect(() => {
+    async function fetchUsername() {
+      if (!user) return;
+
+      setEmail(user.emailAddresses[0]?.emailAddress || "");
+
+      // Query supabase for username by email or user id
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("username")
+        .eq("email", user.emailAddresses[0]?.emailAddress)
+        .single();
+
+      if (error) {
+        console.error("Error fetching username:", error.message);
+      } else if (data?.username) {
+        setUsername(data.username);
+      }
+    }
+
+    fetchUsername();
+  }, [user]);
+
+  // Checkbox change handler
+  const handleCheckboxChange = (option: string) => {
+    setSelectedOptions((prev) =>
+      prev.includes(option)
+        ? prev.filter((o) => o !== option)
+        : [...prev, option]
+    );
+  };
+
+const waitlistOptions = [
+    "I'm interested in AI tools",
+    "I'm looking for business growth",
+    "I want networking opportunities",
+    "I need help with productivity",
+];
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (selectedOptions.length === 0) {
+        setError("Please select at least one option.");
+        return;
+    }
+
+    setLoading(true);
+
+    try {
+        await sendWaitlist({
+            name: username,
+            email: email,
+            message: selectedOptions.join(", "),
+        });
+        setError("");
+        setShowPopup(false);
+        alert("You successfully joined the waitlist!");
+    } catch (err) {
+        console.error(err);
+        setError("Failed to join waitlist. Try again.");
+    } finally {
+        setLoading(false);
+    }
+};
+
+
+  // Checkbox options example
+  const options = [
+    "Low Carb",
+    "High Protein",
+    "Vegetarian",
+    "Gluten Free",
+  ];
 
   return (
     <>
@@ -77,49 +168,69 @@ async function sendWaitlist(data: typeof formData) {
       <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
       <p className="text-gray-600 mb-4">Enter your details below to get notified!</p>
 
-      <Input
-        type="text"
-        value={formData.name}
-        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        placeholder="Your Name"
-        className="mb-3"
-      />
-
-      <Input
-        type="email"
-        value={formData.email}
-        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        placeholder="Your Email"
-        className="mb-3"
-      />
-
-      <textarea
-        value={formData.message}
-        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-        placeholder="Any message (optional)"
-        className="w-full p-3 border rounded-lg h-24 resize-none mb-4"
-      />
-
       <div className="flex gap-2">
-        <Button
-          onClick={async () => {
-            setStatus("Sending...");
-            try {
-              await sendWaitlist(formData);
-              setStatus("Success! We'll notify you.");
-              setFormData({ name: "", email: "", message: "" });
-              setTimeout(() => {
+<p>Name: {username || "Loading..."}</p>
+<p>Email: {email || "Loading..."}</p>
+
+        {waitlistOptions.map((option, idx) => (
+    <div key={idx} className="flex items-center space-x-2">
+        <input
+            type="checkbox"
+            id={`option-${idx}`}
+            checked={formData.selectedOptions.includes(option)}
+            onChange={(e) => {
+                const updated = e.target.checked
+                    ? [...formData.selectedOptions, option]
+                    : formData.selectedOptions.filter((item) => item !== option);
+                setFormData({ ...formData, selectedOptions: updated });
+            }}
+        />
+        <label htmlFor={`option-${idx}`}>{option}</label>
+    </div>
+))}
+
+{waitlistOptions.map((option, idx) => (
+    <div key={idx} className="flex items-center space-x-2">
+        <input
+            type="checkbox"
+            id={`option-${idx}`}
+            checked={selectedOptions.includes(option)}
+            onChange={() => handleCheckboxChange(option)}
+        />
+        <label htmlFor={`option-${idx}`}>{option}</label>
+    </div>
+))}
+
+<Button
+    onClick={async () => {
+        if (formData.selectedOptions.length === 0) {
+            setStatus("Please select at least one option.");
+            return;
+        }
+
+        setStatus("Sending...");
+
+        const updatedFormData = {
+            name: username,
+            email: email,
+            message: formData.selectedOptions.join(", "), // Send options as comma-separated string
+        };
+
+        try {
+            await sendWaitlist(updatedFormData);
+            setStatus("Success! We'll notify you.");
+            setFormData({ selectedOptions: [] });
+            setTimeout(() => {
                 setShowPopup(false);
                 setStatus(null);
-              }, 1500);
-            } catch {
-              setStatus("Failed to send.");
-            }
-          }}
-          className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg rounded-lg"
-        >
-          Join Waitlist
-        </Button>
+            }, 1500);
+        } catch {
+            setStatus("Failed to send.");
+        }
+    }}
+>
+    Join Waitlist
+</Button>
 
         <Button
           variant="outline"
