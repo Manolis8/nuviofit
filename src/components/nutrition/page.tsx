@@ -74,10 +74,10 @@ useEffect(() => {
   };
 
 const waitlistOptions = [
-    "I'm interested in AI tools",
-    "I'm looking for business growth",
-    "I want networking opportunities",
-    "I need help with productivity",
+    "Nutrition",
+    "Meditation",
+    "Goal Tracking",
+    "Smartwatch Sync",
 ];
 
 
@@ -156,7 +156,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
     <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
       <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
-      <p className="text-gray-600 mb-4">Enter your details below to get notified!</p>
+      <p className="text-gray-600 mb-4">Choose which features you look forward to launch!</p>
 
       <div className="flex gap-2">
 
