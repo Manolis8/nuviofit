@@ -9,12 +9,10 @@ import { supabase } from "@/components/lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/UserContext";
 import { Button } from "@/components/ui/button"
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-
 import { Input } from "@/components/ui/input"
 
 export default function OnboardingPage() {
@@ -38,7 +36,6 @@ const [isGenerating, setIsGenerating] = useState(false);
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 const {
-  updateProfile,
   setupFinished,
   setSetupFinished,
   userProfile,
@@ -48,6 +45,23 @@ const {
 
 
 if (!isLoaded) return <div>Loading...</div>;
+
+  const handleCompleteOnboarding = async () => {
+    if (!user) return;
+
+    const { error } = await supabase
+      .from('onboarding_responses')
+      .update({ setupFinished: true })
+      .eq('user_id', user.id);
+
+    if (error) {
+      console.error("Failed to update onboarding status:", error);
+      return;
+    }
+
+    setSetupFinished(true);
+    navigate("/dashboard");
+  };
 
 const generatePlan = async () => {
   const { user } = useUser(); // Clerk user
@@ -90,13 +104,13 @@ const generatePlan = async () => {
     // 🛠 Generate the fitness plan
     const result = await generateFitnessPlan(user_id);
 
-if (!result) {
-  alert("❌ Plan generation failed. Please try again.");
-  setIsGenerating(false);
-  return;
-}
+    if (!result) {
+      alert("❌ Plan generation failed. Please try again.");
+      setIsGenerating(false);
+      return;
+    }
 
-    // ✅ Update onboarding_responses
+    // ✅ Update onboarding_responses with the fitness plan
     const updatedRow = {
       ...onboardingData,
       fitness_plan: result,
@@ -110,11 +124,9 @@ if (!result) {
       console.error("Error saving fitness plan:", upsertError);
     }
 
+    // 🔑 Call your function to mark onboarding complete
+    await handleCompleteOnboarding();
 
-    // 🎉 Navigate to dashboard
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 3000);
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
