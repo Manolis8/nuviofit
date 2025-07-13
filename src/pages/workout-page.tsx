@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-
+import { useUserContext } from "@/context/UserContext";
 
 
 export default function WorkoutPage() {
@@ -162,7 +162,11 @@ const today = new Date().toLocaleDateString("en-US", { weekday: "short" }); // "
 const workout = fullPlan.find(w => w.isToday);
 
 
+const { setupFinished } = useUserContext();
+
 useEffect(() => {
+  if (!user?.id || !setupFinished) return; // ⛔ Don't fetch until onboarding done
+
   const fetchPlan = async () => {
     const { data, error } = await supabase
       .from("onboarding_responses")
@@ -177,19 +181,19 @@ useEffect(() => {
 
     const planText = data.fitness_plan?.replace(/\r\n/g, "\n");
 
-const countWorkoutDays = (plan: string) => {
-  const sections = plan
-    .split(/(?=Day\s*\d+:)/gi)
-    .filter(section => /^Day\s*\d+:/i.test(section.trim()));
+    const countWorkoutDays = (plan: string) => {
+      const sections = plan
+        .split(/(?=Day\s*\d+:)/gi)
+        .filter(section => /^Day\s*\d+:/i.test(section.trim()));
 
-  const workoutDays = sections.filter(section =>
-    !/rest day/i.test(section)
-  );
+      const workoutDays = sections.filter(section =>
+        !/rest day/i.test(section)
+      );
 
-  return workoutDays.length;
-};
+      return workoutDays.length;
+    };
 
-setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
+    setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
     if (!planText) {
       console.warn("⚠️ No plan text found");
@@ -198,11 +202,11 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
     const workoutCount = countWorkoutDays(planText);
     setWorkoutDays(workoutCount);
-    
   };
 
-  if (user?.id) fetchPlan();
-}, [user]);
+  fetchPlan();
+}, [user, setupFinished]);
+
 
 
 useEffect(() => {
