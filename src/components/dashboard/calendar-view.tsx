@@ -73,14 +73,6 @@ startOfWeek.setDate(baseDate.getDate() - currentWeekDay + 1); // Monday
 }, [user]);
 
 
-const [todaysWorkout, setTodaysWorkout] = useState({
-  title: "",
-  duration: "",
-  calories: "",
-  totalExercises: 0, // ✅ renamed to match your usage
-  exercises_list: [],
-});
-
 const endOfWeek = new Date(startOfWeek);
 endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday
 const formattedStart = startOfWeek.toLocaleDateString("en-US", {
@@ -212,7 +204,7 @@ useEffect(() => {
       <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
         Workout
       </span>
-      {todaysWorkout.title && (
+      {day.completed && (
         <span className="text-xs text-green-600 dark:text-green-400">✓</span>
       )}
     </div>
