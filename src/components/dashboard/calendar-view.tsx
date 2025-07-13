@@ -198,17 +198,11 @@ useEffect(() => {
     }`}
   >
     <div className="flex items-center gap-2 mb-1">
-      <span className="text-sm">
-        {day.emoji?.match(/[\p{Emoji}]/u)?.[0] || "🏋️"}
-      </span>
       <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
         Workout
       </span>
-      {day.completed && (
-        <span className="text-xs text-green-600 dark:text-green-400">✓</span>
-      )}
     </div>
-    <p className="text-xs text-gray-600 dark:text-gray-400">
+    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
       {day.title || "Workout"}
     </p>
   </div>
