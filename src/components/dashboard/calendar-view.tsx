@@ -197,11 +197,6 @@ useEffect(() => {
         : "bg-gray-50 border border-gray-200 dark:bg-gray-700 dark:border-gray-600"
     }`}
   >
-    <div className="flex items-center gap-2 mb-1">
-      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-        Workout
-      </span>
-    </div>
     <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
       {day.title || "Workout"}
     </p>
