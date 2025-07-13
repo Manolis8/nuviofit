@@ -167,8 +167,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       <p className="text-gray-600 mb-4">Enter your details below to get notified!</p>
 
       <div className="flex gap-2">
-<p>Name: {username || "Loading..."}</p>
-<p>Email: {email || "Loading..."}</p>
+
 
         {waitlistOptions.map((option, idx) => (
     <div key={idx} className="flex items-center space-x-2">
