@@ -64,20 +64,14 @@ async function sendWaitlist(data: any) {
     body: JSON.stringify(data),
   });
 
-  let responseData;
-  try {
-    responseData = await res.json();
-  } catch {
-    // Response is not JSON
-    responseData = { message: "Unknown error, invalid response format." };
-  }
-
   if (!res.ok) {
-    throw new Error(responseData.message || "Failed to send waitlist");
+    const errorData = await res.json();
+    throw new Error(errorData.message || "Failed to send waitlist");
   }
 
-  return responseData;
+  return await res.json();
 }
+
 
 
   const handleSubmit = async (e: React.FormEvent) => {
