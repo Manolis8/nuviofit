@@ -18,7 +18,7 @@ import { CalendarView } from "./pages/calendar";
 import MoodTracker from "./components/mindset/page";
 import PrivacyPolicy from "./pages/Privacypolicy";
 import TermsOfService from "./pages/Termsofservice";
-import Nutrition from "./pages/nutrition/page";
+import Nutrition from "./components/nutrition/page";
 import GoalTracker from "./components/goals/page";
 import Arena from "./pages/the-arena";
 import NotFound from "./pages/NotFound";
