@@ -465,10 +465,6 @@ useEffect(() => {
                     <User className="h-4 w-4 mr-2" />
                     Edit Profile Information
                   </Button>
-                  {/*<Button variant="outline" className="w-full justify-start">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Notification Preferences
-                  </Button>*/}
                   <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/privacy-policy")}>
                     <Lock className="h-4 w-4 mr-2" />
                     Privacy Policy
