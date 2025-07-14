@@ -1,21 +1,19 @@
-import { Brain, Heart, Moon, Lock, Bell } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react"
+import { Trophy, Target, Calendar, Users, Lock, Mail } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 import { ChefHat, Utensils, Apple } from "lucide-react"
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useUser } from "@clerk/clerk-react"; 
 import { supabase } from "@/components/lib/supabaseClient";
-import {  Sparkles } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Target, TrendingUp, Award} from "lucide-react"
-import { Navbar } from "@/components/navigation/navbar"
-import { Progress } from "@/components/ui/progress"
-import {Coffee} from "lucide-react"
-import { Activity, Crown } from "lucide-react"
-export function SmartwatchSync() {
-const [showPopup, setShowPopup] = useState(false);
+
+export function GoalChallengeTracker() {
+  const [showWaitlist, setShowWaitlist] = useState(false)
+
+  const [showPopup, setShowPopup] = useState(false);
     const { user } = useUser();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
@@ -107,85 +105,82 @@ const [showPopup, setShowPopup] = useState(false);
     };
 
   return (
-    <Card className="border-none shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          ⌚ Smartwatch Sync
-          <Lock className="h-4 w-4 text-gray-400" />
-        </CardTitle>
-        <CardDescription>Connect your wearable device to track steps, sleep, and more</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Locked Status */}
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 rounded-lg border border-orange-200 dark:border-orange-800">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-full">
-              <Lock className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white">Premium Feature</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">🔒 Locked - Coming with Pro Tier</p>
-            </div>
-          </div>
-          <Badge variant="secondary" className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
-            2026
-          </Badge>
+    <Card className="relative overflow-hidden">
+  {/* Coming Soon Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-cyan-500/10 to-emerald-500/10 backdrop-blur-[1px] z-10 flex items-center justify-center">
+    <div className="text-center p-6">
+      <Lock className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+      <h3 className="text-xl font-bold text-gray-700 mb-2">Coming Soon!</h3>
+      <p className="text-gray-600 mb-4">Goals & Challenges feature is in development</p>
+      <Button
+        onClick={() => setShowPopup(true)}
+        className="bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 text-white hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600"
+      >
+        <Mail className="h-4 w-4 mr-2" />
+        Join Beta Waitlist
+      </Button>
+    </div>
+  </div>
+
+  <CardHeader className="pb-3">
+    <CardTitle className="flex items-center gap-2 text-lg">
+      <Trophy className="h-5 w-5 text-yellow-500" />
+      Goals & Challenges
+    </CardTitle>
+  </CardHeader>
+  <CardContent className="space-y-4">
+    {/* Current Goals */}
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Target className="h-4 w-4 text-blue-500" />
+          <span className="text-sm font-medium">Weekly Workout Goal</span>
         </div>
+        <Badge variant="secondary">3/5</Badge>
+      </div>
+      <Progress value={60} className="h-2" />
+    </div>
 
-        {/* Preview Features */}
-        <div className="space-y-3 opacity-60">
-          <h4 className="font-medium text-gray-700 dark:text-gray-300">Coming Soon:</h4>
-
-          {/* Device Options */}
-          <div className="grid gap-2">
-            {[
-              { name: "Apple Watch", icon: "⌚", popular: true },
-              { name: "Fitbit", icon: "📱", popular: true },
-              { name: "Garmin", icon: "🏃", popular: false },
-              { name: "Samsung Galaxy Watch", icon: "⌚", popular: false },
-            ].map((device, index) => (
-              <div
-                key={index}
-                className="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-xl">{device.icon}</span>
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-500 dark:text-gray-400">{device.name}</p>
-                    <p className="text-xs text-gray-400">{device.popular ? "Popular choice" : "Advanced features"}</p>
-                  </div>
-                  <Lock className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Preview Stats */}
-          <div className="grid grid-cols-3 gap-3 mt-4">
-            <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <Heart className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-400">--</p>
-              <p className="text-xs text-gray-400">Heart Rate</p>
-            </div>
-            <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <Activity className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-400">--</p>
-              <p className="text-xs text-gray-400">Steps</p>
-            </div>
-            <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <Moon className="w-6 h-6 text-gray-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-gray-400">--</p>
-              <p className="text-xs text-gray-400">Sleep</p>
-            </div>
-          </div>
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4 text-green-500" />
+          <span className="text-sm font-medium">Daily Steps</span>
         </div>
+        <Badge variant="secondary">8.2k/10k</Badge>
+      </div>
+      <Progress value={82} className="h-2" />
+    </div>
 
-        {/* CTA */}
-        <Button onClick={() => setShowPopup(true)} className="w-full bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white">
-          <Crown className="h-4 w-4 mr-2" />
-          Coming with Pro Tier in 2026
+    {/* Active Challenges */}
+    <div className="pt-2 border-t">
+      <h4 className="text-sm font-semibold mb-2 flex items-center gap-2">
+        <Users className="h-4 w-4 text-purple-500" />
+        Active Challenges
+      </h4>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg dark:bg-gray-800">
+          <span className="text-sm">30-Day Consistency</span>
+          <Badge variant="outline">Day 12</Badge>
+        </div>
+        <div className="flex items-center justify-between p-2 bg-gray-50 rounded-lg dark:bg-gray-800">
+          <span className="text-sm">Summer Shred</span>
+          <Badge variant="outline">Week 2</Badge>
+        </div>
+      </div>
+    </div>
+  </CardContent>
+
+  {/* Waitlist Modal */}
+
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full">
+        <Button onClick={() => setShowPopup(true)} className="text-lg font-bold mb-4">Join Beta Waitlist
         </Button>
-                                            {showPopup && (
+        <p className="text-gray-600 mb-4">Be the first to try our Goals & Challenges feature!</p>
+      </div>
+    </div>
+    {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                   <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
                     <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
@@ -232,7 +227,8 @@ const [showPopup, setShowPopup] = useState(false);
                   </div>
                 </div>
               )}
-      </CardContent>
-    </Card>
+  
+</Card>
+
   )
 }
