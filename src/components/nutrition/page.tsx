@@ -56,7 +56,7 @@ export default function NutritionPage() {
   ];
 
   async function sendWaitlist(data: any) {
-    const res = await fetch("/api/waitlist-features", {
+    const res = await fetch("/api/waitlist", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
