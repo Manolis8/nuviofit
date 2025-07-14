@@ -1,13 +1,107 @@
-"use client"
-
 import { motion } from "framer-motion"
-import { Brain, Heart, Sparkles } from "lucide-react"
+import { Bell, ChefHat, Utensils, Apple } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import React, { useEffect, useState } from "react";
+import { useUser } from "@clerk/clerk-react"; 
+import { supabase } from "@/components/lib/supabaseClient";
+import { Brain, Heart, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 export default function MindsetPage() {
+
+  const [showPopup, setShowPopup] = useState(false);
+    const { user } = useUser();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [status, setStatus] = useState<string | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+  
+    useEffect(() => {
+      async function fetchUsername() {
+        if (!user) return;
+        setEmail(user.emailAddresses[0]?.emailAddress || "");
+  
+        const { data, error } = await supabase
+          .from("onboarding_responses")
+          .select("username")
+          .eq("user_id", user.id)
+          .single();
+  
+        if (error) {
+          console.error("Error fetching username:", error.message);
+        } else if (data?.username) {
+          setUsername(data.username);
+        }
+      }
+  
+      fetchUsername();
+    }, [user]);
+  
+    const waitlistOptions = [
+      "Nutrition",
+      "Meditation",
+      "Goal Tracking",
+      "Smartwatch Sync",
+    ];
+  
+    const handleCheckboxChange = (option: string) => {
+      setSelectedOptions((prev) =>
+        prev.includes(option)
+          ? prev.filter((o) => o !== option)
+          : [...prev, option]
+      );
+    };
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError("");
+      setStatus(null);
+  
+      if (!user?.id) {
+        setError("You must be logged in.");
+        return;
+      }
+  
+      if (selectedOptions.length === 0) {
+        setError("Please select at least one option.");
+        return;
+      }
+  
+      setLoading(true);
+      setStatus("Sending...");
+  
+      const { error } = await supabase.from("waitlist_features").insert([
+        {
+          user_id: user.id,
+          email,
+          username,
+          nutrition: selectedOptions.includes("Nutrition"),
+          meditation: selectedOptions.includes("Meditation"),
+          goal_tracking: selectedOptions.includes("Goal Tracking"),
+          smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
+        },
+      ]);
+  
+      if (error) {
+        console.error(error);
+        setError("Failed to join waitlist. Try again.");
+        setStatus("Failed to send.");
+      } else {
+        setStatus("Success! We'll notify you.");
+        setSelectedOptions([]);
+        setTimeout(() => {
+          setShowPopup(false);
+          setStatus(null);
+        }, 1500);
+      }
+  
+      setLoading(false);
+    };
+
   return (
     <>
       <Navbar />
@@ -96,12 +190,59 @@ export default function MindsetPage() {
                 <CardDescription>Be among the first to experience our meditation platform</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input type="email" placeholder="Enter your email" className="text-center" />
-                <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white">
-                  🧘 Join Mindset Beta
+                <Button onClick={() => setShowPopup(true)} className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white">
+                  🧘 Join Mindset Waitlist
                 </Button>
               </CardContent>
             </Card>
+
+            {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
+            <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
+            <p className="text-gray-600 mb-4">
+              Choose which features you look forward launching!
+            </p>
+
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <div className="flex flex-col gap-3">
+                {waitlistOptions.map((option, idx) => (
+                  <div key={idx} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id={`option-${idx}`}
+                      checked={selectedOptions.includes(option)}
+                      onChange={() => handleCheckboxChange(option)}
+                    />
+                    <label htmlFor={`option-${idx}`}>{option}</label>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-black text-white rounded p-2"
+                >
+                  {loading ? "Joining..." : "Join Waitlist"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowPopup(false)}
+                  className="border rounded p-2"
+                >
+                  Cancel
+                </button>
+              </div>
+
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+              {status && <p className="text-sm text-center mt-2">{status}</p>}
+            </form>
+          </div>
+        </div>
+      )}
           </motion.div>
 
           {/* Zen Quote */}
