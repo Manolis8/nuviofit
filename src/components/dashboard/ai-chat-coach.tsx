@@ -99,7 +99,7 @@ async function sendFeedback(formData: { name: string; email: string; message: st
   const { error: insertError } = await supabase.from("feedback").insert([
     {
       user_id: user.id,
-      email: formData.email,
+      email: user.emailAddresses[0]?.emailAddress,
       username,
       message: formData.message,
     },
