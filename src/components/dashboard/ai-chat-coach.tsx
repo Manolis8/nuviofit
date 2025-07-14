@@ -62,7 +62,7 @@ const { user } = useUser();
         user_id: user.id,
         email,
         username,
-        feedback: feedbackText, // assuming you add a 'feedback' TEXT column
+        message: feedbackText, // assuming you add a 'feedback' TEXT column
       },
     ]);
 
@@ -101,7 +101,7 @@ async function sendFeedback(formData: { name: string; email: string; message: st
       user_id: user.id,
       email: formData.email,
       username,
-      feedback: formData.message,
+      message: formData.message,
     },
   ]);
 
