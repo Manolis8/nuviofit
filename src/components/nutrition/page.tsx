@@ -58,12 +58,10 @@ export default function NutritionPage() {
 
   async function sendWaitlist(data: any) {
     const res = await fetch("/api/waitlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+  method: "POST",  // must be POST
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data),
+});
 
     if (!res.ok) {
       // Defensive check: sometimes response might be empty
