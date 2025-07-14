@@ -6,17 +6,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  const {
-    user_id,
-    email,
-    username,
-    smartwatch_sync,
-    goal_tracking,
-    nutrition,
-    meditation,
-  } = req.body;
-
   try {
+    const { user_id, email, username, smartwatch_sync, goal_tracking, nutrition, meditation } = req.body;
+
     const { data, error } = await supabaseAdmin.from("waitlist_features").upsert(
       {
         user_id,
@@ -30,10 +22,15 @@ export default async function handler(req, res) {
       { onConflict: "user_id" }
     );
 
-    if (error) throw error;
+    if (error) {
+      console.error("Supabase Error:", error);
+      throw error;
+    }
 
     res.status(200).json({ message: "Success", data });
   } catch (error: any) {
-    res.status(500).json({ message: error.message || "Failed to save data" });
+    console.error("API ERROR:", error);
+    res.status(500).json({ message: error.message || "Failed to save data", details: error });
   }
 }
+
