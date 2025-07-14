@@ -6,12 +6,10 @@ import { Button } from "@/components/ui/button"
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react"; 
 import { supabase } from "@/components/lib/supabaseClient";
-import { supabaseAdmin } from "@/components/lib/supabaseAdmin";
-import { Input } from "@/components/ui/input";
 
 
 export default function NutritionPage() {
- const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const { user } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -56,28 +54,6 @@ export default function NutritionPage() {
     );
   };
 
-  async function sendWaitlist(data: any) {
-    const res = await fetch("/api/waitlist", {
-  method: "POST",  // must be POST
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(data),
-});
-
-    if (!res.ok) {
-      // Defensive check: sometimes response might be empty
-      let errorMessage = "Failed to send waitlist";
-      try {
-        const errorData = await res.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch {
-        // ignore parsing error
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await res.json();
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -96,8 +72,8 @@ export default function NutritionPage() {
     setLoading(true);
     setStatus("Sending...");
 
-    try {
-      await sendWaitlist({
+    const { error } = await supabase.from("waitlist").insert([
+      {
         user_id: user.id,
         email,
         username,
@@ -105,21 +81,23 @@ export default function NutritionPage() {
         meditation: selectedOptions.includes("Meditation"),
         goal_tracking: selectedOptions.includes("Goal Tracking"),
         smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
-      });
+      },
+    ]);
 
+    if (error) {
+      console.error(error);
+      setError("Failed to join waitlist. Try again.");
+      setStatus("Failed to send.");
+    } else {
       setStatus("Success! We'll notify you.");
       setSelectedOptions([]);
       setTimeout(() => {
         setShowPopup(false);
         setStatus(null);
       }, 1500);
-    } catch (err) {
-      console.error(err);
-      setError((err as Error).message || "Failed to join waitlist. Try again.");
-      setStatus("Failed to send.");
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (
