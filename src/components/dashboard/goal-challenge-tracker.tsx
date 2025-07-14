@@ -4,9 +4,105 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { motion } from "framer-motion"
+import { ChefHat, Utensils, Apple } from "lucide-react"
+import React, { useEffect } from "react";
+import { useUser } from "@clerk/clerk-react"; 
+import { supabase } from "@/components/lib/supabaseClient";
 
 export function GoalChallengeTracker() {
   const [showWaitlist, setShowWaitlist] = useState(false)
+
+  const [showPopup, setShowPopup] = useState(false);
+    const { user } = useUser();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [status, setStatus] = useState<string | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+  
+    useEffect(() => {
+      async function fetchUsername() {
+        if (!user) return;
+        setEmail(user.emailAddresses[0]?.emailAddress || "");
+  
+        const { data, error } = await supabase
+          .from("onboarding_responses")
+          .select("username")
+          .eq("user_id", user.id)
+          .single();
+  
+        if (error) {
+          console.error("Error fetching username:", error.message);
+        } else if (data?.username) {
+          setUsername(data.username);
+        }
+      }
+  
+      fetchUsername();
+    }, [user]);
+  
+    const waitlistOptions = [
+      "Nutrition",
+      "Meditation",
+      "Goal Tracking",
+      "Smartwatch Sync",
+    ];
+  
+    const handleCheckboxChange = (option: string) => {
+      setSelectedOptions((prev) =>
+        prev.includes(option)
+          ? prev.filter((o) => o !== option)
+          : [...prev, option]
+      );
+    };
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError("");
+      setStatus(null);
+  
+      if (!user?.id) {
+        setError("You must be logged in.");
+        return;
+      }
+  
+      if (selectedOptions.length === 0) {
+        setError("Please select at least one option.");
+        return;
+      }
+  
+      setLoading(true);
+      setStatus("Sending...");
+  
+      const { error } = await supabase.from("waitlist_features").insert([
+        {
+          user_id: user.id,
+          email,
+          username,
+          nutrition: selectedOptions.includes("Nutrition"),
+          meditation: selectedOptions.includes("Meditation"),
+          goal_tracking: selectedOptions.includes("Goal Tracking"),
+          smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
+        },
+      ]);
+  
+      if (error) {
+        console.error(error);
+        setError("Failed to join waitlist. Try again.");
+        setStatus("Failed to send.");
+      } else {
+        setStatus("Success! We'll notify you.");
+        setSelectedOptions([]);
+        setTimeout(() => {
+          setShowPopup(false);
+          setStatus(null);
+        }, 1500);
+      }
+  
+      setLoading(false);
+    };
 
   return (
     <Card className="relative overflow-hidden">
@@ -17,7 +113,7 @@ export function GoalChallengeTracker() {
       <h3 className="text-xl font-bold text-gray-700 mb-2">Coming Soon!</h3>
       <p className="text-gray-600 mb-4">Goals & Challenges feature is in development</p>
       <Button
-        onClick={() => setShowWaitlist(true)}
+        onClick={() => setShowPopup(true)}
         className="bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 text-white hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600"
       >
         <Mail className="h-4 w-4 mr-2" />
@@ -76,25 +172,62 @@ export function GoalChallengeTracker() {
   </CardContent>
 
   {/* Waitlist Modal */}
-  {showWaitlist && (
+
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
       <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full">
-        <h3 className="text-lg font-bold mb-4">Join Beta Waitlist</h3>
+        <Button onClick={() => setShowPopup(true)} className="text-lg font-bold mb-4">Join Beta Waitlist
+        </Button>
         <p className="text-gray-600 mb-4">Be the first to try our Goals & Challenges feature!</p>
-        <div className="space-y-3">
-          <input type="email" placeholder="Enter your email" className="w-full p-3 border rounded-lg" />
-          <div className="flex gap-2">
-            <Button className="flex-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500">
-              Join Waitlist
-            </Button>
-            <Button variant="outline" onClick={() => setShowWaitlist(false)}>
-              Cancel
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
-  )}
+    {showPopup && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
+                    <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
+                    <p className="text-gray-600 mb-4">
+                      Choose which features you look forward launching!
+                    </p>
+        
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                      <div className="flex flex-col gap-3">
+                        {waitlistOptions.map((option, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              id={`option-${idx}`}
+                              checked={selectedOptions.includes(option)}
+                              onChange={() => handleCheckboxChange(option)}
+                            />
+                            <label htmlFor={`option-${idx}`}>{option}</label>
+                          </div>
+                        ))}
+                      </div>
+        
+                      <div className="flex flex-col gap-2">
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="bg-black text-white rounded p-2"
+                        >
+                          {loading ? "Joining..." : "Join Waitlist"}
+                        </button>
+        
+                        <button
+                          type="button"
+                          onClick={() => setShowPopup(false)}
+                          className="border rounded p-2"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+        
+                      {error && <p className="text-red-500 text-sm">{error}</p>}
+                      {status && <p className="text-sm text-center mt-2">{status}</p>}
+                    </form>
+                  </div>
+                </div>
+              )}
+  
 </Card>
 
   )
