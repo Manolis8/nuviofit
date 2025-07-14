@@ -1,5 +1,4 @@
-// pages/api/waitlist.ts
-import { supabaseAdmin } from "@/components/lib/supabaseAdmin";  // This uses the service role key.
+import { supabaseAdmin } from "../src/components/lib/supabaseAdmin";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
