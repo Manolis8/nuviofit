@@ -1,4 +1,5 @@
-import { supabaseAdmin } from "../src/components/lib/supabaseAdmin";
+import { supabaseAdmin } from "@/components/lib/supabaseAdmin";
+
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
