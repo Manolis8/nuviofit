@@ -1,36 +1,40 @@
 import { supabaseAdmin } from "../../components/lib/supabaseAdmin";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method Not Allowed" });
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  try {
-    const { user_id, email, username, smartwatch_sync, goal_tracking, nutrition, meditation } = req.body;
+  const {
+    user_id,
+    email,
+    username,
+    nutrition,
+    meditation,
+    goal_tracking,
+    smartwatch_sync,
+  } = req.body;
 
-    const { data, error } = await supabaseAdmin.from("waitlist_features").upsert(
-      {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from('waitlist_features')
+      .upsert({
         user_id,
         email,
         username,
-        smartwatch_sync,
-        goal_tracking,
         nutrition,
         meditation,
-      },
-      { onConflict: "user_id" }
-    );
+        goal_tracking,
+        smartwatch_sync,
+      }, { onConflict: 'user_id' });
 
-    if (error) {
-      console.error("Supabase Error:", error);
-      throw error;
-    }
+    if (error) throw error;
 
-    res.status(200).json({ message: "Success", data });
+    res.status(200).json({ message: 'Success', data });
   } catch (error: any) {
-    console.error("API ERROR:", error);
-    res.status(500).json({ message: error.message || "Failed to save data", details: error });
+    res.status(500).json({ message: error.message || 'Failed to save data' });
   }
 }
+
 
