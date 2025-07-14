@@ -11,8 +11,8 @@ import { Input } from "@/components/ui/input";
 
 
 export default function NutritionPage() {
-  const [showPopup, setShowPopup] = useState(false);
-  const { user } = useUser(); // Clerk User
+ const [showPopup, setShowPopup] = useState(false);
+  const { user } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -41,6 +41,13 @@ export default function NutritionPage() {
     fetchUsername();
   }, [user]);
 
+  const waitlistOptions = [
+    "Nutrition",
+    "Meditation",
+    "Goal Tracking",
+    "Smartwatch Sync",
+  ];
+
   const handleCheckboxChange = (option: string) => {
     setSelectedOptions((prev) =>
       prev.includes(option)
@@ -49,31 +56,29 @@ export default function NutritionPage() {
     );
   };
 
-  const waitlistOptions = [
-    "Nutrition",
-    "Meditation",
-    "Goal Tracking",
-    "Smartwatch Sync",
-  ];
+  async function sendWaitlist(data: any) {
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-async function sendWaitlist(data: any) {
-  const res = await fetch("/api/waitlist", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
+    if (!res.ok) {
+      // Defensive check: sometimes response might be empty
+      let errorMessage = "Failed to send waitlist";
+      try {
+        const errorData = await res.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // ignore parsing error
+      }
+      throw new Error(errorMessage);
+    }
 
-  if (!res.ok) {
-    const errorData = await res.json();
-    throw new Error(errorData.message || "Failed to send waitlist");
+    return await res.json();
   }
-
-  return await res.json();
-}
-
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,7 +117,7 @@ async function sendWaitlist(data: any) {
       }, 1500);
     } catch (err) {
       console.error(err);
-      setError("Failed to join waitlist. Try again.");
+      setError((err as Error).message || "Failed to join waitlist. Try again.");
       setStatus("Failed to send.");
     } finally {
       setLoading(false);
