@@ -8,19 +8,118 @@ import { useUser } from "@clerk/clerk-react"
 import { sendFeedback } from "../lib/sendFeedback";
 import { addDays } from "date-fns";
 import Link from "next/link";
+import { supabase } from "@/components/lib/supabaseClient";
 
 const feedback_url = process.env.FEEDBACK_URL;
 export function AIChatCoach() {
+
+const { user } = useUser();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!user) return;
+
+      setEmail(user.emailAddresses[0]?.emailAddress || "");
+
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("username")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching username:", error.message);
+      } else if (data?.username) {
+        setUsername(data.username);
+      }
+    }
+
+    fetchUserData();
+  }, [user]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setStatus(null);
+
+    if (!user?.id) {
+      setError("You must be logged in.");
+      return;
+    }
+
+    if (!feedbackText.trim()) {
+      setError("Feedback cannot be empty.");
+      return;
+    }
+
+    const { error: insertError } = await supabase.from("feedback").insert([
+      {
+        user_id: user.id,
+        email,
+        username,
+        feedback: feedbackText, // assuming you add a 'feedback' TEXT column
+      },
+    ]);
+
+    if (insertError) {
+      console.error(insertError);
+      setError("Failed to submit feedback.");
+      setStatus("Error");
+    } else {
+      setStatus("Feedback submitted successfully!");
+      setFeedbackText("");
+    }
+  };
+
+
+// This function sends the feedback to Supabase.
+async function sendFeedback(formData: { name: string; email: string; message: string }) {
+  if (!user?.id) throw new Error("User not logged in.");
+
+  // Fetch username from onboarding_responses
+  const { data, error: fetchError } = await supabase
+    .from("onboarding_responses")
+    .select("username")
+    .eq("user_id", user.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch username:", fetchError.message);
+    throw fetchError;
+  }
+
+  const username = data?.username || formData.name || "Unknown";
+
+  // Insert feedback to Supabase
+  const { error: insertError } = await supabase.from("feedback").insert([
+    {
+      user_id: user.id,
+      email: formData.email,
+      username,
+      feedback: formData.message,
+    },
+  ]);
+
+  if (insertError) {
+    console.error("Failed to send feedback:", insertError.message);
+    throw insertError;
+  }
+}
+
+
   const [isOpen, setIsOpen] = useState(false)
   const [showFeedback, setShowFeedback] = useState(false)
-  const [feedbackText, setFeedbackText] = useState("");
 const [formData, setFormData] = useState({
   name: "",
   email: "",
   message: ""
 });
-const [status, setStatus] = useState<string | null>(null);
-  const { user, isLoaded } = useUser();
+  const {isLoaded } = useUser();
   const [messagesLeft, setMessagesLeft] = useState<number | null>(null);
   const { lastResetAt } = useAutoRenewMessages(user.id);
 
@@ -120,21 +219,6 @@ const [status, setStatus] = useState<string | null>(null);
       <p className="text-gray-600 mb-4">Help us improve your experience!</p>
 
       <div className="space-y-3">
-        <input
-          type="text"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          placeholder="Your Name"
-          className="w-full p-3 border rounded-lg"
-        />
-
-        <input
-          type="email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          placeholder="Your Email"
-          className="w-full p-3 border rounded-lg"
-        />
 
         <textarea
           value={formData.message}
@@ -144,25 +228,27 @@ const [status, setStatus] = useState<string | null>(null);
         />
 
         <div className="flex gap-2">
-          <Button
-onClick={async () => {
-  setStatus("Sending...");
-  try {
-    await sendFeedback(formData);
-    setStatus("Feedback sent!");
-    setFormData({ name: "", email: "", message: "" });
-    setTimeout(() => {
-      setShowFeedback(false);
-      setStatus(null);
-    }, 1500);
-  } catch {
-    setStatus("Failed to send.");
-  }
-}}
-            className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            Send Feedback
-          </Button>
+<Button
+  onClick={async () => {
+    setStatus("Sending...");
+    try {
+      await sendFeedback(formData);
+      setStatus("Feedback sent!");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => {
+        setShowFeedback(false);
+        setStatus(null);
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      setStatus("Failed to send.");
+    }
+  }}
+  className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200"
+>
+  Send Feedback
+</Button>
+
 
           <Button variant="outline" onClick={() => setShowFeedback(false)}>
             Cancel
