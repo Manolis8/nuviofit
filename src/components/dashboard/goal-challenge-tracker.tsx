@@ -21,7 +21,7 @@ export function GoalChallengeTracker() {
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-  
+   
     useEffect(() => {
       async function fetchUsername() {
         if (!user) return;
