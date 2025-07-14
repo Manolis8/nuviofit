@@ -497,7 +497,7 @@ const Welcome = () => {
               Nuviofit isn't just an app—it's a growing community of people committed to transforming their health and supporting each other along the way.
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="bg-wellness-peach/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -716,7 +716,7 @@ const Welcome = () => {
               <h4 className="font-bold mb-4">Features</h4>
               <ul className="space-y-2">
                 <li><Link to="/mindset" className="text-gray-400 hover:text-white transition-colors">Mood Tracking</Link></li>
-                <li><Link to="/workout_page" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
+                <li><Link to="/workout-page" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
                 <li><Link to="/nutrition" className="text-gray-400 hover:text-white transition-colors">Nutrition Guide</Link></li>
                 <li><Link to="/goals" className="text-gray-400 hover:text-white transition-colors">Goal Setting</Link></li>
               </ul>
