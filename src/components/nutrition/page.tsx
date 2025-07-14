@@ -72,7 +72,7 @@ export default function NutritionPage() {
     setLoading(true);
     setStatus("Sending...");
 
-    const { error } = await supabase.from("waitlist").insert([
+    const { error } = await supabase.from("waitlist_features").insert([
       {
         user_id: user.id,
         email,
