@@ -170,13 +170,7 @@ export function GoalChallengeTracker() {
       </div>
     </div>
 
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full">
-        <Button onClick={() => setShowPopup(true)} className="text-lg font-bold mb-4">Join Beta Waitlist
-        </Button>
-        <p className="text-gray-600 mb-4">Be the first to try our Goals & Challenges feature!</p>
-      </div>
-    </div>
+
     {showPopup && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
                   <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
