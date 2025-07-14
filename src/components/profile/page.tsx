@@ -1,17 +1,18 @@
 import { User, Flame, Trophy, Calendar, Settings, Crown, Lock, Bell } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
-import { supabase } from "@/components/lib/supabaseClient";
-import { useState } from "react"
-import { useUser } from "@clerk/clerk-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
-import { ChefHat, Utensils, Apple } from "lucide-react"
-import React, { useEffect } from "react";
+import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/clerk-react"
+import { supabase } from "@/components/lib/supabaseClient";
+
+
+
 
 const achievements = [
   { emoji: "🔥", title: "First Workout", unlocked: false },
@@ -25,13 +26,120 @@ const achievements = [
 export default function ProfilePage() {
 
 
+const { user } = useUser();
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!user) return;
+
+      setEmail(user.emailAddresses[0]?.emailAddress || "");
+
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("username")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching username:", error.message);
+      } else if (data?.username) {
+        setUsername(data.username);
+      }
+    }
+
+    fetchUserData();
+  }, [user]);
+
+  const handleSubmit2 = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setStatus(null);
+
+    if (!user?.id) {
+      setError("You must be logged in.");
+      return;
+    }
+
+    if (!feedbackText.trim()) {
+      setError("Feedback cannot be empty.");
+      return;
+    }
+
+    const { error: insertError } = await supabase.from("feedback").insert([
+      {
+        user_id: user.id,
+        email,
+        username,
+        message: feedbackText, // assuming you add a 'feedback' TEXT column
+      },
+    ]);
+
+    if (insertError) {
+      console.error(insertError);
+      setError("Failed to submit feedback.");
+      setStatus("Error");
+    } else {
+      setStatus("Feedback submitted successfully!");
+      setFeedbackText("");
+    }
+  };
+
+
+// This function sends the feedback to Supabase.
+async function sendFeedback(formData: { name: string; email: string; message: string }) {
+  if (!user?.id) throw new Error("User not logged in.");
+
+  // Fetch username from onboarding_responses
+  const { data, error: fetchError } = await supabase
+    .from("onboarding_responses")
+    .select("username")
+    .eq("user_id", user.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch username:", fetchError.message);
+    throw fetchError;
+  }
+
+  const username = data?.username || formData.name || "Unknown";
+
+  // Insert feedback to Supabase
+  const { error: insertError } = await supabase.from("feedback").insert([
+    {
+      user_id: user.id,
+      email: user.emailAddresses[0]?.emailAddress,
+      username,
+      message: formData.message,
+    },
+  ]);
+
+  if (insertError) {
+    console.error("Failed to send feedback:", insertError.message);
+    throw insertError;
+  }
+}
+
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [showFeedback, setShowFeedback] = useState(false)
+const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  message: ""
+});
+
+
+
+
+
+
   const [showPopup, setShowPopup] = useState(false);
-    const { user } = useUser();
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [status, setStatus] = useState<string | null>(null);
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
-    const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
   
     useEffect(() => {
@@ -438,6 +546,58 @@ useEffect(() => {
                 </div>
               )}
 
+
+              {showFeedback && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full">
+      <h3 className="text-lg font-bold mb-4">Send Feedback</h3>
+      <p className="text-gray-600 mb-4">Help us improve your experience!</p>
+
+      <div className="space-y-3">
+
+        <textarea
+          value={formData.message}
+          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+          placeholder="Your Message"
+          className="w-full p-3 border rounded-lg h-24 resize-none"
+        />
+
+        <div className="flex gap-2">
+<Button
+  onClick={async () => {
+    setStatus("Sending...");
+    try {
+      await sendFeedback(formData);
+      setStatus("Feedback sent!");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => {
+        setShowFeedback(false);
+        setStatus(null);
+      }, 1500);
+    } catch (error) {
+      console.error(error);
+      setStatus("Failed to send.");
+    }
+  }}
+  className="flex-1 bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600 shadow-lg hover:shadow-xl transition-all duration-200"
+>
+  Send Feedback
+</Button>
+
+
+          <Button variant="outline" onClick={() => setShowFeedback(false)}>
+            Cancel
+          </Button>
+        </div>
+
+        {status && (
+          <p className="text-sm text-gray-500 mt-2 text-center">{status}</p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
               </CardContent>
             </Card>
           </motion.div>
@@ -465,6 +625,10 @@ useEffect(() => {
                     <User className="h-4 w-4 mr-2" />
                     Edit Profile Information
                   </Button>
+                  {/*<Button variant="outline" className="w-full justify-start">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Notification Preferences
+                  </Button>*/}
                   <Button variant="outline" className="w-full justify-start" onClick={() => navigate("/privacy-policy")}>
                     <Lock className="h-4 w-4 mr-2" />
                     Privacy Policy
@@ -474,6 +638,7 @@ useEffect(() => {
                     Terms Of Service
                   </Button>
                   <Button
+                  onClick={() => setShowFeedback(true)}
                     variant="outline"
                     className="w-full justify-start bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100"
                   >
