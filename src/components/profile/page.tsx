@@ -1,16 +1,17 @@
-import { motion } from "framer-motion"
 import { User, Flame, Trophy, Calendar, Settings, Crown, Lock, Bell } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "@/components/lib/supabaseClient";
-import { useEffect} from "react"
 import { useState } from "react"
 import { useUser } from "@clerk/clerk-react"
+import { Badge } from "@/components/ui/badge"
+import { Progress } from "@/components/ui/progress"
+import { motion } from "framer-motion"
+import { ChefHat, Utensils, Apple } from "lucide-react"
+import React, { useEffect } from "react";
 
 const achievements = [
   { emoji: "🔥", title: "First Workout", unlocked: false },
@@ -22,16 +23,108 @@ const achievements = [
 ]
 
 export default function ProfilePage() {
+
+
+  const [showPopup, setShowPopup] = useState(false);
+    const { user } = useUser();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [status, setStatus] = useState<string | null>(null);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+  
+    useEffect(() => {
+      async function fetchUsername() {
+        if (!user) return;
+        setEmail(user.emailAddresses[0]?.emailAddress || "");
+  
+        const { data, error } = await supabase
+          .from("onboarding_responses")
+          .select("username")
+          .eq("user_id", user.id)
+          .single();
+  
+        if (error) {
+          console.error("Error fetching username:", error.message);
+        } else if (data?.username) {
+          setUsername(data.username);
+        }
+      }
+  
+      fetchUsername();
+    }, [user]);
+  
+    const waitlistOptions = [
+      "Nutrition",
+      "Meditation",
+      "Goal Tracking",
+      "Smartwatch Sync",
+    ];
+  
+    const handleCheckboxChange = (option: string) => {
+      setSelectedOptions((prev) =>
+        prev.includes(option)
+          ? prev.filter((o) => o !== option)
+          : [...prev, option]
+      );
+    };
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setError("");
+      setStatus(null);
+  
+      if (!user?.id) {
+        setError("You must be logged in.");
+        return;
+      }
+  
+      if (selectedOptions.length === 0) {
+        setError("Please select at least one option.");
+        return;
+      }
+  
+      setLoading(true);
+      setStatus("Sending...");
+  
+      const { error } = await supabase.from("waitlist_features").insert([
+        {
+          user_id: user.id,
+          email,
+          username,
+          nutrition: selectedOptions.includes("Nutrition"),
+          meditation: selectedOptions.includes("Meditation"),
+          goal_tracking: selectedOptions.includes("Goal Tracking"),
+          smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
+        },
+      ]);
+  
+      if (error) {
+        console.error(error);
+        setError("Failed to join waitlist. Try again.");
+        setStatus("Failed to send.");
+      } else {
+        setStatus("Success! We'll notify you.");
+        setSelectedOptions([]);
+        setTimeout(() => {
+          setShowPopup(false);
+          setStatus(null);
+        }, 1500);
+      }
+  
+      setLoading(false);
+    };
+
+
   const navigate = useNavigate()
-    const { user, isLoaded } = useUser()
     const [displayName, setDisplayName] = useState(
    user?.username ||  "User"
 );
   const isValidDisplayName = displayName.length >= 4 && displayName.length <= 30;
 
-  const email = user?.primaryEmailAddress?.emailAddress || "Unknown";
+  const email2 = user?.primaryEmailAddress?.emailAddress || "Unknown";
 
-const [username, setUsername] = useState("");
 
 useEffect(() => {
   const fetchUsername = async () => {
@@ -88,7 +181,7 @@ useEffect(() => {
       firstName: user.firstName || "",
       lastName: user.lastName || "",
       username: user.username || "",
-      email: user.primaryEmailAddress?.emailAddress || "",
+      email2: user.primaryEmailAddress?.emailAddress || "",
     }));
   }
 }, [user]);
@@ -97,7 +190,7 @@ useEffect(() => {
       firstName: "",
       lastName: "",
       username: "",
-      email: "",
+      email2: "",
       phone: "",
       joinDate: "",
       lastLogin: "",
@@ -151,7 +244,7 @@ useEffect(() => {
 
                   <div className="text-center md:text-left flex-1">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{username}</h1>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">{userData.email}</p>
+                    <p className="text-gray-600 dark:text-gray-300 mb-4">{userData.email2}</p>
                     <div className="flex flex-wrap gap-4 justify-center md:justify-start">
                       <Badge
                         variant="secondary"
@@ -294,9 +387,56 @@ useEffect(() => {
   🔒 Coming in 2026
 </Button>
 
-<Button className="w-full mt-4 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white">
+<Button onClick={() => setShowPopup(true)} className="w-full mt-4 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 hover:from-blue-600 hover:via-cyan-600 hover:to-emerald-600 text-white">
   🔔 Join Waitlist
 </Button>
+    {showPopup && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full shadow-lg">
+                    <h3 className="text-lg font-bold mb-4">Join the Waitlist</h3>
+                    <p className="text-gray-600 mb-4">
+                      Choose which features you look forward launching!
+                    </p>
+        
+                    <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                      <div className="flex flex-col gap-3">
+                        {waitlistOptions.map((option, idx) => (
+                          <div key={idx} className="flex items-center gap-2">
+                            <input
+                              type="checkbox"
+                              id={`option-${idx}`}
+                              checked={selectedOptions.includes(option)}
+                              onChange={() => handleCheckboxChange(option)}
+                            />
+                            <label htmlFor={`option-${idx}`}>{option}</label>
+                          </div>
+                        ))}
+                      </div>
+        
+                      <div className="flex flex-col gap-2">
+                        <button
+                          type="submit"
+                          disabled={loading}
+                          className="bg-black text-white rounded p-2"
+                        >
+                          {loading ? "Joining..." : "Join Waitlist"}
+                        </button>
+        
+                        <button
+                          type="button"
+                          onClick={() => setShowPopup(false)}
+                          className="border rounded p-2"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+        
+                      {error && <p className="text-red-500 text-sm">{error}</p>}
+                      {status && <p className="text-sm text-center mt-2">{status}</p>}
+                    </form>
+                  </div>
+                </div>
+              )}
 
               </CardContent>
             </Card>
