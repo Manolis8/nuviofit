@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react"; 
 import { supabase } from "@/components/lib/supabaseClient";
+import { supabaseAdmin } from "@/components/lib/supabaseAdmin";
 import { Input } from "@/components/ui/input";
 
 
