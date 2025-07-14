@@ -55,22 +55,30 @@ export default function NutritionPage() {
     "Smartwatch Sync",
   ];
 
-  async function sendWaitlist(data: any) {
-    const res = await fetch("/api/waitlist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+async function sendWaitlist(data: any) {
+  const res = await fetch("/api/waitlist", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Failed to send waitlist");
-    }
-
-    return await res.json();
+  let responseData;
+  try {
+    responseData = await res.json();
+  } catch {
+    // Response is not JSON
+    responseData = { message: "Unknown error, invalid response format." };
   }
+
+  if (!res.ok) {
+    throw new Error(responseData.message || "Failed to send waitlist");
+  }
+
+  return responseData;
+}
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
