@@ -129,7 +129,7 @@ const Welcome = () => {
   const testimonials = [
     {
       name: "Sarah M.",
-      text: "This app helped me understand the connection between my mood and physical health. I'm sleeping better and feeling more energized!",
+      text: "I’ve lost 15 pounds since starting this program, and for the first time in years, I actually feel confident when I look in the mirror. It’s not just about the weight — I feel energized and more in control of my health.",
       avatar: "👩"
     },
     {
@@ -138,9 +138,9 @@ const Welcome = () => {
       avatar: "👨"
     },
     {
-      name: "Jessica K.",
-      text: "The nutrition coach changed everything. I finally found healthy meals I actually enjoy eating!",
-      avatar: "👩‍🦰"
+      name: "Jorge",
+      text: "My kids keep telling me I look like a superhero now! I’ve gotten leaner, more toned, and I finally have the energy to keep up with them. This plan changed how my family sees me.",
+      avatar: "👨"
     }
   ];
   
@@ -426,34 +426,6 @@ const Welcome = () => {
         </div>
       </section>
       
-      {/* Results Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-wellness-blue/10 rounded-full px-4 py-2 mb-4">
-              <Award className="text-wellness-blue mr-2 h-5 w-5" />
-              <span className="text-sm font-medium">Real Results</span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-4">Experience Transformative Outcomes</h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              What our users achieve with consistent use of Nuviofit
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-            {resultsData.map((result, index) => (
-              <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px] bg-gradient-to-br from-white to-gray-50">
-                <CardContent className="flex flex-col items-center text-center p-6">
-                  <div className="text-5xl mb-4">{result.emoji}</div>
-                  <h3 className="text-xl font-bold mb-2">{result.title}</h3>
-                  <p className="text-gray-600">{result.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-      
       {/* What Makes Us Different - Moved above How It Works */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -526,13 +498,6 @@ const Welcome = () => {
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="bg-wellness-blue/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Users className="text-wellness-blue h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">10,000+</h3>
-                <p className="text-gray-600">Active community members sharing their wellness journeys</p>
-              </div>
               
               <div className="bg-white rounded-xl shadow-lg p-6">
                 <div className="bg-wellness-peach/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
@@ -750,8 +715,8 @@ const Welcome = () => {
             <div>
               <h4 className="font-bold mb-4">Features</h4>
               <ul className="space-y-2">
-                <li><Link to="/mood" className="text-gray-400 hover:text-white transition-colors">Mood Tracking</Link></li>
-                <li><Link to="/fitness" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
+                <li><Link to="/mindset" className="text-gray-400 hover:text-white transition-colors">Mood Tracking</Link></li>
+                <li><Link to="/workout_page" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
                 <li><Link to="/nutrition" className="text-gray-400 hover:text-white transition-colors">Nutrition Guide</Link></li>
                 <li><Link to="/goals" className="text-gray-400 hover:text-white transition-colors">Goal Setting</Link></li>
               </ul>
@@ -760,9 +725,8 @@ const Welcome = () => {
               <h4 className="font-bold mb-4">Company</h4>
               <ul className="space-y-2">
                 <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+                <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
               </ul>
             </div>
             <div>
