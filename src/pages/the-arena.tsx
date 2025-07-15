@@ -531,11 +531,14 @@ const caloriesIndex = lines.findIndex(line =>
 let parsedWorkoutFocus = "";
 if (workoutfocusIndex !== -1) {
   const focusLine = lines[workoutfocusIndex + 1]?.trim() || "";
-  parsedWorkoutFocus = focusLine;
+  parsedWorkoutFocus = focusLine
+    ? focusLine.split('<>').map(f => f.trim())
+    : [];
   console.log("💪 Workout Focus:", parsedWorkoutFocus);
 } else {
   console.warn("⚠️ Workout focus not found");
 }
+
 
 let parsedTotalCalories = 0;
 if (caloriesIndex !== -1) {
