@@ -363,7 +363,7 @@ if (warmupIndex !== -1) {
     .map(line => line.trim())
     .filter(Boolean)
     .map(line => {
-      const parts = line.split(/\s*-\s*/);
+      const parts = line.split(/\s*<>\s*/);
       return {
         emoji: parts[0] || "",
         name: parts[1] || "",
