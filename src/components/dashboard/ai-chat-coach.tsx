@@ -20,8 +20,6 @@ export function AIChatCoach() {
   const [isOpen, setIsOpen] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
-  const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
-
 
   // --------------------- Fetch User Data ---------------------
   useEffect(() => {
@@ -50,47 +48,46 @@ export function AIChatCoach() {
   useEffect(() => {
     if (!user || !isLoaded) return;
 
-const checkAndResetMessages = async () => {
-  const { data, error } = await supabase
-    .from("onboarding_responses")
-    .select("messages_left, last_reset_at")
-    .eq("user_id", user.id)
-    .single();
+    const checkAndResetMessages = async () => {
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("messages_left, last_reset_at")
+        .eq("user_id", user.id)
+        .single();
 
-  if (error || !data) {
-    console.error("Error fetching user reset info:", error?.message);
-    return;
-  }
+      if (error || !data) {
+        console.error("Error fetching user reset info:", error?.message);
+        return;
+      }
 
-  const today = new Date();
-  const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
+      const today = new Date();
+      const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
 
-if (lastResetDate) {
-  const nextResetDateCalc = new Date(lastResetDate);
-  nextResetDateCalc.setDate(nextResetDateCalc.getDate() + 30);
-  setNextResetDate(nextResetDateCalc);
-}
+      if (!lastResetDate) return;
 
-  if (today >= nextResetDate) {
-    const { error: updateError } = await supabase
-      .from("onboarding_responses")
-      .update({
-        messages_left: 40,
-        last_reset_at: today.toISOString().slice(0, 10),
-      })
-      .eq("user_id", user.id);
+      const nextResetDate = new Date(lastResetDate);
+      nextResetDate.setMonth(nextResetDate.getMonth() + 1);
+      nextResetDate.setDate(8); // reset always on 8th
 
-    if (updateError) {
-      console.error("Failed to reset messages:", updateError.message);
-    } else {
-      console.log("✅ Messages successfully reset after 30 days.");
-      setMessagesLeft(40);
-    }
-  } else {
-    setMessagesLeft(data.messages_left);
-  }
-};
+      if (today.toDateString() === nextResetDate.toDateString()) {
+        const { error: updateError } = await supabase
+          .from("onboarding_responses")
+          .update({
+            messages_left: 40,
+            last_reset_at: today.toISOString(),
+          })
+          .eq("user_id", user.id);
 
+        if (updateError) {
+          console.error("Failed to reset messages:", updateError.message);
+        } else {
+          console.log("✅ Messages successfully reset for this month.");
+          setMessagesLeft(40);
+        }
+      } else {
+        setMessagesLeft(data.messages_left);
+      }
+    };
 
     checkAndResetMessages();
   }, [user, isLoaded]);
@@ -224,10 +221,16 @@ if (lastResetDate) {
     👉 view messages
   </span>
 </Link>
-{user && nextResetDate && (
-  <p>Renewal date: {nextResetDate.toLocaleDateString()}</p>
+   {user && (
+  <p>
+    Renewal date:{" "}
+    {new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      8
+    ).toLocaleDateString()}
+  </p>
 )}
-
 
 
   </div>
