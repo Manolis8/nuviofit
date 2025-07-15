@@ -62,24 +62,21 @@ const checkAndResetMessages = async () => {
     return;
   }
 
-
-
-const today = new Date();
-const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 15);
-const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 15);
-const nextResetDate = today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate;
-
-setNextResetDate(nextResetDate);
-
+  const today = new Date();
+  const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 16);
+  const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 16);
   const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
   const messagesLeft = data.messages_left;
 
-  if (!lastResetDate || lastResetDate < thisMonthResetDate && today >= thisMonthResetDate) {
+  // Set next reset date for UI
+  setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
+
+  if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
     const { error: updateError } = await supabase
       .from("onboarding_responses")
       .update({
         messages_left: 40,
-        last_reset_at: today.toISOString().slice(0, 10),
+        last_reset_at: thisMonthResetDate.toISOString().slice(0, 10), // <-- Save the 16th
       })
       .eq("user_id", user.id);
 
@@ -92,10 +89,8 @@ setNextResetDate(nextResetDate);
   } else {
     setMessagesLeft(messagesLeft);
   }
-
-  // Update next reset date in state for display
-  setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
 };
+
 
 
     checkAndResetMessages();
