@@ -390,7 +390,7 @@ if (mainExercisesMatch) {
     .filter(line => line && !line.toLowerCase().startsWith("mindset tip"));
 
   const exercises = mainExercisesLines.map(line => {
-    const parts = line.split(" - ").map(part => part.trim());
+    const parts = line.split(" <> ").map(part => part.trim());
 
     return {
       id: uuidv4(),
