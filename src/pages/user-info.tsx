@@ -1,37 +1,119 @@
-import { useState } from "react"
 import { motion } from "framer-motion"
 import { User, Mail, Lock, Bell, Shield, Trash2, LogOut, Edit3, Save, X, ArrowLeft, AlertTriangle } from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { useUser } from "@clerk/clerk-react"
-import { useEffect} from "react"
-import { supabase } from "@/components/lib/supabaseClient";
 import { useClerk } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/clerk-react"; 
-import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
-import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
 import React  from "react";
 import { useNavigate } from "react-router-dom";
 import { useSignIn } from "@clerk/clerk-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react";
+import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
+import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
+import { useUser } from "@clerk/clerk-react"
 import { addDays } from "date-fns";
-
-
-
-
+import { supabase } from "@/components/lib/supabaseClient";
 
 export default function UserInfoPage() {
+const { user, isLoaded } = useUser();
+  const [username, setUsername] = useState("");
+  const [feedbackText, setFeedbackText] = useState("");
+  const [status, setStatus] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
+    const [email2, setEmail2] = useState("");
+
+
+  // --------------------- Fetch User Data ---------------------
+  useEffect(() => {
+    if (!user) return;
+
+    setEmail2(user.emailAddresses[0]?.emailAddress || "");
+
+    const fetchUserData = async () => {
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("username")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching username:", error.message);
+      } else if (data?.username) {
+        setUsername(data.username);
+      }
+    };
+
+    fetchUserData();
+  }, [user]);
+
+  // --------------------- Monthly Messages Reset ---------------------
+  useEffect(() => {
+    if (!user || !isLoaded) return;
+
+const checkAndResetMessages = async () => {
+  const { data, error } = await supabase
+    .from("onboarding_responses")
+    .select("messages_left, last_reset_at")
+    .eq("user_id", user.id)
+    .single();
+
+  if (error || !data) {
+    console.error("Error fetching user reset info:", error?.message);
+    return;
+  }
+
+  const today = new Date();
+  const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 16);
+  const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 16);
+  const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
+  const messagesLeft = data.messages_left;
+
+  // Set next reset date for UI
+  setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
+
+  if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
+    const { error: updateError } = await supabase
+      .from("onboarding_responses")
+      .update({
+        messages_left: 40,
+        last_reset_at: thisMonthResetDate.toISOString().slice(0, 10), // <-- Save the 16th
+      })
+      .eq("user_id", user.id);
+
+    if (updateError) {
+      console.error("Failed to reset messages:", updateError.message);
+    } else {
+      console.log("✅ Messages reset for this month.");
+      setMessagesLeft(40);
+    }
+  } else {
+    setMessagesLeft(messagesLeft);
+  }
+};
+
+
+
+    checkAndResetMessages();
+  }, [user, isLoaded]);
+
+
+
+
   const navigate = useNavigate()
-  const { user, isSignedIn, isLoaded } = useUser();
 
 
   const [available, setAvailable] = useState<null | boolean>(null);
@@ -647,9 +729,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
               <p className="text-sm text-gray-500">
                 Use them wisely to chat with your AI cat bot!
               </p>
-              {nextRenewalDate && (
-                <p>Renewal date: {nextRenewalDate.toLocaleDateString()}</p>
-              )}
+{nextResetDate && (
+  <p className="text-sm text-gray-500">
+    Renewal Date: {nextResetDate.getDate()}/{nextResetDate.getMonth() + 1}/{nextResetDate.getFullYear()}
+  </p>
+)}
             </div>
           </div>
         </div>
