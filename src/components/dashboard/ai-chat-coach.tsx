@@ -225,11 +225,11 @@ const checkAndResetMessages = async () => {
     👉 view messages
   </span>
 </Link>
-<p>Renewal date: {nextResetDate?.toLocaleDateString()}</p>
-
-
-
-
+{nextResetDate && (
+  <p className="text-sm text-gray-500">
+    Renewal Date: {nextResetDate.getDate()}/{nextResetDate.getMonth() + 1}/{nextResetDate.getFullYear()}
+  </p>
+)}
 
   </div>
 </div>
