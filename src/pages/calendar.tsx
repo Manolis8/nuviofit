@@ -162,7 +162,7 @@ useEffect(() => {
       )}
     </div>
     <p className="text-xs text-gray-600 dark:text-gray-400">
-      {day.focus || "Workout"}
+      {day.title || "Workout"}
     </p>
   </div>
 
