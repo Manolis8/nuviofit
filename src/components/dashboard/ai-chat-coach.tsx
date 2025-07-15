@@ -67,7 +67,7 @@ export function AIChatCoach() {
 
       const nextResetDate = new Date(lastResetDate);
       nextResetDate.setMonth(nextResetDate.getMonth() + 1);
-      nextResetDate.setDate(8); // reset always on 8th
+      nextResetDate.setDate(15); // reset always on 8th
 
       if (today.toDateString() === nextResetDate.toDateString()) {
         const { error: updateError } = await supabase
@@ -227,7 +227,7 @@ export function AIChatCoach() {
     {new Date(
       new Date().getFullYear(),
       new Date().getMonth() + 1,
-      8
+      15
     ).toLocaleDateString()}
   </p>
 )}
