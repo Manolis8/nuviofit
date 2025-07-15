@@ -52,7 +52,7 @@ Warm-up:
 {emoji} <> {name} <> {duration}  
 {emoji} <> {name} <> {duration} 
 Workout Focus:  
-{muscle groups or body areas emphasized — e.g. Upper Body or Legs <> Core}  
+{muscle groups or body areas emphasized — e.g. Upper Body or Legs + Core}  
 Main Exercises:  
 {emoji} <> {exercise name} <> {reps OR duration} x {sets} sets <> {rest time otherwise type 0} <> {short clear instruction on how to perform it} <> {estimated calories for that exercise}
 
