@@ -35,7 +35,7 @@ const userId = user?.id;
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-const MAX_MESSAGES = 40;
+const MAX_MESSAGES = 30;
 
 const handleSend = async () => {
   if (!input.trim()) return;
@@ -111,7 +111,7 @@ const handleSend = async () => {
 
 
   // Show only last 40 messages for display
-  const messagesToShow = messages.length > 40 ? messages.slice(-40) : messages;
+  const messagesToShow = messages.length > 30 ? messages.slice(-30) : messages;
 
   return (
     <div className="flex h-[250px] md:h-[300px] flex-col rounded-lg border border-slate-200 dark:border-slate-800">
