@@ -41,9 +41,13 @@ const calorieLine = lines.find(l => l.toLowerCase().startsWith("calories:"));
 const totalLine = lines.find(l => l.toLowerCase().startsWith("total exercises:"));
 
 const focusIndex = lines.findIndex(l => l.toLowerCase().startsWith("workout focus:"));
-const focus = focusIndex !== -1 && lines[focusIndex + 1]?.trim()
+
+const focusLine = focusIndex !== -1 && lines[focusIndex + 1]?.trim()
   ? lines[focusIndex + 1].trim()
   : (isRestDay ? "Rest Day" : "Workout");
+
+const focus = focusLine.split('<>').map(f => f.trim());
+
 
 const duration = durationLine?.split(":")[1]?.trim() || "0 min";
 const calories = calorieLine?.split(":")[1]?.trim() || "0";
