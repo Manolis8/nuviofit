@@ -67,7 +67,7 @@ const totalExercises = parseInt(totalLine?.split(":")[1]?.trim()) || 0;
               !l.toLowerCase().startsWith("mindset tip:")
             )
             .map(line => {
-              const parts = line.split(/\s*-\s*/).map(p => p.trim());
+              const parts = line.split(/\s*<>\s*/).map(p => p.trim());
               return {
                 id: uuidv4(),
                 emoji: parts[0] || "",
