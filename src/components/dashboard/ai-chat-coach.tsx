@@ -232,7 +232,14 @@ const nextResetDate = today < thisMonthReset ? thisMonthReset : nextMonthReset;
   </span>
 </Link>
 {user && (
-  <p>Renewal date: {nextResetDate.toLocaleDateString()}</p>
+  <p>
+    Renewal date:{" "}
+    {new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      15
+    ).toLocaleDateString()}
+  </p>
 )}
 
 
