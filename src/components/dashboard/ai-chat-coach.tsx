@@ -76,7 +76,7 @@ if (lastResetDate) {
       .from("onboarding_responses")
       .update({
         messages_left: 40,
-        last_reset: today.toISOString().slice(0, 10),
+        last_reset_at: today.toISOString().slice(0, 10),
       })
       .eq("user_id", user.id);
 
