@@ -46,7 +46,11 @@ const focusLine = focusIndex !== -1 && lines[focusIndex + 1]?.trim()
   ? lines[focusIndex + 1].trim()
   : (isRestDay ? "Rest Day" : "Workout");
 
-const focus = focusLine.split('<>').map(f => f.trim());
+// If Rest Day, keep as string. Else, split by '<>'
+const focus = typeof focusLine === "string" && !focusLine.toLowerCase().includes("rest")
+  ? focusLine.split('<>').map(f => f.trim())
+  : [focusLine];
+
 
 
 const duration = durationLine?.split(":")[1]?.trim() || "0 min";
