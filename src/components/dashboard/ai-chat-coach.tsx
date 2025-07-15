@@ -63,7 +63,6 @@ const checkAndResetMessages = async () => {
   }
 
   const today = new Date();
-  today.setDate(16);
   const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 16);
   const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 16);
   const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
