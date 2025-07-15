@@ -53,7 +53,7 @@ export function AIChatCoach() {
 const checkAndResetMessages = async () => {
   const { data, error } = await supabase
     .from("onboarding_responses")
-    .select("messages_left, last_reset")
+    .select("messages_left, last_reset_at")
     .eq("user_id", user.id)
     .single();
 
@@ -63,7 +63,7 @@ const checkAndResetMessages = async () => {
   }
 
   const today = new Date();
-  const lastResetDate = data.last_reset ? new Date(data.last_reset) : null;
+  const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
 
 if (lastResetDate) {
   const nextResetDateCalc = new Date(lastResetDate);
