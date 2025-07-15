@@ -534,10 +534,10 @@ if (workoutfocusIndex !== -1) {
   parsedWorkoutFocus = focusLine
     ? focusLine.split('<>').map(f => f.trim())
     : [];
-  console.log("💪 Workout Focus:", parsedWorkoutFocus);
 } else {
   console.warn("⚠️ Workout focus not found");
 }
+
 
 
 let parsedTotalCalories = 0;
