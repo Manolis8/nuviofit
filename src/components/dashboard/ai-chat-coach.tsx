@@ -167,24 +167,35 @@ const checkAndResetMessages = async () => {
   return (
     <>
 {/* Floating Action Buttons */}
-<div className="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
-  {/* Feedback Button */}
-  <Button
-    onClick={() => setShowFeedback(true)}
-    size="icon"
-    className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg hover:from-blue-600 hover:to-green-600 hover:shadow-xl transition-all duration-200"
-  >
-    <Send className="h-5 w-5" />
-  </Button>
+<div className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 group">
 
-{/* AI Chat Button */}
-<Button
-  onClick={() => setIsOpen(!isOpen)}
-  size="icon"
-  className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg hover:from-blue-600 hover:to-green-600 hover:shadow-xl transition-all duration-200"
->
-  <MessageCircle className="h-6 w-6" />
-</Button>
+  {/* Feedback Button */}
+  <div className="relative group">
+    <div className="absolute right-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all bg-gray-800 text-white text-xs rounded px-3 py-1 shadow-lg">
+      Feedback / Report a Bug
+    </div>
+    <Button
+      onClick={() => setShowFeedback(true)}
+      size="icon"
+      className="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg hover:from-blue-600 hover:to-green-600 hover:shadow-xl transition-all duration-200"
+    >
+      <Send className="h-5 w-5" />
+    </Button>
+  </div>
+
+  {/* AI Chat Button */}
+  <div className="relative group">
+    <div className="absolute right-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all bg-gray-800 text-white text-xs rounded px-3 py-1 shadow-lg">
+      The AI Chat Coach
+    </div>
+    <Button
+      onClick={() => setIsOpen(!isOpen)}
+      size="icon"
+      className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-lg hover:from-blue-600 hover:to-green-600 hover:shadow-xl transition-all duration-200"
+    >
+      <MessageCircle className="h-6 w-6" />
+    </Button>
+  </div>
 
 </div>
 
@@ -222,7 +233,7 @@ const checkAndResetMessages = async () => {
   <div className="flex items-center space-x-3">
 <Link href="/user-info#ai-messages" scroll={false}>
   <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium cursor-pointer hover:bg-indigo-200 transition">
-    👉 view messages
+    👉 view credits left
   </span>
 </Link>
 {nextResetDate && (
