@@ -5,27 +5,29 @@ import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
 import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
 import { AIChatBox } from "@/components/ai-chat-box"
 import { useUser } from "@clerk/clerk-react"
-import { sendFeedback } from "../lib/sendFeedback";
 import { addDays } from "date-fns";
 import Link from "next/link";
 import { supabase } from "@/components/lib/supabaseClient";
 
-const feedback_url = process.env.FEEDBACK_URL;
 export function AIChatCoach() {
-
-const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [messagesLeft, setMessagesLeft] = useState<number | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
+  // --------------------- Fetch User Data ---------------------
   useEffect(() => {
-    async function fetchUserData() {
-      if (!user) return;
+    if (!user) return;
 
-      setEmail(user.emailAddresses[0]?.emailAddress || "");
+    setEmail(user.emailAddresses[0]?.emailAddress || "");
 
+    const fetchUserData = async () => {
       const { data, error } = await supabase
         .from("onboarding_responses")
         .select("username")
@@ -37,11 +39,60 @@ const { user } = useUser();
       } else if (data?.username) {
         setUsername(data.username);
       }
-    }
+    };
 
     fetchUserData();
   }, [user]);
 
+  // --------------------- Monthly Messages Reset ---------------------
+  useEffect(() => {
+    if (!user || !isLoaded) return;
+
+    const checkAndResetMessages = async () => {
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("messages_left, last_reset_at")
+        .eq("user_id", user.id)
+        .single();
+
+      if (error || !data) {
+        console.error("Error fetching user reset info:", error?.message);
+        return;
+      }
+
+      const today = new Date();
+      const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
+
+      if (!lastResetDate) return;
+
+      const nextResetDate = new Date(lastResetDate);
+      nextResetDate.setMonth(nextResetDate.getMonth() + 1);
+      nextResetDate.setDate(8); // reset always on 8th
+
+      if (today.toDateString() === nextResetDate.toDateString()) {
+        const { error: updateError } = await supabase
+          .from("onboarding_responses")
+          .update({
+            messages_left: 40,
+            last_reset: today.toISOString(),
+          })
+          .eq("user_id", user.id);
+
+        if (updateError) {
+          console.error("Failed to reset messages:", updateError.message);
+        } else {
+          console.log("✅ Messages successfully reset for this month.");
+          setMessagesLeft(40);
+        }
+      } else {
+        setMessagesLeft(data.messages_left);
+      }
+    };
+
+    checkAndResetMessages();
+  }, [user, isLoaded]);
+
+  // --------------------- Submit Feedback ---------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -62,7 +113,7 @@ const { user } = useUser();
         user_id: user.id,
         email,
         username,
-        message: feedbackText, // assuming you add a 'feedback' TEXT column
+        message: feedbackText,
       },
     ]);
 
@@ -76,69 +127,39 @@ const { user } = useUser();
     }
   };
 
+  // --------------------- Manual Feedback Sender (Optional) ---------------------
+  async function sendFeedback(formData: { name: string; email: string; message: string }) {
+    if (!user?.id) throw new Error("User not logged in.");
 
-// This function sends the feedback to Supabase.
-async function sendFeedback(formData: { name: string; email: string; message: string }) {
-  if (!user?.id) throw new Error("User not logged in.");
+    const { data, error: fetchError } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
 
-  // Fetch username from onboarding_responses
-  const { data, error: fetchError } = await supabase
-    .from("onboarding_responses")
-    .select("username")
-    .eq("user_id", user.id)
-    .single();
+    if (fetchError) {
+      console.error("Failed to fetch username:", fetchError.message);
+      throw fetchError;
+    }
 
-  if (fetchError) {
-    console.error("Failed to fetch username:", fetchError.message);
-    throw fetchError;
+    const username = data?.username || formData.name || "Unknown";
+
+    const { error: insertError } = await supabase.from("feedback").insert([
+      {
+        user_id: user.id,
+        email: user.emailAddresses[0]?.emailAddress,
+        username,
+        message: formData.message,
+      },
+    ]);
+
+    if (insertError) {
+      console.error("Failed to send feedback:", insertError.message);
+      throw insertError;
+    }
   }
 
-  const username = data?.username || formData.name || "Unknown";
-
-  // Insert feedback to Supabase
-  const { error: insertError } = await supabase.from("feedback").insert([
-    {
-      user_id: user.id,
-      email: user.emailAddresses[0]?.emailAddress,
-      username,
-      message: formData.message,
-    },
-  ]);
-
-  if (insertError) {
-    console.error("Failed to send feedback:", insertError.message);
-    throw insertError;
-  }
-}
-
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [showFeedback, setShowFeedback] = useState(false)
-const [formData, setFormData] = useState({
-  name: "",
-  email: "",
-  message: ""
-});
-  const {isLoaded } = useUser();
-  const [messagesLeft, setMessagesLeft] = useState<number | null>(null);
-  const { lastResetAt } = useAutoRenewMessages(user.id);
-
-  // Calculate next renewal date by adding 30 days to lastResetAt
-  const nextRenewalDate = lastResetAt ? addDays(lastResetAt, 30) : null;
-  const renewalDate = new Date();
-  renewalDate.setMonth(renewalDate.getMonth() + 1); // next month
-
-  useEffect(() => {
-    if (!isLoaded || !user) return;
-
-    const fetchMessages = async () => {
-      const count = await getMessagesLeft(user.id); // should return number
-      setMessagesLeft(count);
-    };
-
-    fetchMessages();
-  }, [isLoaded, user]);
-  
+  // --------------------- Render ---------------------
   return (
     <>
 {/* Floating Action Buttons */}
@@ -200,8 +221,15 @@ const [formData, setFormData] = useState({
     👉 view messages
   </span>
 </Link>
-    {nextRenewalDate && (
-  <p>Renewal date: {nextRenewalDate.toLocaleDateString()}</p>
+   {user && (
+  <p>
+    Renewal date:{" "}
+    {new Date(
+      new Date().getFullYear(),
+      new Date().getMonth() + 1,
+      8
+    ).toLocaleDateString()}
+  </p>
 )}
 
 
