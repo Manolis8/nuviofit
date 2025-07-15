@@ -62,15 +62,14 @@ const checkAndResetMessages = async () => {
     return;
   }
 
+
+
 const today = new Date();
-const thisMonthReset = new Date(today.getFullYear(), today.getMonth(), 15);
-const nextMonthReset = new Date(today.getFullYear(), today.getMonth() + 1, 15);
+const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 15);
+const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 15);
+const nextResetDate = today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate;
 
-const nextResetDate = today < thisMonthReset ? thisMonthReset : nextMonthReset;
-
-
-  const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 15);
-  const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 15);
+setNextResetDate(nextResetDate);
 
   const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
   const messagesLeft = data.messages_left;
@@ -231,16 +230,8 @@ const nextResetDate = today < thisMonthReset ? thisMonthReset : nextMonthReset;
     👉 view messages
   </span>
 </Link>
-{user && (
-  <p>
-    Renewal date:{" "}
-    {new Date(
-      new Date().getFullYear(),
-      new Date().getMonth() + 1,
-      15
-    ).toLocaleDateString()}
-  </p>
-)}
+<p>Renewal date: {nextResetDate?.toLocaleDateString()}</p>
+
 
 
 
