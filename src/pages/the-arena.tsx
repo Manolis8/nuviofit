@@ -362,9 +362,6 @@ const navigate = useNavigate()
   const [motivationIndex, setMotivationIndex] = useState(0)
   const [workoutCompleted, setWorkoutCompleted] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
-  const [weeklyProgress] = useState(3) // 3 of 5 days completed
-  const [currentStreak] = useState(3)
-const [totalExercises, setTotalExercises] = useState(0);
 const { user } = useUser()
 const [todayExercises, setTodayExercises] = useState<
   {
@@ -574,7 +571,7 @@ const parsedExercises = exerciseLines
       !line.toLowerCase().startsWith("calories")
   )
   .map(line => {
-    const parts = line.split(/\s*-\s*/).map(p => p.trim());
+    const parts = line.split(/\s*<>\s*/).map(p => p.trim());
 
     const scheme = parts[2] || "";
     const resttime = parts[3] || "";
