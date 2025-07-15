@@ -654,26 +654,39 @@ const navigate = useNavigate()
 </div>
 
                 {/* Quick Stats Sidebar */}
-                <div className="space-y-6">
-                  <Card className="border-none shadow-lg">
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">📈 Quick Stats</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-<div className="flex justify-between items-center">
-  <div>
-    <span className="font-semibold text-base">Weekly Progress</span>
-    <p className="text-sm text-muted-foreground">You’ve completed {weeklyCount} out of {workoutDays} workouts</p>
+<div className="space-y-6">
+  <Card className="border-none shadow-lg">
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">📈 Quick Stats</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <div>
+            <span className="font-semibold text-base">Weekly Progress</span>
+            <p className="text-sm text-muted-foreground">
+              You’ve completed {weeklyCount} out of {workoutDays} workouts
+            </p>
+          </div>
+          <Badge>
+            {weeklyCount}/{workoutDays}
+          </Badge>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+
+  {/* Edit Plan Button */}
+  <div className="flex justify-end">
+    <a
+      href="/edit-fitness-plan"
+      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg shadow hover:bg-primary/90 transition"
+    >
+      ✏️ Edit Fitness Plan
+    </a>
   </div>
-  <Badge>
-    {weeklyCount}/{workoutDays}
-  </Badge>
 </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+
               </div>
             </TabsContent>
 
