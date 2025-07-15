@@ -168,7 +168,7 @@ const parsedExercises = mainExercisesLines
     !line.toLowerCase().startsWith("calories")
   )
   .map(line => {
-    const parts = line.split(/\s*-\s*/);
+    const parts = line.split(/\s*<>\s*/);
     return {
       emoji: parts[0] || "🏋️",
       name: parts[1] || "",
@@ -257,7 +257,7 @@ setTodaysWorkout({
 )}
 
       {/* Start Button */}
-     <Button
+      <Button
   onClick={startWorkout}
   disabled={workoutCompletedTodayed || isTodayRestDayed}
   className={`w-full mb-6 bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500 text-white text-lg py-6 ${
