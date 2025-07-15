@@ -13,7 +13,6 @@ export async function generateFitnessPlan(userId: string) {
     console.error("Supabase error:", error.message, error.details || "");
     throw new Error(`Supabase error: ${error.message}`);
   }
-  
 if (!data) {
   console.warn("⚠️ No onboarding data found for user:", userId);
   return null;
@@ -50,15 +49,15 @@ Use the following onboarding data to perform 3 tasks:
 
 Day {number}: {Title and emoji}  
 Warm-up:  
-{emoji} - {name} - {duration}  
-{emoji} - {name} - {duration} 
+{emoji} <> {name} <> {duration}  
+{emoji} <> {name} <> {duration} 
 Workout Focus:  
 {muscle groups or body areas emphasized — e.g. Upper Body or Legs + Core}  
 Main Exercises:  
-{emoji} - {exercise name} - {reps OR duration} x {sets} sets - {rest time otherwise type 0} - {short clear instruction on how to perform it} - {estimated calories for that exercise}
+{emoji} <> {exercise name} <> {reps OR duration} x {sets} sets <> {rest time otherwise type 0} <> {short clear instruction on how to perform it} <> {estimated calories for that exercise}
 
 Example:  
-💪 - Push ups - 15 reps x 3 sets - 45 sec rest - Keep your back straight, lower to 90°, push up. - 100
+💪 <> Push ups <> 15 reps x 3 sets <> 45 sec rest <> Keep your back straight, lower to 90°, push up. <> 100
 
 Mindset Tip:  
 {short motivational sentence related to goals or identity}  
@@ -67,11 +66,10 @@ Duration: {estimated session duration in minutes, e.g., 40 min}
 Calories: {sum of the calories for all exercises — just a number, no units}
 
 --- RULES FOR FORMAT (STRICT) ---
-
-- Use only this dash format: - between values, and x for reps/sets (no colons, asterisks, or other symbols).
+- Do not forget a signle part of the stucture liek mindset, workout focus and so on
 - DO NOT write bullet points or markdown — plain text only.
 - Each warm-up and each exercise must be on a new line.
-- Always include sets, even for cardio or time-based exercises. (e.g. 🫁 - Run - 20 min x 1 set)
+- Always include sets, even for cardio or time-based exercises. (e.g. 🫁 <> Run <> 20 min x 1 set)
 - Emojis:
   - 💪 = Upper Body
   - 🦵 = Legs
@@ -82,21 +80,39 @@ Calories: {sum of the calories for all exercises — just a number, no units}
 
 - For rest days, use this:
 Main Exercises:  
-😴 - Rest Day - No resttime applicable
+😴 <> Rest Day <> No resttime applicable
 
 - For other forms like stretching or planks, use the same format:
-🧘 - Plank hold - 1 min x 2 sets - 30 sec rest - Maintain straight line, engage core. - 60
+🧘 <> Plank hold <> 1 min x 2 sets <> 30 sec rest <> Maintain straight line, engage core. <> 60
 
 - Focus on quality and volume — include up to 10 main exercises if appropriate.
-- "Reps OR duration" means use either like "15 reps" or "2 min" — then follow with x 3 sets.
+- "Reps OR duration" means use either like "15 reps" or "2 min" <> then follow with x 3 sets.
+
+If Training Method includes "Swimming", generate swimming workouts like:
+
+Interval laps (e.g., 10 x 100m Freestyle)
+
+Distance sets (e.g., 500m continuous swim)
+
+Stroke variation (e.g., Freestyle, Backstroke, Breaststroke)
+
+Use meters (m) for distance, not reps.
+
+Rest between sets should reflect swimming rest periods (e.g., 30 sec, 1 min)
+
+Example format:
+🫁 <> 100m Freestyle <> x 10 sets <> 30 sec rest <> Swim at moderate pace, focus on form. <> 300
+
+If Training Method includes "Yoga / Pilates", create routines like flows, holds, and stretches. Use time-based sets.
+
+If Training Method includes "Rehab / Therapy", focus on light mobility, stability, and corrective movements.
+
+If Training Method includes "Hiking", include time or distance-based walking/hiking plans.
+
+Maintain emojis as per guidelines, but adapt the activity to match the method.
+
 
 --- FORMAT RULES (STRICT) ---
-
-- ✅ Use dashes ONLY in the following structure:
-  {emoji} - {exercise name} - {reps or duration} x {sets} sets - {rest time} - {instructions} - {calories per one set}
-
-- ❌ Never hyphenate exercise names (e.g., use "cat cow", NOT "cat-cow"; "push ups", NOT "push-ups").
-
 - ✅ Always use "x" between reps and sets (e.g., 12 reps x 3 sets)
 
 - ✅ Emojis must appear ONLY:
@@ -117,7 +133,7 @@ Main Exercises:
 
 - ⚠️ If it's a rest day, use:
   Main Exercises:
-  😴 - Rest Day - No resttime applicable
+  😴 <> Rest Day <> No resttime applicable
 
 - In rest time section do it like this:
 1 minute 30 sec rest  
