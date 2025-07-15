@@ -249,7 +249,7 @@ const checkAndResetMessages = async () => {
         <textarea
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-          placeholder="Your Message"
+          placeholder="Help us improve! Share ideas, feedback, or report a problem..."
           className="w-full p-3 border rounded-lg h-24 resize-none"
         />
 
