@@ -75,7 +75,7 @@ const checkAndResetMessages = async () => {
     const { error: updateError } = await supabase
       .from("onboarding_responses")
       .update({
-        messages_left: 40,
+        messages_left: 30,
         last_reset_at: thisMonthResetDate.toISOString().slice(0, 10), // <-- Save the 16th
       })
       .eq("user_id", user.id);
@@ -84,7 +84,7 @@ const checkAndResetMessages = async () => {
       console.error("Failed to reset messages:", updateError.message);
     } else {
       console.log("✅ Messages reset for this month.");
-      setMessagesLeft(40);
+      setMessagesLeft(30);
     }
   } else {
     setMessagesLeft(messagesLeft);
