@@ -146,21 +146,19 @@ useEffect(() => {
     }
 
     if (data?.fitness_plan) {
-      let fullText = data.fitness_plan;
-
-      // Find the starting index of "Day 1" (case sensitive)
+      // Extract from "Day 1" onwards (optional, based on your text)
+      const fullText = data.fitness_plan;
       const startIndex = fullText.indexOf("Day 1");
-
-      // If "Day 1" found, slice from there; else show full text
       const planText = startIndex !== -1 ? fullText.slice(startIndex) : fullText;
 
-      setPrompt(planText);
-      setFitnessPlan(planText);
+      setFitnessPlan(planText);  // Put fetched plan here
+      setPrompt("");             // Keep prompt EMPTY for user input
     }
   };
 
   fetchFitnessPlan();
 }, [user]);
+
 
 
   // Prevent navigation if there are unsaved changes
