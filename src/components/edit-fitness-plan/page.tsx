@@ -146,13 +146,21 @@ useEffect(() => {
     }
 
     if (data?.fitness_plan) {
-      setFitnessPlan(data.fitness_plan); // <- Just set the string, no JSON.parse
+      let fullText = data.fitness_plan;
+
+      // Find the starting index of "Day 1" (case sensitive)
+      const startIndex = fullText.indexOf("Day 1");
+
+      // If "Day 1" found, slice from there; else show full text
+      const planText = startIndex !== -1 ? fullText.slice(startIndex) : fullText;
+
+      setPrompt(planText);
+      setFitnessPlan(planText);
     }
   };
 
   fetchFitnessPlan();
 }, [user]);
-
 
 
   // Prevent navigation if there are unsaved changes
