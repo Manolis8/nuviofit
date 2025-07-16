@@ -6,66 +6,8 @@ import { ArrowLeft, Send, Zap, Calendar, Clock, Target, Save, X } from "lucide-r
 import Link from "next/link"
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
+import { aiEditFitnessPlan } from "@/components/lib/EditFitnessPlan";
 
-interface WorkoutDay {
-  day: string
-  title: string
-  exercises: string[]
-  duration: string
-  intensity: "Low" | "Medium" | "High"
-}
-
-const initialFitnessPlan: WorkoutDay[] = [
-  {
-    day: "Monday",
-    title: "Upper Body Strength",
-    exercises: ["Push-ups", "Pull-ups", "Dumbbell Press", "Bicep Curls"],
-    duration: "45 min",
-    intensity: "High",
-  },
-  {
-    day: "Tuesday",
-    title: "Cardio & Core",
-    exercises: ["Running", "Planks", "Mountain Climbers", "Burpees"],
-    duration: "30 min",
-    intensity: "Medium",
-  },
-  {
-    day: "Wednesday",
-    title: "Lower Body Power",
-    exercises: ["Squats", "Lunges", "Deadlifts", "Calf Raises"],
-    duration: "50 min",
-    intensity: "High",
-  },
-  {
-    day: "Thursday",
-    title: "Active Recovery",
-    exercises: ["Yoga", "Stretching", "Light Walking", "Foam Rolling"],
-    duration: "25 min",
-    intensity: "Low",
-  },
-  {
-    day: "Friday",
-    title: "Full Body Circuit",
-    exercises: ["Kettlebell Swings", "Box Jumps", "Battle Ropes", "Med Ball Slams"],
-    duration: "40 min",
-    intensity: "High",
-  },
-  {
-    day: "Saturday",
-    title: "Flexibility & Balance",
-    exercises: ["Pilates", "Balance Poses", "Deep Stretching", "Meditation"],
-    duration: "35 min",
-    intensity: "Low",
-  },
-  {
-    day: "Sunday",
-    title: "Rest Day",
-    exercises: ["Complete Rest", "Light Stretching", "Hydration Focus", "Recovery"],
-    duration: "15 min",
-    intensity: "Low",
-  },
-]
 
 const LoadingSkeleton = () => (
   <div className="space-y-4 sm:space-y-6">
@@ -102,22 +44,6 @@ const LoadingSkeleton = () => (
     ))}
   </div>
 )
-
-const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" }) => {
-  const colors = {
-    Low: "from-green-400 to-emerald-300 text-green-800",
-    Medium: "from-yellow-400 to-orange-300 text-orange-800",
-    High: "from-red-400 to-pink-300 text-red-800",
-  }
-
-  return (
-    <span
-      className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${colors[intensity]} shadow-sm`}
-    >
-      {intensity}
-    </span>
-  )
-}
 
 export default function EditFitnessPlanPage() {
     const { user } = useUser();
@@ -175,28 +101,48 @@ useEffect(() => {
   }, [hasChanges])
 
 const handleSubmit = async () => {
-  if (!prompt.trim() || hasUsedOnce) return;
+  if (!prompt.trim() || hasUsedOnce || !user) return;
 
   setIsLoading(true);
   setHasUsedOnce(true);
 
-  setTimeout(() => {
-    const updatedPlan = fitnessPlan + "\n\nAI Optimized Exercise Added.";
+  try {
+    const updatedPlan = await aiEditFitnessPlan(user.id, fitnessPlan, prompt);
     setFitnessPlan(updatedPlan);
     setHasChanges(true);
-    setIsLoading(false);
     setPrompt("");
-  }, 3000);
+
+    await handleSavePlanToSupabase(updatedPlan);
+  } catch (error: any) {
+    console.error("Error updating fitness plan with AI:", error.message);
+  }
+
+  setIsLoading(false);
 };
 
 
-  const handleSavePlan = () => {
-    setHasChanges(false)
-    setShowSaveDialog(true)
-    setTimeout(() => {
-      setShowSaveDialog(false)
-    }, 2000)
+const handleSavePlanToSupabase = async (planToSave: string) => {
+  if (!user) return;
+  setIsLoading(true);
+
+  const { error } = await supabase
+    .from("onboarding_responses")
+    .update({ fitness_plan: planToSave })
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Failed to save fitness plan:", error);
+    setIsLoading(false);
+    return;
   }
+
+  setHasChanges(false);
+  setShowSaveDialog(true);
+  setTimeout(() => {
+    setShowSaveDialog(false);
+  }, 2000);
+  setIsLoading(false);
+};
 
   const handleCancel = () => {
     if (hasChanges) {
@@ -208,6 +154,7 @@ const handleSubmit = async () => {
   }
 
   const wordCount = prompt.split(" ").filter((word) => word.length > 0).length
+
 
   return (
     <div className="min-h-screen bg-gray-50">
