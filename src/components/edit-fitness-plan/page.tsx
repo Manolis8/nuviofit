@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Send, Zap, Calendar, Clock, Target, Save, X } from "lucide-react"
 import Link from "next/link"
+import { supabase } from "@/components/lib/supabaseClient";
+import { useUser } from "@clerk/nextjs";
 
 interface WorkoutDay {
   day: string
@@ -118,12 +120,43 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
 }
 
 export default function EditFitnessPlanPage() {
+    const { user } = useUser();
   const [fitnessPlan, setFitnessPlan] = useState<WorkoutDay[]>(initialFitnessPlan)
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [hasUsedOnce, setHasUsedOnce] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
+
+
+useEffect(() => {
+    const fetchFitnessPlan = async () => {
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("onboarding_responses")
+        .select("fitness_plan")
+        .eq("user_id", user.id) // Clerk's user ID
+        .single();
+
+      if (error) {
+        console.error("Error fetching fitness plan:", error);
+        return;
+      }
+
+      if (data?.fitness_plan) {
+        setPrompt(data.fitness_plan);
+        // If your fitness_plan is JSON stored as string:
+        try {
+          setFitnessPlan(JSON.parse(data.fitness_plan));
+        } catch (e) {
+          console.warn("Could not parse fitness_plan as JSON:", e);
+        }
+      }
+    };
+
+    fetchFitnessPlan();
+  }, [user]);
 
   // Prevent navigation if there are unsaved changes
   useEffect(() => {
@@ -230,80 +263,79 @@ export default function EditFitnessPlanPage() {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           {/* Left Side - 7-Day Plan in One Big Div */}
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">7-Day Fitness Plan</h2>
-            </div>
+<div className="space-y-4 sm:space-y-6">
+  <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+    <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">7-Day Fitness Plan</h2>
+  </div>
 
-            <Card className="border-gray-200 bg-white shadow-sm">
-              <CardContent className="p-3 sm:p-6">
-                {isLoading ? (
-                  <LoadingSkeleton />
-                ) : (
-                  <div className="space-y-4 sm:space-y-6 animate-fadeIn">
-                    {fitnessPlan.map((day, index) => (
-                      <div
-                        key={day.day}
-                        className={`${index !== fitnessPlan.length - 1 ? "border-b border-gray-100 pb-4 sm:pb-6" : ""}`}
-                      >
-                        <div className="flex items-start gap-2 sm:gap-4">
-                          <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xs sm:text-sm flex-shrink-0">
-                            {day.day.slice(0, 3).toUpperCase()}
-                          </div>
-                          <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                              <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{day.title}</h3>
-                              <IntensityBadge intensity={day.intensity} />
-                            </div>
-                            <div className="flex items-center gap-1 sm:gap-2 text-gray-600">
-                              <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                              <span className="text-xs sm:text-sm">{day.duration}</span>
-                            </div>
-                            <div className="space-y-1 sm:space-y-2">
-                              <h4 className="text-xs sm:text-sm font-medium text-gray-700">Exercises:</h4>
-                              <div className="grid grid-cols-1 gap-1 sm:gap-2">
-                                {day.exercises.map((exercise, i) => (
-                                  <div key={i} className="flex items-center gap-1 sm:gap-2 text-gray-700">
-                                    <Target className="w-2 h-2 sm:w-3 sm:h-3 text-emerald-500 flex-shrink-0" />
-                                    <span className="text-xs sm:text-sm truncate">{exercise}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+  <Card className="border-gray-200 bg-white shadow-sm">
+    <CardContent className="p-3 sm:p-6">
+      {isLoading ? (
+        <LoadingSkeleton />
+      ) : (
+        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
+          {fitnessPlan?.map((day, index) => (
+            <div
+              key={day.day}
+              className={`${index !== fitnessPlan.length - 1 ? "border-b border-gray-100 pb-4 sm:pb-6" : ""}`}
+            >
+              <div className="flex items-start gap-2 sm:gap-4">
+                <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xs sm:text-sm flex-shrink-0">
+                  {day.day.slice(0, 3).toUpperCase()}
+                </div>
+                <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{day.title}</h3>
+                    <IntensityBadge intensity={day.intensity} />
                   </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              < Link href="/workout-page">
-              <Button
-                onClick={handleSavePlan}
-                disabled={!hasChanges}
-                className="bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Save Plan
-              </Button>
-              </Link>
-              < Link href="/workout-page">
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600 px-6 sm:px-8 py-2.5 sm:py-2 bg-transparent text-sm sm:text-base"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancel
-              </Button>
-              </Link>
+                  <div className="flex items-center gap-1 sm:gap-2 text-gray-600">
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm">{day.duration}</span>
+                  </div>
+                  <div className="space-y-1 sm:space-y-2">
+                    <h4 className="text-xs sm:text-sm font-medium text-gray-700">Exercises:</h4>
+                    <div className="grid grid-cols-1 gap-1 sm:gap-2">
+                      {day.exercises.map((exercise, i) => (
+                        <div key={i} className="flex items-center gap-1 sm:gap-2 text-gray-700">
+                          <Target className="w-2 h-2 sm:w-3 sm:h-3 text-emerald-500 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm truncate">{exercise}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
+        </div>
+      )}
+    </CardContent>
+  </Card>
+
+  {/* Action Buttons */}
+  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+    <Link href="/workout-page">
+      <Button
+        disabled={!hasChanges}
+        className="bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+      >
+        <Save className="w-4 h-4 mr-2" />
+        Save Plan
+      </Button>
+    </Link>
+    <Link href="/workout-page">
+      <Button
+        variant="outline"
+        className="border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600 px-6 sm:px-8 py-2.5 sm:py-2 bg-transparent text-sm sm:text-base"
+      >
+        <X className="w-4 h-4 mr-2" />
+        Cancel
+      </Button>
+    </Link>
+  </div>
+</div>
+
 
           {/* Right Side - AI Input Section */}
           <div className="space-y-4 sm:space-y-6">
@@ -366,7 +398,7 @@ export default function EditFitnessPlanPage() {
                       <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">Plan Updated!</h3>
                       <p className="text-gray-600 text-xs sm:text-sm">
                         Your fitness plan has been customized with AI. You can only use the AI assistant once per
-                        session.
+                        month.
                       </p>
                     </div>
                     <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
