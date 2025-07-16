@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Send, Zap, Calendar, Clock, Target, Save, X } from "lucide-react"
-import { useRouter } from "next/navigation"
+import Link from "next/link";
 
 interface WorkoutDay {
   day: string
@@ -124,7 +124,6 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
 }
 
 
-  const router = useRouter()
   const [fitnessPlan, setFitnessPlan] = useState<WorkoutDay[]>(initialFitnessPlan)
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -172,7 +171,6 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
     setShowSaveDialog(true)
     setTimeout(() => {
       setShowSaveDialog(false)
-      router.push("/dashboard")
     }, 2000)
   }
 
@@ -180,10 +178,8 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
     if (hasChanges) {
       const confirmLeave = window.confirm("You have unsaved changes. Are you sure you want to leave?")
       if (confirmLeave) {
-        router.push("/dashboard")
       }
     } else {
-      router.push("/dashboard")
     }
   }
 
@@ -210,15 +206,17 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
       <div className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              className="border-gray-300 hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 bg-transparent"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+<Link href="/workout-page">
+  <Button
+    variant="outline"
+    size="sm"
+    className="border-gray-300 hover:border-emerald-500 hover:bg-emerald-50 transition-all duration-300 bg-transparent"
+  >
+    <ArrowLeft className="w-4 h-4 mr-2" />
+    Back
+  </Button>
+</Link>
+
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-cyan-400">
                 <Zap className="w-5 h-5 text-white" />
@@ -290,6 +288,7 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
 
             {/* Action Buttons */}
             <div className="flex gap-4 justify-center">
+              <Link href="/workout-page">
               <Button
                 onClick={handleSavePlan}
                 disabled={!hasChanges}
@@ -298,14 +297,17 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
                 <Save className="w-4 h-4 mr-2" />
                 Save Plan
               </Button>
-              <Button
-                onClick={handleCancel}
-                variant="outline"
-                className="border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600 px-8 py-2 bg-transparent"
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancel
-              </Button>
+              </Link>
+<Link href="/workout-page">
+  <Button
+    variant="outline"
+    className="border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600 px-8 py-2 bg-transparent"
+  >
+    <X className="w-4 h-4 mr-2" />
+    Cancel
+  </Button>
+</Link>
+
             </div>
           </div>
 
@@ -340,23 +342,24 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
                     </div>
                   </div>
 
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={!prompt.trim() || wordCount > 250 || isLoading}
-                    className="w-full bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        AI is updating your plan...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Send className="w-4 h-4" />
-                        Update Fitness Plan
-                      </div>
-                    )}
-                  </Button>
+<Button
+  onClick={handleSubmit}
+  disabled={!prompt.trim() || wordCount > 250 || isLoading}
+  className="w-full bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {isLoading ? (
+    <div className="flex items-center gap-2">
+      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+      AI is updating your plan...
+    </div>
+  ) : (
+    <div className="flex items-center gap-2">
+      <Send className="w-4 h-4" />
+      Update Fitness Plan
+    </div>
+  )}
+</Button>
+
                 </CardContent>
               </Card>
             ) : (
