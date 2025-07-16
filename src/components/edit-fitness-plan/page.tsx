@@ -326,19 +326,19 @@ export default function EditFitnessPlanPage() {
                       onChange={(e) => setPrompt(e.target.value)}
                       placeholder="e.g., 'Add more cardio exercises to Tuesday and Thursday', 'Make the workouts shorter', 'Focus more on upper body strength'..."
                       className="min-h-[150px] sm:min-h-[200px] bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:border-emerald-500 focus:ring-emerald-500/20 resize-none text-sm sm:text-base"
-                      maxLength={1250}
+                      maxLength={1250} 
                     />
                     <div className="flex justify-between items-center text-xs">
-                      <span className={`${wordCount > 250 ? "text-red-500" : "text-gray-500"}`}>
-                        {wordCount}/250 words
+                      <span className={`${wordCount > 200? "text-red-500" : "text-gray-500"}`}>
+                        {wordCount}/200 words
                       </span>
-                      <span className="text-gray-400">{prompt.length}/1250 characters</span>
+                      <span className="text-gray-400">{prompt.length}/900 characters</span>    
                     </div>
                   </div>
 
                   <Button
                     onClick={handleSubmit}
-                    disabled={!prompt.trim() || wordCount > 250 || isLoading}
+                    disabled={!prompt.trim() || wordCount > 200 || isLoading}
                     className="w-full bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                   >
                     {isLoading ? (
