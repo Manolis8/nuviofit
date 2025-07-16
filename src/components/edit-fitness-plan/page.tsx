@@ -65,6 +65,9 @@ const initialFitnessPlan: WorkoutDay[] = [
   },
 ]
 
+export default function EditFitnessPlanPage() {
+
+
 const LoadingSkeleton = () => (
   <div className="space-y-6">
     {[...Array(7)].map((_, i) => (
@@ -120,7 +123,7 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
   )
 }
 
-export default function EditFitnessPlanPage() {
+
   const router = useRouter()
   const [fitnessPlan, setFitnessPlan] = useState<WorkoutDay[]>(initialFitnessPlan)
   const [prompt, setPrompt] = useState("")
