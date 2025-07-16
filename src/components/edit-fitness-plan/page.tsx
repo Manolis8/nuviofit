@@ -121,42 +121,39 @@ const IntensityBadge = ({ intensity }: { intensity: "Low" | "Medium" | "High" })
 
 export default function EditFitnessPlanPage() {
     const { user } = useUser();
-  const [fitnessPlan, setFitnessPlan] = useState<WorkoutDay[]>(initialFitnessPlan)
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [hasUsedOnce, setHasUsedOnce] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [fitnessPlan, setFitnessPlan] = useState<string>(""); 
+
 
 
 useEffect(() => {
-    const fetchFitnessPlan = async () => {
-      if (!user) return;
+  const fetchFitnessPlan = async () => {
+    if (!user) return;
 
-      const { data, error } = await supabase
-        .from("onboarding_responses")
-        .select("fitness_plan")
-        .eq("user_id", user.id) // Clerk's user ID
-        .single();
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("fitness_plan")
+      .eq("user_id", user.id)
+      .single();
 
-      if (error) {
-        console.error("Error fetching fitness plan:", error);
-        return;
-      }
+    if (error) {
+      console.error("Error fetching fitness plan:", error);
+      return;
+    }
 
-      if (data?.fitness_plan) {
-        setPrompt(data.fitness_plan);
-        // If your fitness_plan is JSON stored as string:
-        try {
-          setFitnessPlan(JSON.parse(data.fitness_plan));
-        } catch (e) {
-          console.warn("Could not parse fitness_plan as JSON:", e);
-        }
-      }
-    };
+    if (data?.fitness_plan) {
+      setFitnessPlan(data.fitness_plan); // <- Just set the string, no JSON.parse
+    }
+  };
 
-    fetchFitnessPlan();
-  }, [user]);
+  fetchFitnessPlan();
+}, [user]);
+
+
 
   // Prevent navigation if there are unsaved changes
   useEffect(() => {
@@ -171,27 +168,21 @@ useEffect(() => {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload)
   }, [hasChanges])
 
-  const handleSubmit = async () => {
-    if (!prompt.trim() || hasUsedOnce) return
+const handleSubmit = async () => {
+  if (!prompt.trim() || hasUsedOnce) return;
 
-    setIsLoading(true)
-    setHasUsedOnce(true)
+  setIsLoading(true);
+  setHasUsedOnce(true);
 
-    // Simulate AI processing
-    setTimeout(() => {
-      // Simulate plan update
-      const updatedPlan = fitnessPlan.map((day) => ({
-        ...day,
-        title: day.title + " (AI Enhanced)",
-        exercises: [...day.exercises, "AI Optimized Exercise"],
-      }))
+  setTimeout(() => {
+    const updatedPlan = fitnessPlan + "\n\nAI Optimized Exercise Added.";
+    setFitnessPlan(updatedPlan);
+    setHasChanges(true);
+    setIsLoading(false);
+    setPrompt("");
+  }, 3000);
+};
 
-      setFitnessPlan(updatedPlan)
-      setHasChanges(true)
-      setIsLoading(false)
-      setPrompt("")
-    }, 3000)
-  }
 
   const handleSavePlan = () => {
     setHasChanges(false)
@@ -274,40 +265,8 @@ useEffect(() => {
       {isLoading ? (
         <LoadingSkeleton />
       ) : (
-        <div className="space-y-4 sm:space-y-6 animate-fadeIn">
-          {fitnessPlan?.map((day, index) => (
-            <div
-              key={day.day}
-              className={`${index !== fitnessPlan.length - 1 ? "border-b border-gray-100 pb-4 sm:pb-6" : ""}`}
-            >
-              <div className="flex items-start gap-2 sm:gap-4">
-                <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xs sm:text-sm flex-shrink-0">
-                  {day.day.slice(0, 3).toUpperCase()}
-                </div>
-                <div className="flex-1 space-y-2 sm:space-y-3 min-w-0">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{day.title}</h3>
-                    <IntensityBadge intensity={day.intensity} />
-                  </div>
-                  <div className="flex items-center gap-1 sm:gap-2 text-gray-600">
-                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">{day.duration}</span>
-                  </div>
-                  <div className="space-y-1 sm:space-y-2">
-                    <h4 className="text-xs sm:text-sm font-medium text-gray-700">Exercises:</h4>
-                    <div className="grid grid-cols-1 gap-1 sm:gap-2">
-                      {day.exercises.map((exercise, i) => (
-                        <div key={i} className="flex items-center gap-1 sm:gap-2 text-gray-700">
-                          <Target className="w-2 h-2 sm:w-3 sm:h-3 text-emerald-500 flex-shrink-0" />
-                          <span className="text-xs sm:text-sm truncate">{exercise}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="animate-fadeIn text-gray-700 text-sm sm:text-base whitespace-pre-line">
+          {fitnessPlan}
         </div>
       )}
     </CardContent>
@@ -335,6 +294,7 @@ useEffect(() => {
     </Link>
   </div>
 </div>
+
 
 
           {/* Right Side - AI Input Section */}
