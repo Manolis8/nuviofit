@@ -280,7 +280,6 @@ const handleSubmit = async () => {
 
   {/* Action Buttons */}
   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-    <Link href="/workout-page">
       <Button
         disabled={!hasChanges}
         className="bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
@@ -288,7 +287,6 @@ const handleSubmit = async () => {
         <Save className="w-4 h-4 mr-2" />
         Save Plan
       </Button>
-    </Link>
     <Link href="/workout-page">
       <Button
         variant="outline"
