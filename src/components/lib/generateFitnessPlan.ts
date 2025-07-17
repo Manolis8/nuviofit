@@ -85,7 +85,17 @@ Main Exercises:
 - For other forms like stretching or planks, use the same format:
 🧘 <> Plank hold <> 1 min x 2 sets <> 30 sec rest <> Maintain straight line, engage core. <> 60
 
-- Focus on quality and volume — include up to 10 main exercises if appropriate.
+📝 EXERCISE COUNT RULES:
+
+- For most days (strength, mobility, gym workouts, calisthenics): include **6-10 exercises**.
+- For light or recovery days (yoga, mobility, rehab): 3-5 exercises are acceptable.
+- For cardio-intensive days (HIIT, endurance runs, cycling, swimming intervals): use common sense. Focus on variety within the method (intervals, drills, technique), not quantity. Exercise count may range from 4-6 if intervals are involved.
+
+Do NOT undertrain the day. Ensure the workload fits the user's goal.
+
+Always include a **Total Exercises count**, accurately reflecting the "Main Exercises" block.
+
+
 - "Reps OR duration" means use either like "15 reps" or "2 min" <> then follow with x 3 sets.
 
 If Training Method includes "Swimming", generate swimming workouts like:
