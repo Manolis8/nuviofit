@@ -42,11 +42,20 @@ Calories: {number}
 4️⃣ KEEP emojis, sets, rest times, calories.
 5️⃣ DO NOT skip Warm-up, Workout Focus, Main Exercises, Mindset Tip, Duration, Calories.
 
-6️⃣ For REST days, always write:
+ 6) Focus on quality and volume — include **6-10 main exercises** for most workout days. 
+
+Do NOT write less than 5 exercises unless it is clearly a recovery or mobility day. 
+
+Ensure variety across the exercises. Use full body approaches where relevant.
+
+For strength or gym days, lean towards higher volume (7-10 exercises). For cardio days, include variety (intervals, technique drills, cooldown).
+
+
+7) For REST days, always write:
 Main Exercises:  
 😴 <> Rest Day <> No resttime applicable
 
-7️⃣--- TRAINING METHODS YOU CAN INCLUDE ---
+8)--- TRAINING METHODS YOU CAN INCLUDE ---
 (These are the most common methods this user expects. Use these styles more often where appropriate, but you may combine them sensibly.)
 
 🏋 Gym workouts — Machines, weights  
