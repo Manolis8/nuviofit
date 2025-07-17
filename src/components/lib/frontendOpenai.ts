@@ -13,5 +13,11 @@ export async function getOpenAIResponse(messages: any[]) {
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  console.log("API response data:", data); // Debug log
+
+  if (!data.reply) {
+    throw new Error("No reply field in API response");
+  }
+
+  return data.reply;
 }
