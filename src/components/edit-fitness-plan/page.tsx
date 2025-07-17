@@ -205,6 +205,11 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
           </div>
         </div>
       </div>
+{hasChanges && (
+  <div className="rounded-md bg-emerald-50 border border-emerald-300 text-emerald-700 text-sm p-4 mb-4">
+    ✅ You have updated your fitness plan. Click <strong>Save</strong> to apply your changes.
+  </div>
+)}
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
@@ -216,28 +221,30 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
     <h2 className="text-lg sm:text-xl font-semibold text-gray-900">7-Day Fitness Plan</h2>
   </div>
 
-  <Card className="border-gray-200 bg-white shadow-sm">
-    <CardContent className="p-3 sm:p-6">
-      {isLoading ? (
-        <LoadingSkeleton />
-      ) : (
-        <div className="animate-fadeIn text-gray-700 text-sm sm:text-base whitespace-pre-line">
-          {fitnessPlan}
-        </div>
-      )}
-    </CardContent>
-  </Card>
+<Card className={`${hasChanges ? "border-2 border-emerald-400" : "border-gray-200"} bg-white shadow-sm`}>
+  <CardContent className="p-3 sm:p-6">
+    {isLoading ? (
+      <LoadingSkeleton />
+    ) : (
+      <pre className="whitespace-pre-wrap font-mono text-sm">
+        {fitnessPlan}
+      </pre>
+    )}
+  </CardContent>
+</Card>
+
 
   {/* Action Buttons */}
   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
 <Button
   onClick={() => handleSavePlanToSupabase(fitnessPlan)}
   disabled={!hasChanges}
-  className="..."
+  className="bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium px-6 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
 >
   <Save className="w-4 h-4 mr-2" />
   Save Plan
 </Button>
+
     <Link href="/workout-page">
       <Button
         variant="outline"
