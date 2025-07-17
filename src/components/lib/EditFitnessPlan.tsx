@@ -3,9 +3,9 @@ import { supabase } from "@/components/lib/supabaseClient";
 export async function aiEditFitnessPlan(userId: string, currentPlan: string, userRequest: string): Promise<string> {
 
 const prompt = `
-You are a certified fitness coach, exercise scientist, and mindset mentor.  
+You are a certified fitness coach, exercise scientist, and mindset mentor. 
 You are NOT writing a new fitness plan from scratch.  
-You are carefully EDITING the user's existing 7-day plan below based on their request.
+You are carefully EDITING the user's existing 7-day fitness plan based on their requested changes.
 
 --- CURRENT PLAN (DO NOT DESTROY THE STRUCTURE) ---
 ${currentPlan}
@@ -13,10 +13,10 @@ ${currentPlan}
 --- USER REQUEST / FEEDBACK ---
 ${userRequest}
 
-
 --- INSTRUCTIONS (STRICT) ---
-1️⃣ ALWAYS return the ENTIRE 7-day plan.
-2️⃣ The days must ALWAYS stay the same:
+
+1️⃣ You MUST return the **full 7-day plan**.
+2️⃣ Days MUST stay the same:
 - Day 1 = Monday
 - Day 2 = Tuesday
 - Day 3 = Wednesday
@@ -25,33 +25,54 @@ ${userRequest}
 - Day 6 = Saturday
 - Day 7 = Sunday
 
-3️⃣ NEVER delete or skip any day. Keep them all.
-4️⃣ DO NOT change the structure:
-- Each day must start with: "Day {number}: {Title} {emoji}"
-- Include Warm-up, Workout Focus, Main Exercises, Mindset Tip, Total Exercises, Duration, Calories.
+3️⃣ DO NOT change the structure. KEEP this format EXACTLY:
 
-5️⃣ KEEP all formatting exactly the same:
-- Do NOT use bullet points.
-- Do NOT use markdown.
-- Plain text only.
-- Each Warm-up and Main Exercise must follow the original emoji <> exercise <> sets <> rest <> calories format.
+Day {number}: {Title and emoji}  
+Warm-up:  
+{emoji} <> {name} <> {duration}  
+{emoji} <> {name} <> {duration}  
+Workout Focus:  
+{muscle groups or body areas emphasized}  
+Main Exercises:  
+{emoji} <> {exercise name} <> {reps OR duration} x {sets} sets <> {rest time otherwise type 0} <> {instruction} <> {calories}
 
-6️⃣ ONLY make adjustments where necessary to reflect the user's request.
-7️⃣ DO NOT change other days unless the request explicitly says so.
-8️⃣ KEEP calories, sets, reps, rest times.
+Mindset Tip:  
+{short motivational sentence}  
+Total Exercises: {count}  
+Duration: {minutes}  
+Calories: {number}
 
-9️⃣ If you add new exercises, keep them within the same structure.
-10️⃣ DO NOT add explanations or extra comments. Output ONLY the updated plan text.
+4️⃣ KEEP emojis, sets, rest times, calories.
+5️⃣ DO NOT skip Warm-up, Workout Focus, Main Exercises, Mindset Tip, Duration, Calories.
+
+6️⃣ For REST days, always write:
+Main Exercises:  
+😴 <> Rest Day <> No resttime applicable
+
+7️⃣ If Training Method includes:
+- **Swimming:** Write laps, meters, intervals clearly as in the example.
+- **Yoga / Pilates:** Use time-based flows or poses.
+- **Rehab / Therapy:** Light mobility and stability.
+- **Hiking:** Include time or distance.
+
+FORMAT RULES (STRICT):
+- ✅ Use "x" between reps and sets: 12 reps x 3 sets
+- ✅ Emojis ONLY at:
+  - Warm-up lines start
+  - Exercise lines start
+  - Day title line start
+
+- ❌ NEVER put emojis inside instructions or calories.
+- ❌ NEVER remove calories, sets, or rest time.
+- ❌ NO bullets, NO markdown. Plain text only.
 
 EXAMPLES OF REQUEST:
-- "Make Wednesday's cardio harder"
 - "Add mobility on Saturday"
-- "Swap push-ups for incline push-ups on Monday"
+- "Make Wednesday harder cardio"
+- "Swap push-ups for incline push-ups Monday"
 
-Be precise. Respect the original format fully.
-Return only the clean updated text.
+Be precise. Respect the structure. Return the clean, updated 7-day plan only. No comments. No notes.
 `;
-
 
 
   const response = await fetch("/api/generate", {
