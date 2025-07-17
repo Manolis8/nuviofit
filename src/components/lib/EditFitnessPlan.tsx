@@ -1,8 +1,5 @@
-import { supabase } from "@/components/lib/supabaseClient";
-
 export async function aiEditFitnessPlan(userId: string, currentPlan: string, userRequest: string): Promise<string> {
-
-const prompt = `
+  const prompt = `
 You are a certified fitness coach, exercise scientist, and mindset mentor. 
 You are NOT writing a new fitness plan from scratch.  
 You are carefully EDITING the user's existing 7-day fitness plan based on their requested changes.
@@ -74,7 +71,6 @@ EXAMPLES OF REQUEST:
 Be precise. Respect the structure. Return the clean, updated 7-day plan only. No comments. No notes.
 `;
 
-
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -106,22 +102,5 @@ Be precise. Respect the structure. Return the clean, updated 7-day plan only. No
   }
 
   const updatedPlan = result.reply;
-
-  // ✅ Save the updated plan to Supabase
-  const { error: updateError } = await supabase
-    .from("onboarding_responses")
-    .upsert(
-      {
-        user_id: userId,
-        fitness_plan: updatedPlan,
-      },
-      { onConflict: "user_id" }
-    );
-
-  if (updateError) {
-    console.error("❌ Failed to save updated plan to Supabase:", updateError.message);
-    throw new Error("Failed to save updated plan to Supabase.");
-  }
-
   return updatedPlan;
 }
