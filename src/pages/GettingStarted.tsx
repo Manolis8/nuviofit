@@ -49,7 +49,6 @@ if (!isLoaded) return <div>Loading...</div>;
 
 
 const generatePlan = async () => {
-
   const user_id = user?.id;
   if (!user_id || planGenerated || step !== 17) return;
 
@@ -57,6 +56,8 @@ const generatePlan = async () => {
     alert("⚠️ Please save your data before generating the plan.");
     return;
   }
+
+  setIsGenerating(true);
 
   try {
     let onboardingData = null;
@@ -76,7 +77,6 @@ const generatePlan = async () => {
 
     if (!onboardingData) {
       alert("❌ No saved data found. Please save your data first.");
-  
       return;
     }
 
@@ -84,7 +84,6 @@ const generatePlan = async () => {
 
     if (!result) {
       alert("❌ Plan generation failed. Please try again.");
-      
       return;
     }
 
@@ -99,14 +98,21 @@ const generatePlan = async () => {
 
     if (upsertError) {
       console.error("Error saving fitness plan:", upsertError);
+      alert("❌ Failed to save fitness plan.");
+      return;
     }
+
+    setPlanGenerated(true); // If you have this state somewhere
+    navigate("/dashboard"); // Redirect after success
 
   } catch (err) {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
   } finally {
+    setIsGenerating(false);
   }
 };
+
 
 
 
@@ -213,8 +219,6 @@ const handleSaveData = async () => {
     alert("❌ No user ID found.");
     return;
   }
-
-  console.log("📦 Submitting formData:", formData);
 
   const success = await handleSubmit();
 
@@ -874,7 +878,7 @@ if (step === 0) {
   { value: "Running / Jogging", label: "Running / Jogging — Cardio / solo", emoji: "🏃" },
   { value: "Biking", label: "Biking — Cardio", emoji: "🚴" },
   { value: "Yoga / Pilates", label: "Yoga / Pilates — Mobility, calm", emoji: "🧘" },
-  { value: "Hiking / Outdoor", label: "Hiking / Outdoor — Natural terrain, relaxing", emoji: "🥾" },
+  { value: "Hiking ", label: "Hiking / Outdoor — Natural terrain, relaxing", emoji: "🥾" },
   { value: "Swimming", label: "Swimming — Low impact, full body", emoji: "🏊" },
   { value: "Rehab / Therapy", label: "Rehab / Therapy — Recovery movements", emoji: "🩺" },
       ].map((item) => {
