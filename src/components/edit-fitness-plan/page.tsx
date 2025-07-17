@@ -307,6 +307,9 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
                       </div>
                     )}
                   </Button>
+<label style={{ display: 'block', fontSize: '0.9rem', color: '#888', fontStyle: 'italic', marginTop: '10px' }}>
+    Remember: You can edit your fitness plan once per month.
+</label>
                 </CardContent>
               </Card>
             ) : (
