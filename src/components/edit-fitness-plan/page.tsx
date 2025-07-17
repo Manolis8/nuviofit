@@ -127,7 +127,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
 
   const { error } = await supabase
     .from("onboarding_responses")
-    .update({ fitness_plan: planToSave })
+    .upsert({ fitness_plan: planToSave })
     .eq("user_id", user.id);
 
   if (error) {
