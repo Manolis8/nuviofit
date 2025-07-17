@@ -1,14 +1,16 @@
 // src/lib/getOpenAIResponse.ts
-export async function getOpenAIResponse(messages: any) {
+export async function getOpenAIResponse(prompt: string) {
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      // REMOVE Authorization header here — backend handles API key securely
     },
     body: JSON.stringify({
-      model: "gpt-4.1-nano",
-      messages,
+      messages: [
+        { role: "system", content: "You are a helpful personal trainer." },
+        { role: "user", content: prompt }
+      ],
     }),
   });
 
