@@ -108,15 +108,16 @@ const handleSubmit = async () => {
 
   try {
     const updatedPlan = await aiEditFitnessPlan(user.id, fitnessPlan, prompt);
-    setFitnessPlan(updatedPlan);
-    setHasChanges(true);
-    setPrompt("");
+    setFitnessPlan(updatedPlan); // ✅ This updates what's shown on screen.
+    setHasChanges(true); // ✅ This enables the Save button
+    setPrompt(""); // Clear input
   } catch (error: any) {
     console.error("Error updating fitness plan with AI:", error.message);
   }
 
   setIsLoading(false);
 };
+
 
 const handleCancel = () => {
   if (hasChanges) {
