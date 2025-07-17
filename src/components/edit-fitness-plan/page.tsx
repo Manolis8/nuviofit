@@ -176,24 +176,35 @@ useEffect(() => {
     return () => window.removeEventListener("beforeunload", handleBeforeUnload)
   }, [hasChanges])
 
-const handleSubmit = async () => {
-  if (!prompt.trim() || hasUsedOnce || !user) return;
+
+  const handleSubmit = async () => {
+  if (editPlanTimes <= 0 || !prompt.trim()) {
+    return;
+  }
 
   setIsLoading(true);
-  setHasUsedOnce(true);
 
   try {
     const updatedPlan = await aiEditFitnessPlan(user.id, fitnessPlan, prompt);
-setFitnessPlan(updatedPlan);
-setHasChanges(true);
-setPrompt("");
-setEditPlanTimes((prev) => prev - 1); // 👈 Update state immediately here
-  } catch (error: any) {
-    console.error("Error updating fitness plan with AI:", error.message);
-  }
+    setFitnessPlan(updatedPlan);
+    setHasChanges(true);
+    setPrompt("");
 
-  setIsLoading(false);
+    await supabase
+      .from("onboarding_responses")
+      .update({
+        editplantimes: editPlanTimes - 1
+      })
+      .eq("user_id", user.id);
+
+    setEditPlanTimes((prev) => prev - 1);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setIsLoading(false);
+  }
 };
+
 
 
 const handleCancel = () => {
@@ -345,7 +356,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Customize Your Plan</h2>
             </div>
 
-            {!hasUsedOnce && editPlanTimes > 0 ? (
+            {editPlanTimes > 0 ? (
               <Card className="border-gray-200 bg-white shadow-sm">
                 <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   <div className="space-y-2">
