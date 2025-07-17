@@ -46,11 +46,21 @@ Calories: {number}
 Main Exercises:  
 😴 <> Rest Day <> No resttime applicable
 
-7️⃣ If Training Method includes:
-- **Swimming:** Write laps, meters, intervals clearly as in the example.
-- **Yoga / Pilates:** Use time-based flows or poses.
-- **Rehab / Therapy:** Light mobility and stability.
-- **Hiking:** Include time or distance.
+7️⃣--- TRAINING METHODS YOU CAN INCLUDE ---
+(These are the most common methods this user expects. Use these styles more often where appropriate, but you may combine them sensibly.)
+
+🏋 Gym workouts — Machines, weights  
+🤸 Bodyweight / Calisthenics — Little equipment, at-home  
+🏃 Running / Jogging — Cardio / solo  
+🚴 Biking — Cardio  
+🧘 Yoga / Pilates — Mobility, calm  
+🥾 Hiking / Outdoor — Natural terrain, relaxing  
+🏊 Swimming — Low impact, full body  
+🩺 Rehab / Therapy — Recovery movements
+
+You may also combine mobility, stretching, and cardio with these where appropriate. 
+
+When adjusting any day in the program, make sure to clearly reflect the chosen method (e.g., mobility, cardio, strength). Pick activities aligned with the methods above when applicable.
 
 FORMAT RULES (STRICT):
 - ✅ Use "x" between reps and sets: 12 reps x 3 sets
