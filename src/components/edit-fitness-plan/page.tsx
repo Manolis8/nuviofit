@@ -46,16 +46,92 @@ const LoadingSkeleton = () => (
 )
 
 export default function EditFitnessPlanPage() {
-    const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
   const [hasUsedOnce, setHasUsedOnce] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [fitnessPlan, setFitnessPlan] = useState<string>(""); 
+  const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
+  const [editPlanTimes, setEditPlanTimes] = useState<number>(0);
+
+
+// -------------------------Reset logic-----------------
+
+useEffect(() => {
+  if (!user || !isLoaded) return;
+
+  const checkAndResetPlanEditLimit = async () => {
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("editplantimes, last_reset_at")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error || !data) {
+      console.error("Error fetching user plan edit info:", error?.message);
+      return;
+    }
+
+    const today = new Date();
+    const thisMonthResetDate = new Date(today.getFullYear(), today.getMonth(), 16);
+    const nextMonthResetDate = new Date(today.getFullYear(), today.getMonth() + 1, 16);
+    const lastResetDate = data.last_reset_at ? new Date(data.last_reset_at) : null;
+
+    // Set for UI
+    setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
+
+    if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
+      const { error: updateError } = await supabase
+        .from("onboarding_responses")
+        .update({
+          editplantimes: 1,
+          last_reset_at: thisMonthResetDate.toISOString().slice(0, 10),
+        })
+        .eq("user_id", user.id);
+
+      if (updateError) {
+        console.error("Failed to reset edit limit:", updateError.message);
+      } else {
+        console.log("✅ Reset edit limit to 1 for this month.");
+        setEditPlanTimes(1);
+      }
+    } else {
+      setEditPlanTimes(data.editplantimes);
+    }
+  };
+
+  checkAndResetPlanEditLimit();
+}, [user, isLoaded]);
+
+
+const handleGeneratePlan = async () => {
+  if (editPlanTimes <= 0) {
+    alert("You can only edit your plan once per month. Wait until the next reset.");
+    return;
+  }
+
+  // Proceed to AI generate plan...
+
+  // After generating successfully:
+  const { error: updateError } = await supabase
+    .from("onboarding_responses")
+    .update({
+      editplantimes: editPlanTimes - 1,
+    })
+    .eq("user_id", user.id);
+
+  if (updateError) {
+    console.error("Failed to decrement edit times:", updateError.message);
+  } else {
+    setEditPlanTimes((prev) => prev - 1);
+  }
+};
 
 
 
+//------------------------uptdate fitness plan logic----
 useEffect(() => {
   const fetchFitnessPlan = async () => {
     if (!user) return;
@@ -108,9 +184,10 @@ const handleSubmit = async () => {
 
   try {
     const updatedPlan = await aiEditFitnessPlan(user.id, fitnessPlan, prompt);
-    setFitnessPlan(updatedPlan); // ✅ This updates what's shown on screen.
-    setHasChanges(true); // ✅ This enables the Save button
-    setPrompt(""); // Clear input
+setFitnessPlan(updatedPlan);
+setHasChanges(true);
+setPrompt("");
+setEditPlanTimes((prev) => prev - 1); // 👈 Update state immediately here
   } catch (error: any) {
     console.error("Error updating fitness plan with AI:", error.message);
   }
@@ -268,7 +345,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Customize Your Plan</h2>
             </div>
 
-            {!hasUsedOnce ? (
+            {!hasUsedOnce && editPlanTimes > 0 ? (
               <Card className="border-gray-200 bg-white shadow-sm">
                 <CardContent className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                   <div className="space-y-2">
@@ -325,6 +402,11 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
                         Your fitness plan has been customized with AI. You can only use the AI assistant once per
                         month.
                       </p>
+                      {nextResetDate && (
+  <p className="text-sm text-gray-500">
+    Renewal Date: {nextResetDate.getDate()}/{nextResetDate.getMonth() + 1}/{nextResetDate.getFullYear()}
+  </p>
+)}
                     </div>
                     <div className="bg-gray-50 p-3 sm:p-4 rounded-lg">
                       <p className="text-xs sm:text-sm text-gray-700">
