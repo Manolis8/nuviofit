@@ -42,13 +42,15 @@ Calories: {number}
 4️⃣ KEEP emojis, sets, rest times, calories.
 5️⃣ DO NOT skip Warm-up, Workout Focus, Main Exercises, Mindset Tip, Duration, Calories.
 
- 6) Focus on quality and volume — include **6-10 main exercises** for most workout days. 
+ 6) 📝 EXERCISE COUNT RULES:
 
-Do NOT write less than 5 exercises unless it is clearly a recovery or mobility day. 
+- For most days (strength, mobility, gym workouts, calisthenics): include **6-10 exercises**.
+- For light or recovery days (yoga, mobility, rehab): 3-5 exercises are acceptable.
+- For cardio-intensive days (HIIT, endurance runs, cycling, swimming intervals): use common sense. Focus on variety within the method (intervals, drills, technique), not quantity. Exercise count may range from 4-6 if intervals are involved.
 
-Ensure variety across the exercises. Use full body approaches where relevant.
+Do NOT undertrain the day. Ensure the workload fits the user's goal.
 
-For strength or gym days, lean towards higher volume (7-10 exercises). For cardio days, include variety (intervals, technique drills, cooldown).
+Always include a **Total Exercises count**, accurately reflecting the "Main Exercises" block.
 
 
 7) For REST days, always write:
