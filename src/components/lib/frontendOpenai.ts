@@ -1,17 +1,10 @@
-// src/lib/getOpenAIResponse.ts
-export async function getOpenAIResponse(prompt: string) {
+export async function getOpenAIResponse(messages: any[]) {
   const response = await fetch("/api/generate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // REMOVE Authorization header here — backend handles API key securely
     },
-    body: JSON.stringify({
-      messages: [
-        { role: "system", content: "You are a helpful personal trainer." },
-        { role: "user", content: prompt }
-      ],
-    }),
+    body: JSON.stringify({ messages }),
   });
 
   if (!response.ok) {
