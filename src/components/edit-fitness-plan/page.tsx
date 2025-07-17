@@ -111,13 +111,22 @@ const handleSubmit = async () => {
     setFitnessPlan(updatedPlan);
     setHasChanges(true);
     setPrompt("");
-
-    await handleSavePlanToSupabase(updatedPlan);
   } catch (error: any) {
     console.error("Error updating fitness plan with AI:", error.message);
   }
 
   setIsLoading(false);
+};
+
+const handleCancel = () => {
+  if (hasChanges) {
+    const confirmLeave = window.confirm("You have unsaved changes. Are you sure you want to leave?");
+    if (confirmLeave) {
+      window.location.href = "/workout-page";
+    }
+  } else {
+    window.location.href = "/workout-page";
+  }
 };
 
 
@@ -127,7 +136,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
 
   const { error } = await supabase
     .from("onboarding_responses")
-    .upsert({ fitness_plan: planToSave })
+    .update({ fitness_plan: planToSave })
     .eq("user_id", user.id);
 
   if (error) {
@@ -140,18 +149,11 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
   setShowSaveDialog(true);
   setTimeout(() => {
     setShowSaveDialog(false);
+    window.location.href = "/workout-page"; // Redirect after success
   }, 2000);
   setIsLoading(false);
 };
 
-  const handleCancel = () => {
-    if (hasChanges) {
-      const confirmLeave = window.confirm("You have unsaved changes. Are you sure you want to leave?")
-      if (confirmLeave) {
-      }
-    } else {
-    }
-  }
 
   const wordCount = prompt.split(" ").filter((word) => word.length > 0).length
 
@@ -227,13 +229,14 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
 
   {/* Action Buttons */}
   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-      <Button
-        disabled={!hasChanges}
-        className="bg-gradient-to-r from-emerald-500 to-cyan-400 hover:from-emerald-600 hover:to-cyan-500 text-white font-medium px-6 sm:px-8 py-2.5 sm:py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-emerald-500/25 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-      >
-        <Save className="w-4 h-4 mr-2" />
-        Save Plan
-      </Button>
+<Button
+  onClick={() => handleSavePlanToSupabase(fitnessPlan)}
+  disabled={!hasChanges}
+  className="..."
+>
+  <Save className="w-4 h-4 mr-2" />
+  Save Plan
+</Button>
     <Link href="/workout-page">
       <Button
         variant="outline"
