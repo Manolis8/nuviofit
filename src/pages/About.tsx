@@ -49,18 +49,18 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Mission & Vision */}
+      {/* Mission & Why We Exist */}
       <section className="mb-16">
         <div className="text-center mb-10">
           <div className="inline-flex items-center bg-wellness-lavender/10 rounded-full px-4 py-2 mb-4">
             <Target className="text-wellness-lavender mr-2 h-5 w-5" />
-            <span className="text-sm font-medium">Mission & Vision</span>
+            <span className="text-sm font-medium">Mission & Purpose</span>
           </div>
           <h2 className="text-3xl font-bold">Why We Exist</h2>
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-2 gap-10">
             <div>
               <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
               <p className="text-lg text-gray-700 mb-6">
@@ -68,16 +68,6 @@ const AboutPage = () => {
               </p>
               <p className="text-lg text-gray-700">
                 We help people build consistent habits in fitness, nutrition, mindfulness, and recovery through one unified, intelligent platform.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
-              <p className="text-lg text-gray-700 mb-6">
-                To create the world’s first operating system for resilience — the platform that helps millions achieve clarity, discipline, and health in a distracted world.
-              </p>
-              <p className="text-lg text-gray-700">
-                We believe fitness isn’t about six-packs. It’s about building the strength to succeed in life — physically, mentally, and emotionally.
               </p>
             </div>
 
@@ -91,6 +81,24 @@ const AboutPage = () => {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="mb-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold">Our Vision for the Future</h2>
+        </div>
+        <div className="bg-white rounded-2xl shadow-lg p-8">
+          <p className="text-lg text-gray-700 mb-4">
+            Our vision is to create the world’s first operating system for resilience — the platform that helps millions achieve clarity, discipline, and health in a distracted world. But beyond that, we see ourselves writing history by fundamentally changing how people interact with health technology.
+          </p>
+          <p className="text-lg text-gray-700 mb-4">
+            We want to influence not just individual users, but the way society thinks about mental and physical wellness — moving from short-term fitness trends to long-term mastery of self. We believe the next generation of tools should inspire discipline, strength, and mental resilience in a way that impacts culture, not just clicks.
+          </p>
+          <p className="text-lg text-gray-700">
+            Our future is to build revolutionary products that transform how people live, think, and feel — products worthy of writing our name in history for changing lives, not just apps.
+          </p>
         </div>
       </section>
 
