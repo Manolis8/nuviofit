@@ -85,22 +85,38 @@ const AboutPage = () => {
       </section>
 
       {/* Vision Section */}
-      <section className="mb-16">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold">Our Vision for the Future</h2>
-        </div>
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <p className="text-lg text-gray-700 mb-4">
-            Our vision is to create the world’s first operating system for resilience — the platform that helps millions achieve clarity, discipline, and health in a distracted world. But beyond that, we see ourselves writing history by fundamentally changing how people interact with health technology.
-          </p>
-          <p className="text-lg text-gray-700 mb-4">
-            We want to influence not just individual users, but the way society thinks about mental and physical wellness — moving from short-term fitness trends to long-term mastery of self. We believe the next generation of tools should inspire discipline, strength, and mental resilience in a way that impacts culture, not just clicks.
-          </p>
-          <p className="text-lg text-gray-700">
-            Our future is to build revolutionary products that transform how people live, think, and feel — products worthy of writing our name in history for changing lives, not just apps.
-          </p>
-        </div>
-      </section>
+<section className="mb-16">
+  <div className="text-center mb-10">
+    <h2 className="text-3xl font-bold">🔮 Our Vision for the Future</h2>
+  </div>
+  <div className="bg-white rounded-2xl shadow-lg p-8">
+    <p className="text-lg text-gray-700 mb-4">
+      At <strong>NuvioFit</strong>, our vision reaches beyond fitness.
+      We aim to reshape the future of health and wellness by creating technologies that help people master both body and mind, through systems that adapt, understand, and empower.
+    </p>
+    <p className="text-lg text-gray-700 mb-4">
+      We are not building “just another app.” We are laying the foundation for a <strong>revolutionary ecosystem</strong> that will redefine how people achieve health, resilience, and balance — mentally and physically.
+    </p>
+    <p className="text-lg text-gray-700 mb-4">
+      We envision a world where health technology isn’t just reactive, but predictive. Not generic, but deeply personal. Not focused on trends, but on transforming lives.
+    </p>
+    <p className="text-lg text-gray-700 mb-4">
+      We will <strong>thrive to lead a movement</strong> — a future where people don’t rely on guesswork or motivation alone. Instead, they are equipped with intelligent tools that evolve with them, understand their unique challenges, and guide them to lasting results.
+    </p>
+    <p className="text-lg text-gray-700 mb-4">
+      <strong>Our long-term mission is clear:</strong>
+    </p>
+    <p className="text-lg text-gray-700 mb-4">
+      To build revolutionary products that transform not just individuals, but society’s relationship with health.
+      We want our technology to inspire a generation to live with purpose, strength, and mental clarity — to reshape health culture for decades to come.
+    </p>
+    <p className="text-lg text-gray-700">
+      <strong>This is bigger than fitness.</strong> This is about changing how people think, live, and succeed.
+      This is how we will write our name in history.
+    </p>
+  </div>
+</section>
+
 
       {/* Call to Action */}
       <section className="mb-16">
