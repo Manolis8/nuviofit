@@ -1,6 +1,6 @@
 import { supabase } from "@/components/lib/supabaseClient";
 
-const MAX_MESSAGES = 40
+const MAX_MESSAGES = 30
 
 // Fetch or initialize quota, reset if month passed
 export async function fetchUserQuota() {
