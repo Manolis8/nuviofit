@@ -42,6 +42,15 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <header style={{ padding: "1rem", textAlign: "center", backgroundColor: "#fff" }}>
+  <img 
+    src="/nuviofit-logo.png" 
+    alt="NuvioFit Logo" 
+    style={{ height: "50px", cursor: "pointer" }} 
+    onClick={() => window.location.href = "/"} 
+  />
+</header>
+
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
