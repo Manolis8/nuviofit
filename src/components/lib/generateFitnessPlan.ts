@@ -31,7 +31,7 @@ Use the following onboarding data to perform 3 tasks:
 --- USER PROFILE ---
 - Workout Level: ${data.WorkoutLevel}
 - Training Methods: ${data.TrainingMethod?.join(", ")}
-- Training Frequency: ${data.TrainingFrequency}
+- Training Frequency, how many times per week to exercise not any more, only the times the user picked: ${data.TrainingFrequency}
 - Training Duration per session: ${data.TrainingDuration}
 - Past Workout History: ${data.workoutHistory}
 - Achievements: ${data.achievements}
