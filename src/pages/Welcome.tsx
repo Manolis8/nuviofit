@@ -220,11 +220,11 @@ const Welcome = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 mb-8">
-              <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
-                <Link to="/auth/sign-up">
-                  Get Started <ArrowRight className="ml-2" />
-                </Link>
-              </Button>
+<Link to="/auth/sign-up">
+  <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+    Get Started <ArrowRight className="ml-2" />
+  </Button>
+</Link>
             </div>
             
             <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
@@ -518,7 +518,7 @@ const Welcome = () => {
             
             <div className="mt-12">
               <Button asChild size="lg" className="bg-wellness-teal hover:bg-wellness-teal/90">
-                <Link to="/dashboard">
+                <Link to="/auth/sign-up">
                   Join Our Community <ArrowRight className="ml-2" />
                 </Link>
               </Button>
@@ -692,7 +692,7 @@ const Welcome = () => {
               Take the first step toward a healthier, happier you. Your future self—and the people who love you—will thank you for it.
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
-              <Link to="/dashboard">
+              <Link to="/auth/sign-up">
                 Begin Your Wellness Journey <ArrowRight className="ml-2" />
               </Link>
             </Button>
