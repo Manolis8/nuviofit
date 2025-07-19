@@ -25,12 +25,12 @@ You are a certified fitness coach, exercise scientist, and mindset mentor.
 
 Use the following onboarding data to perform 3 tasks:
 1. Write a short, accurate "fitness persona" (4–6 sentences) based on their mindset, preferences, and background.
-2. Generate a 7-day fitness program using the exact structure below. It must be consistent and parseable.
+2. Generate a 7-day fitness program using the exact structure below. It must be consistent, parseable, and must NEVER skip any required part of the structure (especially Workout Focus, Mindset Tip, Total Exercises, Duration, Calories). These must appear without exception.
 
 --- USER PROFILE ---
 - Workout Level: ${data.WorkoutLevel}
 - Training Methods: ${data.TrainingMethod?.join(", ")}
-- Training Frequency, how many times per week to exercise not any more, only the times the user picked: ${data.TrainingFrequency}
+- Training Frequency (how many times per week to exercise; not more, only what user picked): ${data.TrainingFrequency}
 - Training Duration per session: ${data.TrainingDuration}
 - Past Workout History: ${data.workoutHistory}
 - Achievements: ${data.achievements}
@@ -49,9 +49,9 @@ Use the following onboarding data to perform 3 tasks:
 Day {number}: {Title and emoji}  
 Warm-up:  
 {emoji} <> {name} <> {duration}  
-{emoji} <> {name} <> {duration} 
+{emoji} <> {name} <> {duration}  
 Workout Focus:  
-{muscle groups or body areas emphasized — e.g. Upper Body or Legs + Core}  
+{muscle groups or body areas emphasized — e.g., Upper Body or Legs + Core}  
 Main Exercises:  
 {emoji} <> {exercise name} <> {reps OR duration} x {sets} sets <> {rest time otherwise type 0} <> {short clear instruction on how to perform it} <> {estimated calories for that exercise}
 
@@ -60,15 +60,15 @@ Example:
 
 Mindset Tip:  
 Pass_mindset_tip  
-Total Exercises: {count the exercises under "Main Exercises", be extremely careful to count exactly the number of exercises}  
-Duration: {estimated session duration in minutes, e.g., 40 min}  
+Total Exercises: {count the exercises under "Main Exercises", count with extreme precision}
+Duration: {estimated session duration in minutes, e.g., 40 min}
 Calories: {sum of the calories for all exercises — just a number, no units}
 
 --- RULES FOR FORMAT (STRICT) ---
-- Do not forget a signle part of the stucture like Mindset, workout focus and so on
-- DO NOT write bullet points or markdown — plain text only.
-- Each warm-up and each exercise must be on a new line.
-- Always include sets, even for cardio or time-based exercises. (e.g. 🫁 <> Run <> 20 min x 1 set)
+- Never forget a single required block, especially Mindset Tip, Workout Focus, Total Exercises, Duration, Calories.
+- DO NOT use bullet points, markdown, or any other formatting — plain text only.
+- Each warm-up and each exercise must appear on its own single line.
+- Always include sets, even for cardio or time-based exercises. (e.g., 🫁 <> Run <> 20 min x 1 set)
 - Emojis:
   - 💪 = Upper Body
   - 🦵 = Legs
@@ -77,74 +77,49 @@ Calories: {sum of the calories for all exercises — just a number, no units}
   - 🫁 = Cardio/Endurance
   - 😴 = Rest Day (if no workout)
 
-- For rest days, use this:
+For rest days, use this exactly:
 Main Exercises:  
 😴 <> Rest Day <> No resttime applicable
 
-- For other forms like stretching or planks, use the same format:
+For holds, stretches, planks:
 🧘 <> Plank hold <> 1 min x 2 sets <> 30 sec rest <> Maintain straight line, engage core. <> 60
 
 📝 EXERCISE COUNT RULES:
+- Strength, mobility, gym, calisthenics: 6-10 exercises per day.
+- Light/recovery (yoga, rehab, mobility): 3-5 exercises allowed.
+- Cardio-intensive (HIIT, endurance, cycling, swimming): 4-6 exercises if intervals involved.
 
-- For most days (strength, mobility, gym workouts, calisthenics): include **6-10 exercises**.
-- For light or recovery days (yoga, mobility, rehab): 3-5 exercises are acceptable.
-- For cardio-intensive days (HIIT, endurance runs, cycling, swimming intervals): use common sense. Focus on variety within the method (intervals, drills, technique), not quantity. Exercise count may range from 4-6 if intervals are involved.
+NEVER undertrain. Ensure workload matches user's goals.
 
-Do NOT undertrain the day. Ensure the workload fits the user's goal.
+Count exercises accurately for Total Exercises.
 
-Always include a **Total Exercises count**, accurately reflecting the "Main Exercises" block.
-
-
-- "Reps OR duration" means use either like "15 reps" or "2 min" <> then follow with x 3 sets.
-
-If Training Method includes "Swimming", generate swimming workouts like:
-
-Interval laps (e.g., 10 x 100m Freestyle)
-
-Distance sets (e.g., 500m continuous swim)
-
-Stroke variation (e.g., Freestyle, Backstroke, Breaststroke)
-
-Use meters (m) for distance, not reps.
-
-Rest between sets should reflect swimming rest periods (e.g., 30 sec, 1 min)
-
-Example format:
+- "Reps OR duration" means either "15 reps" or "2 min" — use x {sets}.
+- Swimming example:
 🫁 <> 100m Freestyle <> x 10 sets <> 30 sec rest <> Swim at moderate pace, focus on form. <> 300
 
-If Training Method includes "Yoga / Pilates", create routines like flows, holds, and stretches. Use time-based sets.
+- Yoga/Pilates: flows, holds, stretches — time-based sets.
+- Rehab: mobility, stability, light corrective.
+- Hiking: time or distance-based walking plans.
 
-If Training Method includes "Rehab / Therapy", focus on light mobility, stability, and corrective movements.
-
-If Training Method includes "Hiking", include time or distance-based walking/hiking plans.
-
-Maintain emojis as per guidelines, but adapt the activity to match the method.
-
+Follow emojis strictly.
 
 --- FORMAT RULES (STRICT) ---
 - ✅ Always use "x" between reps and sets (e.g., 12 reps x 3 sets)
-
-- ✅ Emojis must appear ONLY:
-  - At the start of warm-up lines
-  - At the start of each exercise line
-  - At the start of the day title (e.g., Day 3: Cardio & Strength 💪)
-
-- ❌ NEVER add emojis:
-  - Inside instructions
-  - Inside mindset tips
-  - Inside duration, calories, muscle group, or anywhere except start of the line
-
-- ✅ Each warm-up or exercise must be on one single line. NO line breaks or bullets.
-
-- ✅ If an exercise has no rest time, still include: - 0 sec rest
-
-- In rest time section do it like this:
+- ✅ Emojis only:
+  - At start of warm-up lines
+  - At start of each exercise line
+  - At start of Day Title (e.g., Day 3: Cardio & Strength 💪)
+- ❌ NEVER put emojis inside instructions, mindset tips, durations, calories, or muscle groups.
+- ✅ Each warm-up or exercise on a single line, no breaks.
+- ✅ If no rest time, include 0 sec rest.
+- Rest time formatting:
 1 minute 30 sec rest  
 30 sec rest  
 1 minute rest
 
-- ALWAYS follow this format exactly. Format must stay consistent and easy to parse in code.
+FORMAT MUST BE CONSISTENT. DO NOT VARY.
 `;
+
 
 
     // ✅ 3. Call your Vercel endpoint
