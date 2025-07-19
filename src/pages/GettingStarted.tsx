@@ -878,7 +878,7 @@ if (step === 0) {
   { value: "Running / Jogging", label: "Running / Jogging — Cardio / solo", emoji: "🏃" },
   { value: "Biking", label: "Biking — Cardio", emoji: "🚴" },
   { value: "Yoga / Pilates", label: "Yoga / Pilates — Mobility, calm", emoji: "🧘" },
-  { value: "Hiking ", label: "Hiking / Outdoor — Natural terrain, relaxing", emoji: "🥾" },
+  { value: "Walking ", label: "Walking — Natural terrain, relaxing", emoji: "🥾" },
   { value: "Swimming", label: "Swimming — Low impact, full body", emoji: "🏊" },
   { value: "Rehab / Therapy", label: "Rehab / Therapy — Recovery movements", emoji: "🩺" },
       ].map((item) => {
@@ -1099,7 +1099,7 @@ if (step === 0) {
     </h2>
 
     <textarea
-      placeholder="e.g. Completed a 10k run, lost 15kg, overcame knee pain, trained 6x/week for 3 months"
+      placeholder="e.g. Completed a 10k run, lost 15kg, overcame knee pain, trained 6x/week for 3 months or say nothing"
       className="w-full border border-slate-300 rounded-md p-3 h-32 text-sm focus:ring-2 focus:ring-[#56A7F2] focus:outline-none"
       value={formData.achievements || ""}
       onChange={(e) =>
@@ -1117,7 +1117,7 @@ if (step === 0) {
     <label htmlFor="recommedations" className="block text-sm font-medium text-slate-700 mb-2">
       Anything else you'd like us to know?
       <span className="block text-sm text-slate-500 mt-1">
-        Let us know any special preferences, restrictions, or training styles you want us to consider.
+        Let us know any special preferences, restrictions, or training styles you want us to consider or say nothing.
       </span>
     </label>
     <textarea
