@@ -1073,7 +1073,7 @@ if (step === 0) {
     </h2>
 
    <textarea
-      placeholder="e.g. Lower back pain, knee injury in 2022, recovering from surgery, asthma"
+      placeholder="e.g. Lower back pain, knee injury in 2022, recovering from surgery, asthma, or say no injurie"
       className="w-full border border-slate-300 rounded-md p-3 h-32 text-sm focus:ring-2 focus:ring-[#56A7F2] focus:outline-none"
       value={formData.injuries || ""}
       onChange={(e) =>
