@@ -19,19 +19,13 @@ import React, { useRef } from "react";
 
 export default function WorkoutPage() {
   const { user, isLoaded } = useUser();
+
 const [workoutStats, setWorkoutStats] = useState({
   duration: "",
   calories: "",
-  totalExercises: "",
+  totalExercises:0,
   title: "",
   scheme: "",
-});
-const [todaysWorkout, setTodaysWorkout] = useState({
-  title: "",
-  duration: "",
-  calories: "",
-  totalExercises: 0, // ✅ renamed to match your usage
-  exercises_list: [],
 });
 
 useEffect(() => {
@@ -814,9 +808,12 @@ const navigate = useNavigate()
               <p className="text-sm font-medium">
   {(day.title || "Training").replace(/[\p{Emoji}]/gu, '').trim()}
 </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {day.exercises.length > 0 ? `${day.exercises.length} exercises` : "Rest day"}
-              </p>
+<p className="text-xs text-gray-500 mt-1">
+  {workoutStats && workoutStats.totalExercises > 0
+    ? `${workoutStats.totalExercises} exercises`
+    : "Rest day"}
+</p>
+
             </div>
           </motion.div>
         ))}
