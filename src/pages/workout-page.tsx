@@ -18,6 +18,94 @@ import React, { useRef } from "react";
 
 
 export default function WorkoutPage() {
+  const { user, isLoaded } = useUser();
+const [workoutStats, setWorkoutStats] = useState({
+  duration: "",
+  calories: "",
+  totalExercises: "",
+  title: "",
+  scheme: "",
+});
+const [todaysWorkout, setTodaysWorkout] = useState({
+  title: "",
+  duration: "",
+  calories: "",
+  totalExercises: 0, // ✅ renamed to match your usage
+  exercises_list: [],
+});
+
+useEffect(() => {
+  const fetchPlan = async () => {
+    if (!user?.id) return;
+
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("fitness_plan")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error || !data?.fitness_plan) {
+      console.error("Failed to fetch fitness plan:", error);
+      return;
+    }
+
+    const planText = data.fitness_plan.replace(/\r\n/g, "\n");
+
+    const dayMap = {
+      Mon: "Day 1",
+      Tue: "Day 2",
+      Wed: "Day 3",
+      Thu: "Day 4",
+      Fri: "Day 5",
+      Sat: "Day 6",
+      Sun: "Day 7",
+    };
+
+    const todayShort = new Date().toLocaleString("en-US", { weekday: "short" });
+    const todayLabel = dayMap[todayShort];
+
+    const daySectionMatch = planText.match(
+      new RegExp(`${todayLabel}.*(?:\\n|\\r\\n)([\\s\\S]*?)(?=Day\\s*\\d+:|$)`, "i")
+    );
+
+    if (!daySectionMatch) {
+      console.warn("No section found for today.");
+      return;
+    }
+
+    const daySection = daySectionMatch[0];
+
+    const mainExercisesMatch = daySection.match(
+      /Main Exercises:\s*\n([\s\S]*?)(?=\n[A-Z][a-z]+(?: [A-Z][a-z]+)*:|\n*$)/i
+    );
+
+    const mainExercisesLines = mainExercisesMatch
+      ? mainExercisesMatch[1]
+          .trim()
+          .split("\n")
+          .map(line => line.trim())
+          .filter(line =>
+            line &&
+            !line.toLowerCase().startsWith("mindset tip") &&
+            !line.toLowerCase().startsWith("total exercises") &&
+            !line.toLowerCase().startsWith("duration") &&
+            !line.toLowerCase().startsWith("calories")
+          )
+      : [];
+
+    const totalExercises = mainExercisesLines.length;
+
+    setWorkoutStats(prev => ({
+      ...prev,
+      totalExercises,
+    }));
+  };
+
+  fetchPlan();
+}, [user]);
+
+
+
 
 const isMounted = useRef(true);
 
@@ -29,7 +117,7 @@ useEffect(() => {
 
 
 const [onboardingData, setOnboardingData] = useState(null);
-  const { user, isLoaded } = useUser();
+
     const user_id = user?.id;
 useEffect(() => {
   if (!user_id) return; // wait for user
@@ -596,7 +684,7 @@ const navigate = useNavigate()
                         <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
                           <Target className="h-6 w-6 text-emerald-500 mx-auto mb-1" />
                           <p className="text-sm text-gray-600 dark:text-gray-400">Exercises</p>
-                          <p className="font-semibold">{todayWorkout?.exercises?.length ?? 0}</p>
+                          <p className="font-semibold">{workoutStats?.totalExercises?? 0}</p>
                         </div>
                       </div>
 
