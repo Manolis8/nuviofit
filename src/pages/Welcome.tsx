@@ -220,11 +220,12 @@ const Welcome = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 mb-8">
-<Link to="/auth/sign-up">
-  <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+<Button asChild size="lg" className="...">
+  <a href="/auth/sign-up">
     Get Started <ArrowRight className="ml-2" />
-  </Button>
-</Link>
+  </a>
+</Button>
+
             </div>
             
             <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
