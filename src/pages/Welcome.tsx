@@ -201,75 +201,75 @@ const Welcome = () => {
       </nav>
       
       {/* Hero Section - With padding top to account for navbar */}
-      <section className="py-20 md:py-32 mt-16 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-sm">
-              <Sparkles className="text-wellness-teal mr-2 h-5 w-5" />
-              <span className="text-sm font-medium">AI-Powered Wellness Journey</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-wellness-teal via-wellness-blue to-wellness-lavender">
-              Transform Your Mind 
-              <br />
-              and Body with Nuviofit
-            </h1>
-            
-            <p className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl">
-              Join the movement of wellness revolutionaries changing how we approach health
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-6 mb-8">
-<Button asChild size="lg" className="...">
-  <a href="/auth/sign-up">
-    Get Started <ArrowRight className="ml-2" />
-  </a>
-</Button>
+<section className="relative py-20 md:py-32 mt-16 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 overflow-hidden">
+  <div className="container mx-auto px-4">
+    <div className="flex flex-col items-center text-center max-w-4xl mx-auto relative z-10">
+      <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-sm">
+        <Sparkles className="text-wellness-teal mr-2 h-5 w-5" />
+        <span className="text-sm font-medium">AI-Powered Wellness Journey</span>
+      </div>
 
-            </div>
-            
-            <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
-              <CircleCheck className="h-4 w-4 text-wellness-teal" />
-              <span>No credit card required</span>
-              <span className="mx-2">•</span>
-              <CircleCheck className="h-4 w-4 text-wellness-teal" />
-              <span>Free to get started</span>
-            </div>
+      <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-wellness-teal via-wellness-blue to-wellness-lavender">
+        Transform Your Mind 
+        <br />
+        and Body with Nuviofit
+      </h1>
 
-            {/* Feature icons row - Expanded with more feature icons */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-              <div className="flex flex-col items-center">
-                <div className="bg-red-100/70 rounded-full p-4 mb-3">
-                  <Heart className="text-red-400 h-6 w-6" />
-                </div>
-                <p className="font-medium">Mood Tracking</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="bg-blue-100/70 rounded-full p-4 mb-3">
-                  <Dumbbell className="text-blue-400 h-6 w-6" />
-                </div>
-                <p className="font-medium">Fitness Plans</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="bg-green-100/70 rounded-full p-4 mb-3">
-                  <Utensils className="text-green-400 h-6 w-6" />
-                </div>
-                <p className="font-medium">Nutrition Guide</p>
-              </div>
-              <div className="flex flex-col items-center">
-                <div className="bg-purple-100/70 rounded-full p-4 mb-3">
-                  <Watch className="text-purple-400 h-6 w-6" />
-                </div>
-                <p className="font-medium">Smartwatch Data</p>
-              </div>
-            </div>
+      <p className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl">
+        Join the movement of wellness revolutionaries changing how we approach health
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-6 mb-8">
+        <Link to="/auth/sign-up">
+          <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+            Get Started <ArrowRight className="ml-2" />
+          </Button>
+        </Link>
+      </div>
+
+      <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
+        <CircleCheck className="h-4 w-4 text-wellness-teal" />
+        <span>No credit card required</span>
+        <span className="mx-2">•</span>
+        <CircleCheck className="h-4 w-4 text-wellness-teal" />
+        <span>Free to get started</span>
+      </div>
+
+      {/* Feature icons row */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+        <div className="flex flex-col items-center">
+          <div className="bg-red-100/70 rounded-full p-4 mb-3">
+            <Heart className="text-red-400 h-6 w-6" />
           </div>
+          <p className="font-medium">Mood Tracking</p>
         </div>
-        
-        {/* Background decorative elements */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-wellness-blue/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-wellness-teal/10 rounded-full blur-3xl"></div>
-      </section>
+        <div className="flex flex-col items-center">
+          <div className="bg-blue-100/70 rounded-full p-4 mb-3">
+            <Dumbbell className="text-blue-400 h-6 w-6" />
+          </div>
+          <p className="font-medium">Fitness Plans</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-green-100/70 rounded-full p-4 mb-3">
+            <Utensils className="text-green-400 h-6 w-6" />
+          </div>
+          <p className="font-medium">Nutrition Guide</p>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-purple-100/70 rounded-full p-4 mb-3">
+            <Watch className="text-purple-400 h-6 w-6" />
+          </div>
+          <p className="font-medium">Smartwatch Data</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Background decorative elements */}
+  <div className="absolute top-20 left-10 w-72 h-72 bg-wellness-blue/10 rounded-full blur-3xl z-0"></div>
+  <div className="absolute bottom-20 right-10 w-80 h-80 bg-wellness-teal/10 rounded-full blur-3xl z-0"></div>
+</section>
+
       
       {/* For Your Loved Ones Section */}
       <section className="py-16 bg-gradient-to-r from-wellness-lavender/20 to-wellness-blue/20">
