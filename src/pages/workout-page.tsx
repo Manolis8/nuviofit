@@ -173,9 +173,7 @@ const workout = fullPlan.find(w => w.isToday);
 
 const { setupFinished } = useUserContext();
 
-useEffect(() => {
-  if (!user?.id || !setupFinished) return; // ⛔ Don't fetch until onboarding done
-
+  useEffect(() => {
   const fetchPlan = async () => {
     const { data, error } = await supabase
       .from("onboarding_responses")
@@ -190,21 +188,19 @@ useEffect(() => {
 
     const planText = data.fitness_plan?.replace(/\r\n/g, "\n");
 
-    const countWorkoutDays = (plan: string) => {
-      const sections = plan
-        .split(/(?=Day\s*\d+:)/gi)
-        .filter(section => /^Day\s*\d+:/i.test(section.trim()));
+const countWorkoutDays = (plan: string) => {
+  const sections = plan
+    .split(/(?=Day\s*\d+:)/gi)
+    .filter(section => /^Day\s*\d+:/i.test(section.trim()));
 
-      const workoutDays = sections.filter(section =>
-        !/rest day/i.test(section)
-      );
+  const workoutDays = sections.filter(section =>
+    !/rest day/i.test(section)
+  );
 
-      return workoutDays.length;
-    };
+  return workoutDays.length;
+};
 
-    if (isMounted.current) {
-    setWorkoutDaysPerWeek(countWorkoutDays(planText));
-}
+setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
     if (!planText) {
       console.warn("⚠️ No plan text found");
@@ -212,13 +208,12 @@ useEffect(() => {
     }
 
     const workoutCount = countWorkoutDays(planText);
-    if (isMounted.current) {
     setWorkoutDays(workoutCount);
-}
+    
   };
 
-  fetchPlan();
-}, [user, setupFinished]);
+  if (user?.id) fetchPlan();
+}, [user]);
 
 
 
