@@ -27,7 +27,6 @@ Use the following onboarding data to perform 3 tasks:
 1. Write a short, accurate "fitness persona" (4–6 sentences) based on their mindset, preferences, and background.
 2. Generate a 7-day fitness program using the exact structure below. It must be consistent and parseable.
 
-
 --- USER PROFILE ---
 - Workout Level: ${data.WorkoutLevel}
 - Training Methods: ${data.TrainingMethod?.join(", ")}
@@ -66,7 +65,7 @@ Duration: {estimated session duration in minutes, e.g., 40 min}
 Calories: {sum of the calories for all exercises — just a number, no units}
 
 --- RULES FOR FORMAT (STRICT) ---
-- Do not forget a signle part of the stucture like mindset, workout focus and so on
+- Do not forget a signle part of the stucture like Mindset, workout focus and so on
 - DO NOT write bullet points or markdown — plain text only.
 - Each warm-up and each exercise must be on a new line.
 - Always include sets, even for cardio or time-based exercises. (e.g. 🫁 <> Run <> 20 min x 1 set)
