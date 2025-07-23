@@ -16,7 +16,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Our Beginning */}
+      {/* Our Beginning */} 
       <section className="mb-16">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <div>
