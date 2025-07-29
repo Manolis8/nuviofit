@@ -83,12 +83,7 @@ const App = () => (
                     </ProtectedRoute>
               }
             />
-                        <Route
-              path="/waitlsit"
-              element={
-                  <Waitlist />
-              }
-            />
+
             <Route
               path="/mindset"
               element={
