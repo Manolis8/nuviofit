@@ -86,9 +86,7 @@ const App = () => (
                         <Route
               path="/waitlsit"
               element={
-                    <ProtectedRoute>
                   <Waitlist />
-                    </ProtectedRoute>
               }
             />
             <Route
