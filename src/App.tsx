@@ -21,6 +21,7 @@ import TermsOfService from "./pages/Termsofservice";
 import Nutrition from "./components/nutrition/page";
 import GoalTracker from "./components/goals/page";
 import Editfitnessplan from "./components/edit-fitness-plan/page";
+import Waitlist from "./components/waitlist/page";
 import Arena from "./pages/the-arena";
 import NotFound from "./pages/NotFound";
 import About from "./pages/About";
@@ -79,6 +80,14 @@ const App = () => (
               element={
                     <ProtectedRoute>
                   <Editfitnessplan />
+                    </ProtectedRoute>
+              }
+            />
+                        <Route
+              path="/waitlsit"
+              element={
+                    <ProtectedRoute>
+                  <Waitlist />
                     </ProtectedRoute>
               }
             />
@@ -165,4 +174,3 @@ const App = () => (
 );
 
 export default App;
-
