@@ -56,7 +56,7 @@ setIsLoading(false)
                 <span className="text-2xl sm:text-3xl">🎉</span>
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-violet-600 to-teal-600 bg-clip-text text-transparent mb-3 sm:mb-4 px-2">
-                You're In! 🚀
+                You're In!
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 px-4">
                 Welcome to the NuvioFit waitlist! We'll notify you the moment early access reopens.
@@ -67,18 +67,6 @@ setIsLoading(false)
               <CardContent className="p-4 sm:p-6 md:p-8">
                 <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-3 sm:mb-4">What happens next?</h3>
                 <div className="space-y-3 sm:space-y-4 text-left">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-violet-400 to-teal-400 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                    </div>
-                    <p className="text-sm sm:text-base text-gray-600">You'll get an email confirmation shortly</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-teal-400 to-blue-400 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Zap className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
-                    </div>
-                    <p className="text-sm sm:text-base text-gray-600">We'll send exclusive content while you wait</p>
-                  </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-400 to-violet-400 rounded-full flex items-center justify-center flex-shrink-0">
                       <Lock className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
@@ -185,6 +173,7 @@ setIsLoading(false)
 
             {/* What You'll Get */}
             <div className="space-y-6 sm:space-y-8 mx-2 sm:mx-0">
+                          {/*
               <Card className="bg-white/60 backdrop-blur-sm border-0 shadow-xl rounded-2xl sm:rounded-3xl">
                 <CardContent className="p-4 sm:p-6 md:p-8">
                   <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6">What You'll Get</h3>
@@ -229,6 +218,7 @@ setIsLoading(false)
                   </div>
                 </CardContent>
               </Card>
+*/}
 
               {/* Reinforcement Section */}
               <Card className="bg-gradient-to-r from-violet-500/10 to-teal-500/10 backdrop-blur-sm border-0 shadow-xl rounded-2xl sm:rounded-3xl">
@@ -281,7 +271,7 @@ setIsLoading(false)
             */}
 
             <div className="text-gray-500 text-xs sm:text-sm px-4">
-              <p>&copy; 2024 NuvioFit. Building the future of health, one workout at a time.</p>
+              <p>&copy; 2025 NuvioFit. Building the future of health, one workout at a time.</p>
             </div>
           </footer>
         </div>
