@@ -1,5 +1,4 @@
-"use client"
-
+import { supabase } from "@/components/lib/supabaseClient";
 import type React from "react"
 
 import { useState } from "react"
@@ -21,11 +20,21 @@ export default function WaitlistPage() {
 
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+const displayName = name.trim() === '' ? 'user' : name.trim()
 
-    setIsSubmitted(true)
-    setIsLoading(false)
+const { data, error } = await supabase
+  .from('waitlist')
+  .insert([{ email: email.trim(), name: displayName }])
+
+if (error) {
+  console.error(error)
+  alert('Something went wrong. Please try again later.')
+  setIsLoading(false)
+  return
+}
+
+setIsSubmitted(true)
+setIsLoading(false)
   }
 
   if (isSubmitted) {
