@@ -28,6 +28,7 @@ export default function OnboardingPage() {
 const [isDataSaved, setIsDataSaved] = useState(false);
 
   const { user, isLoaded } = useUser();
+    const [email, setEmail] = useState("");
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
 
@@ -47,6 +48,14 @@ const {
 
 if (!isLoaded) return <div>Loading...</div>;
 
+  useEffect(() => {
+    async function fetchEmail() {
+      if (!user) return;
+      setEmail(user.emailAddresses[0]?.emailAddress || "");
+    }
+
+    fetchEmail();
+  }, [user]);
 
 const generatePlan = async () => {
   const user_id = user?.id;
@@ -146,7 +155,7 @@ const nextStep = async () => {
   recommedations: "",
   fitnessPlans: "",
   username: "",
-  
+  email: "",  
 });
 
 
@@ -191,6 +200,7 @@ const handleSubmit = async () => {
           workout_level: safe(formData.WorkoutLevel),
           injuries: safe(formData.injuries),
           recommedations: safe(formData.recommedations),
+          email: safe(formData.email),
           // Don't include fitness_plan here — generated separately
         },
       ],
