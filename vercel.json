@@ -1,5 +1,11 @@
 {
   "rewrites": [
     { "source": "/(.*)", "destination": "/" }
+  ],
+  "cron": [
+    {
+      "path": "/api/brevo/feedbackEmails", 
+      "schedule": "0 0 * * *" 
+    }
   ]
 }
