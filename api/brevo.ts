@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // 1) Send Welcome emails to users with welcome_sent = false
-    const welcomeUsersRes = await fetch(`${supabaseUrl}/rest/v1/onboarding_responses?welcome_sent=eq.false&select=email,name`, {
+    const welcomeUsersRes = await fetch(`${supabaseUrl}/rest/v1/onboarding_responses?welcome_sent=eq.false&select=email,username`, {
       headers: {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`,
@@ -26,8 +26,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const welcomeUsers = await welcomeUsersRes.json();
 
     for (const user of welcomeUsers) {
-      await sendEmail(brevoKey, user.email, user.name || 'Friend', 'Welcome to the Movement!', `
-        <h1>Hey ${user.name || 'there'} 👋</h1>
+      await sendEmail(brevoKey, user.email, user.username || 'Friend', 'Welcome to the Movement!', `
+        <h1>Hey ${user.username || 'there'} 👋</h1>
         <p>Welcome to the movement for health! We’re pumped to have you.</p>
       `);
 
@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const feedbackUsers = await feedbackUsersRes.json();
 
     for (const user of feedbackUsers) {
-      await sendEmail(brevoKey, user.email, user.name || 'Friend', "How's your first week going?", `
+      await sendEmail(brevoKey, user.email, user.username || 'Friend', "How's your first week going?", `
         <h2>Yo, it's been 7 days!</h2>
         <p>We’d love to hear how your journey is going so far.</p>
         <p><a href="https://nuviofit.com/feedback">Give Feedback</a></p>
