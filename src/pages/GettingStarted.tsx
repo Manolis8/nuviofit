@@ -66,27 +66,39 @@ const welcomeEmailSent = async (email, username) => {
 const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
 
 const handleWelcomeEmail = async () => {
-  const email = user?.primaryEmailAddress?.emailAddress;
-  const username = user?.username;
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) {
+      console.log("Missing email");
+      return;
+    }
 
-  if (!email || !username) {
-    console.log("Missing email or username");
-    return;
-  }
+    // Fetch username from Supabase
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id) // adjust key if needed
+      .single();
 
-  if (welcomeSent) {
-    console.log("Welcome email already sent");
-    return;
-  }
+    if (error || !data?.username) {
+      console.log("Could not fetch username from Supabase:", error);
+      return;
+    }
 
-  await welcomeEmailSent(email, username);
-  setWelcomeSent(true);
-};
+    const username = data.username;
 
-const handleClick = async () => {
-  await handleWelcomeEmail(); // 🔔 this is where we trigger the email
-  await generatePlan();       // ✨ this is your original function
-};
+    if (welcomeSent) {
+      console.log("Welcome email already sent");
+      return;
+    }
+
+    await welcomeEmailSent(email, username);
+    setWelcomeSent(true);
+  };
+
+  const handleClick = async () => {
+    await handleWelcomeEmail();
+    await generatePlan();
+  };
 
 
 const [dataSaved, setDataSaved] = useState(false);
