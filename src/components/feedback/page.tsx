@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 import { supabase } from "@/components/lib/supabaseClient";
 
@@ -8,16 +7,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Send, CheckCircle } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 export default function FeedbackPage() {
-  const router = useRouter()
+
+  const navigate = useNavigate()
   const { user, isLoaded, isSignedIn } = useUser()
   const [feedback, setFeedback] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleBack = () => {
-    router.push("/dashboard")
+    navigate("/dashboard")
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
