@@ -18,6 +18,7 @@ import { CalendarView } from "./pages/calendar";
 import MoodTracker from "./components/mindset/page";
 import PrivacyPolicy from "./pages/Privacypolicy";
 import TermsOfService from "./pages/Termsofservice";
+import FeedbackPage from "./components/feedback/page";
 import Nutrition from "./components/nutrition/page";
 import GoalTracker from "./components/goals/page";
 import Editfitnessplan from "./components/edit-fitness-plan/page";
@@ -113,6 +114,14 @@ const App = () => (
               element={
                     <ProtectedRoute>
                   <Nutrition />
+                    </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/feedback"
+              element={
+                    <ProtectedRoute>
+                  <FeedbackPage />
                     </ProtectedRoute>
               }
             />
