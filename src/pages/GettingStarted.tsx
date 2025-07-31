@@ -26,11 +26,70 @@ export default function OnboardingPage() {
   const questionStepIndex = step < 8 ? step : step - 1;
   const progress = (questionStepIndex / totalQuestionSteps) * 100;
 const [isDataSaved, setIsDataSaved] = useState(false);
-
   const { user, isLoaded } = useUser();
-    const [email, setEmail] = useState("");
+      const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    async function fetchEmail() {
+      if (!user) return;
+      setEmail(user.emailAddresses[0]?.emailAddress || "");
+    }
+
+    fetchEmail();
+  }, [user]);
+
+
+
   const [planGenerated, setPlanGenerated] = useState(false);
   const [plan, setPlan] = useState("");
+
+const welcomeEmailSent = async (email, username) => {
+    try {
+      const response = await fetch("/api/send-welcome-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, username }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send welcome email");
+      }
+
+      const data = await response.json();
+      console.log("Welcome email sent", data);
+      return data;
+    } catch (error) {
+      console.error("Error sending welcome email:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isLoaded) {
+      // User data not loaded yet
+      console.log("User data not loaded yet");
+      return;
+    }
+
+    if (!user) {
+      console.log("User is null or undefined");
+      return;
+    }
+
+    if (!user.email) {
+      console.log("User email missing");
+      return;
+    }
+
+    if (!user.username) {
+      console.log("User username missing");
+      return;
+    }
+
+    console.log("Calling welcomeEmailSent with:", user.email, user.username);
+    welcomeEmailSent(user.email, user.username);
+
+  }, [user, isLoaded]);
+
 
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
@@ -48,14 +107,6 @@ const {
 
 if (!isLoaded) return <div>Loading...</div>;
 
-  useEffect(() => {
-    async function fetchEmail() {
-      if (!user) return;
-      setEmail(user.emailAddresses[0]?.emailAddress || "");
-    }
-
-    fetchEmail();
-  }, [user]);
 
 const generatePlan = async () => {
   const user_id = user?.id;
@@ -1219,10 +1270,6 @@ if (step === 0) {
   </span>
   <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
 </Button>
-
-
-
-
 
     ) : (
       <Button
