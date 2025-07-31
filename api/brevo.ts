@@ -182,7 +182,7 @@ async function sendEmail(apiKey: string, to: string, username: string, subject: 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      sender: { name: 'NuvioFit', email: 'your_sender_email@nuviofit.com' },
+      sender: { name: 'NuvioFit', email: 'nuviofit@gmail.com' },
       to: [{ email: to, username }],
       subject,
       htmlContent,
