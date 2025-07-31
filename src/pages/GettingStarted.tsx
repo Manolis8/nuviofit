@@ -63,34 +63,6 @@ const welcomeEmailSent = async (email, username) => {
   }
 };
 
-useEffect(() => {
-  if (!isLoaded) {
-    console.log("User data not loaded yet");
-    return;
-  }
-
-  if (!user) {
-    console.log("User is null or undefined");
-    return;
-  }
-
-  const email = user?.primaryEmailAddress?.emailAddress;
-  const username = user?.username;
-
-  if (!email) {
-    console.log("❌ User email missing");
-    return;
-  }
-
-  if (!username) {
-    console.log("❌ User username missing");
-    return;
-  }
-
-  console.log("📩 Calling welcomeEmailSent with:", email, username);
-  welcomeEmailSent(email, username);
-}, [user, isLoaded]);
-
 const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
 
 const handleWelcomeEmail = async () => {
