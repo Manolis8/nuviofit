@@ -44,51 +44,53 @@ const [isDataSaved, setIsDataSaved] = useState(false);
   const [plan, setPlan] = useState("");
 
 const welcomeEmailSent = async (email, username) => {
-    try {
-      const response = await fetch("/api/send-welcome-email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username }),
-      });
+  try {
+    const response = await fetch("/api/send-welcome-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, username }),
+    });
 
-      if (!response.ok) {
-        throw new Error("Failed to send welcome email");
-      }
-
-      const data = await response.json();
-      console.log("Welcome email sent", data);
-      return data;
-    } catch (error) {
-      console.error("Error sending welcome email:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (!isLoaded) {
-      // User data not loaded yet
-      console.log("User data not loaded yet");
-      return;
+    if (!response.ok) {
+      throw new Error("Failed to send welcome email");
     }
 
-    if (!user) {
-      console.log("User is null or undefined");
-      return;
-    }
+    const data = await response.json();
+    console.log("✅ Welcome email sent", data);
+    return data;
+  } catch (error) {
+    console.error("❌ Error sending welcome email:", error);
+  }
+};
 
-    if (!user.email) {
-      console.log("User email missing");
-      return;
-    }
+useEffect(() => {
+  if (!isLoaded) {
+    console.log("User data not loaded yet");
+    return;
+  }
 
-    if (!user.username) {
-      console.log("User username missing");
-      return;
-    }
+  if (!user) {
+    console.log("User is null or undefined");
+    return;
+  }
 
-    console.log("Calling welcomeEmailSent with:", user.email, user.username);
-    welcomeEmailSent(user.email, user.username);
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const username = user?.username;
 
-  }, [user, isLoaded]);
+  if (!email) {
+    console.log("❌ User email missing");
+    return;
+  }
+
+  if (!username) {
+    console.log("❌ User username missing");
+    return;
+  }
+
+  console.log("📩 Calling welcomeEmailSent with:", email, username);
+  welcomeEmailSent(email, username);
+}, [user, isLoaded]);
+
 
 
 const [dataSaved, setDataSaved] = useState(false);
