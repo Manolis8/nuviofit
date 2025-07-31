@@ -91,6 +91,30 @@ useEffect(() => {
   welcomeEmailSent(email, username);
 }, [user, isLoaded]);
 
+const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
+
+const handleWelcomeEmail = async () => {
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const username = user?.username;
+
+  if (!email || !username) {
+    console.log("Missing email or username");
+    return;
+  }
+
+  if (welcomeSent) {
+    console.log("Welcome email already sent");
+    return;
+  }
+
+  await welcomeEmailSent(email, username);
+  setWelcomeSent(true);
+};
+
+const handleClick = async () => {
+  await handleWelcomeEmail(); // 🔔 this is where we trigger the email
+  await generatePlan();       // ✨ this is your original function
+};
 
 
 const [dataSaved, setDataSaved] = useState(false);
@@ -1231,7 +1255,7 @@ if (step === 0) {
     {/* 🎯 Buttons */}
     <div className="mt-6 flex flex-col gap-4 items-center">
 <Button
-  onClick={generatePlan}
+  onClick={handleClick}
   disabled={isGenerating}
   className="bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] text-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-all w-full max-w-xs"
 >
@@ -1241,6 +1265,7 @@ if (step === 0) {
     ? "Plan Completed ✅"
     : "Generate My Plan"}
 </Button>
+
 
     </div>
   </div>
