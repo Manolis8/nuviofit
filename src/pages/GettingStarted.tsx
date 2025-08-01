@@ -45,7 +45,7 @@ const [isDataSaved, setIsDataSaved] = useState(false);
 
 const welcomeEmailSent = async (email, username) => {
   try {
-    const response = await fetch("/api/brevo", {
+    const response = await fetch("/api/sendEmails", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username }),
@@ -62,6 +62,7 @@ const welcomeEmailSent = async (email, username) => {
     console.error("❌ Error sending welcome email:", error);
   }
 };
+
 
 const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
 
