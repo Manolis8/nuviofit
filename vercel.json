@@ -17,11 +17,5 @@
       "source": "/(.*)",
       "destination": "/"
     }
-  ],
-  "crons": [
-    {
-      "path": "/api/brevo",
-      "schedule": "0 9 1 * *"
-    }
   ]
 }
