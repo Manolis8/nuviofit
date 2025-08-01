@@ -45,7 +45,7 @@ const [isDataSaved, setIsDataSaved] = useState(false);
 
 const welcomeEmailSent = async (email, username) => {
   try {
-    const response = await fetch("/api/sendEmails", {
+    const response = await fetch("/api/brevo", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username }),
@@ -62,7 +62,6 @@ const welcomeEmailSent = async (email, username) => {
     console.error("❌ Error sending welcome email:", error);
   }
 };
-
 
 const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
 
@@ -97,9 +96,9 @@ const handleWelcomeEmail = async () => {
   };
 
   const handleClick = async () => {
-    await handleWelcomeEmail();
-
+    await generatePlan();
   };
+
 
 
 const [dataSaved, setDataSaved] = useState(false);
