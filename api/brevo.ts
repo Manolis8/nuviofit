@@ -174,7 +174,13 @@ for (const user of feedbackUsers) {
 }
 
 // Helper to send email via Brevo API
-async function sendEmail(apiKey: string, to: string, username: string, subject: string, htmlContent: string) {
+async function sendEmail(
+  apiKey: string,
+  to: string,
+  username: string,
+  subject: string,
+  htmlContent: string
+) {
   const res = await fetch('https://api.brevo.com/v3/smtp/email', {
     method: 'POST',
     headers: {
@@ -183,15 +189,18 @@ async function sendEmail(apiKey: string, to: string, username: string, subject: 
     },
     body: JSON.stringify({
       sender: { name: 'NuvioFit', email: 'nuviofit@gmail.com' },
-to: [{ email: to, name: username }],
+      to: [{ email: to, name: username }],
       subject,
       htmlContent,
+      textContent: 'This is a fallback text version of the email',
     }),
   });
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(`Failed to send email: ${JSON.stringify(err)}`);
+    throw new Error(`Failed to send email (status ${res.status}): ${JSON.stringify(err)}`);
   }
+
+  return await res.json(); // Optional: return messageId, etc.
 }
 
