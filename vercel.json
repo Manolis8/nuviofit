@@ -5,10 +5,10 @@
       "has": [
         {
           "type": "host",
-          "value": "nuviofit.com"
+          "value": "www.nuviofit.com"
         }
       ],
-      "destination": "https://www.nuviofit.com/:1",
+      "destination": "https://nuviofit.com/:1",
       "permanent": true
     }
   ],
@@ -16,6 +16,12 @@
     {
       "source": "/(.*)",
       "destination": "/"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/brevo",
+      "schedule": "0 9 1 * *"
     }
   ]
 }
