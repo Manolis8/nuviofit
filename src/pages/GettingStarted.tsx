@@ -302,7 +302,7 @@ const sendWelcomeEmail = async (email: string, username: string) => {
   console.log("📤 Sending welcome email to", email);
 
   try {
-    const res = await fetch("/api/brevo", {
+    const res = await fetch("/api/sendwelcomeEmails", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
