@@ -1,15 +1,35 @@
+import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const supabase = createClient(
+process.env.SUPABASE_SERVICE_ROLE_KEY!,
+process.env.VITE_SUPABASE_URL!
+);
+
+export default async function sendEmails(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Only POST method is allowed' });
   }
 
-  const { email, username } = req.body;
+  const { email } = req.body;
 
-  if (!email || !username) {
-    return res.status(400).json({ message: 'Missing email or username' });
+  if (!email) {
+    return res.status(400).json({ message: 'Missing email' });
   }
+
+  // Fetch the username from Supabase using the email
+  const { data, error } = await supabase
+    .from('onboarding_responses')
+    .select('username')
+    .eq('email', email)
+    .single();
+
+  if (error || !data?.username) {
+    console.error("Failed to fetch username:", error);
+    return res.status(404).json({ message: 'Username not found for this email' });
+  }
+
+  const username = data.username;
 
   const brevoKey = process.env.BREVO_API_KEY!;
 
@@ -37,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        sender: { name: 'NuvioFit', email: 'movement@nuviofit.com' }, // replace with Brevo verified sender
+        sender: { name: 'NuvioFit', email: 'movement@nuviofit.com' },
         to: [{ email, name: username }],
         subject: 'Welcome to the Club!',
         htmlContent,
