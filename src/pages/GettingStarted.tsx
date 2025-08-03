@@ -112,7 +112,8 @@ const handleWelcomeEmail = async () => {
 
   const handleClick = async () => {
 
-    await handleWelcomeEmail;
+await handleWelcomeEmail();
+
   };
 
 
@@ -304,6 +305,30 @@ const handleSubmit = async () => {
 
 const [loadingS, setLoadingS] = useState(false);
 
+const sendWelcomeEmail = async (email: string, username: string) => {
+  console.log("📤 Sending welcome email to", email);
+
+  try {
+    const res = await fetch("/api/brevo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, username }),
+    });
+
+    const data = await res.json();
+    console.log("📨 Brevo response:", data);
+
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to send email");
+    }
+  } catch (error) {
+    console.error("❌ Error sending welcome email:", error);
+  }
+};
+
+
 const handleSaveData = async () => {
   const user_id = user.id;
 
@@ -312,20 +337,20 @@ const handleSaveData = async () => {
     return;
   }
 
-  setLoadingS(true); // ⏳ Start loading
-
   const success = await handleSubmit();
-
-  setLoadingS(false); // ✅ Stop loading (whether success or failure)
 
   if (!success) {
     alert("❌ Failed to save data");
     return;
   }
 
+  // ✅ Only call this when we know the data is saved and formData has email/username
+  await sendWelcomeEmail(formData.email, formData.username);
+
   setIsDataSaved(true);
   nextStep();
 };
+
 
 
 const [usernameError, setUsernameError] = useState("");
