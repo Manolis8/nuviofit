@@ -28,6 +28,7 @@ export default function OnboardingPage() {
 const [isDataSaved, setIsDataSaved] = useState(false);
   const { user, isLoaded } = useUser();
       const [email, setEmail] = useState("");
+        const [username, setUsername] = useState("");
 
   useEffect(() => {
     async function fetchEmail() {
@@ -37,6 +38,8 @@ const [isDataSaved, setIsDataSaved] = useState(false);
 
     fetchEmail();
   }, [user]);
+
+
 
 
 
@@ -66,34 +69,36 @@ const welcomeEmailSent = async (email, username) => {
 const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
 
 const handleWelcomeEmail = async () => {
-    const email = user?.primaryEmailAddress?.emailAddress;
-    if (!email) {
-      console.log("Missing email");
-      return;
-    }
+  const email = user?.emailAddresses?.[0]?.emailAddress;
 
-    // Fetch username from Supabase
-    const { data, error } = await supabase
-      .from("onboarding_responses")
-      .select("username")
-      .eq("user_id", user.id) // adjust key if needed
-      .single();
+  if (!email) {
+    console.log("Missing email");
+    return;
+  }
 
-    if (error || !data?.username) {
-      console.log("Could not fetch username from Supabase:", error);
-      return;
-    }
+  // Fetch username from Supabase
+  const { data, error } = await supabase
+    .from("onboarding_responses")
+    .select("username")
+    .eq("user_id", user.id)
+    .single();
 
-    const username = data.username;
+  if (error || !data?.username) {
+    console.log("Could not fetch username from Supabase:", error);
+    return;
+  }
 
-    if (welcomeSent) {
-      console.log("Welcome email already sent");
-      return;
-    }
+  const username = data.username;
 
-    await welcomeEmailSent(email, username);
-    setWelcomeSent(true);
-  };
+  if (welcomeSent) {
+    console.log("Welcome email already sent");
+    return;
+  }
+
+  await welcomeEmailSent(email, username);
+  setWelcomeSent(true);
+};
+
 
   const handleClick = async () => {
 
