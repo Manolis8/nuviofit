@@ -110,13 +110,6 @@ const handleWelcomeEmail = async () => {
 };
 
 
-  const handleClick = async () => {
-
-await handleWelcomeEmail();
-
-  };
-
-
 
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
@@ -345,13 +338,15 @@ const handleSaveData = async () => {
   }
 
   // ✅ Only call this when we know the data is saved and formData has email/username
-  await sendWelcomeEmail(formData.email, formData.username);
-
+  
   setIsDataSaved(true);
   nextStep();
 };
 
-
+  const handleClick = async () => {
+await generatePlan;
+    await sendWelcomeEmail(formData.email, formData.username);
+  };
 
 const [usernameError, setUsernameError] = useState("");
 
