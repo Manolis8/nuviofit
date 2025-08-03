@@ -45,7 +45,7 @@ const [isDataSaved, setIsDataSaved] = useState(false);
 
 const welcomeEmailSent = async (email, username) => {
   try {
-    const response = await fetch("/api/brevo", {
+    const response = await fetch("/api/sendEmails", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username }),
