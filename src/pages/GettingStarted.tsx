@@ -40,6 +40,16 @@ const [isDataSaved, setIsDataSaved] = useState(false);
   }, [user]);
 
 
+useEffect(() => {
+  if (user) {
+    // Set email and optionally username on formData once user loads
+    setFormData((prev) => ({
+      ...prev,
+      email: user.emailAddresses?.[0]?.emailAddress || "",
+      username: prev.username || "", // or fetch from Supabase separately if you want
+    }));
+  }
+}, [user]);
 
 
 
@@ -242,6 +252,9 @@ const handleSubmit = async () => {
     return val?.trim?.() || "nothing";
   };
 
+  // Ensure email is set here:
+  const emailToSave = user.emailAddresses?.[0]?.emailAddress || formData.email;
+
   const { data, error } = await supabase
     .from("onboarding_responses")
     .upsert(
@@ -267,11 +280,11 @@ const handleSubmit = async () => {
           workout_level: safe(formData.WorkoutLevel),
           injuries: safe(formData.injuries),
           recommedations: safe(formData.recommedations),
-          email: safe(formData.email),
-          // Don't include fitness_plan here — generated separately
+          email: safe(emailToSave),
+          // fitness_plan excluded as you said
         },
       ],
-      { onConflict: "user_id" } // <--- important: upsert on user_id
+      { onConflict: "user_id" }
     );
 
   if (error) {
@@ -281,6 +294,7 @@ const handleSubmit = async () => {
 
   return true;
 };
+
 
 
   const handleChange = (field: string, value: any) => {
