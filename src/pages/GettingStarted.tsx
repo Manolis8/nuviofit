@@ -1,8 +1,8 @@
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowLeft} from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react";
 import React, { useRef } from "react";
-
+import { ArrowRight, Loader2 } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
 import { generateFitnessPlan } from "@/components/lib/generateFitnessPlan";
@@ -58,7 +58,7 @@ useEffect(() => {
 
 const welcomeEmailSent = async (email, username) => {
   try {
-    const response = await fetch("/api/sendEmails", {
+    const response = await fetch("/api/brevo", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, username }),
@@ -302,7 +302,7 @@ const handleSubmit = async () => {
   setFormData((prev) => ({ ...prev, [field]: value }));
 };
 
-
+const [loadingS, setLoadingS] = useState(false);
 
 const handleSaveData = async () => {
   const user_id = user.id;
@@ -312,18 +312,20 @@ const handleSaveData = async () => {
     return;
   }
 
+  setLoadingS(true); // ⏳ Start loading
+
   const success = await handleSubmit();
+
+  setLoadingS(false); // ✅ Stop loading (whether success or failure)
 
   if (!success) {
     alert("❌ Failed to save data");
     return;
   }
 
-  setIsDataSaved(true); // ✅ Mark data as saved
-  nextStep(); // ✅ Go to next step
+  setIsDataSaved(true);
+  nextStep();
 };
-
-
 
 
 const [usernameError, setUsernameError] = useState("");
@@ -1292,16 +1294,25 @@ if (step === 0) {
 
     {step === 16 ? (
 <Button
-  onClick={handleSaveData}
-  disabled={!isCurrentStepValid()}
-  className="group relative overflow-hidden bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] px-5 text-white transition-all duration-300 hover:shadow-md"
->
-  <span className="relative z-10 flex items-center gap-2">
-    Save Data & Continue
-    <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-  </span>
-  <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
-</Button>
+      onClick={handleSaveData}
+      disabled={loadingS || !isCurrentStepValid()}
+      className="group relative overflow-hidden bg-gradient-to-r from-[#4ECDC4] via-[#56A7F2] to-[#9F7AEA] px-5 text-white transition-all duration-300 hover:shadow-md disabled:opacity-60"
+    >
+      <span className="relative z-10 flex items-center gap-2">
+        {loadingS ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" />
+            Saving...
+          </>
+        ) : (
+          <>
+            Save Data & Continue
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </>
+        )}
+      </span>
+      <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
+    </Button>
 
     ) : (
       <Button
