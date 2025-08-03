@@ -96,8 +96,8 @@ const handleWelcomeEmail = async () => {
   };
 
   const handleClick = async () => {
-    await generatePlan();
-    await handleWelcomeEmail
+
+    await handleWelcomeEmail;
   };
 
 
