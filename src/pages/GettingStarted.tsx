@@ -344,7 +344,7 @@ const handleSaveData = async () => {
 };
 
   const handleClick = async () => {
-await generatePlan;
+await generatePlan();
     await sendWelcomeEmail(formData.email, formData.username);
   };
 
