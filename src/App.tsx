@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "@/context/UserContext";
 import React from "react";
+import { initGA } from './analytics';
+import GAListener from './GAListener';
+import { useEffect } from 'react';
 
 // Pages & Components
 import Welcome from "./pages/Welcome";
@@ -38,14 +41,20 @@ import  {ProtectedRoute}  from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <UserProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
+const App = () => {
+  useEffect(() => {
+    initGA();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <UserProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <GAListener />  {/* Add GAListener here */}
+            <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Welcome />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -168,11 +177,12 @@ const App = () => (
 
             {/* 404 Fallback */}
             <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </UserProvider>
-  </QueryClientProvider>
-);
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </UserProvider>
+    </QueryClientProvider>
+)
+};
 
 export default App;
