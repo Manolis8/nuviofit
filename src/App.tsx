@@ -11,7 +11,7 @@ import GAListener from './GAListener';
 import { useEffect } from 'react';
 
 // Pages & Components
-import Welcome from "./pages/Welcome";
+import Welcome from "./pages/Welcome"; 
 import Profile from "./components/profile/page";
 import Warmup from "./pages/warmup-page";
 import Dashboard from "./pages/Dashboard";
