@@ -10,3 +10,4 @@ export const initGA = (): void => {
 export const logPageView = (path: string): void => {
   ReactGA.send({ hitType: 'pageview', page: path });
 };
+
