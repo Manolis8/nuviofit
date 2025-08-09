@@ -1,46 +1,115 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>NuvioFit — The AI Operating System for Your Health & Mind</title>
+  <!-- Primary title -->
+  <title>NuvioFit — AI-Powered Personalized Fitness, Nutrition & Wellness</title>
 
-  <meta name="description" content="NuvioFit is the future of health. An AI-powered platform for personalized fitness, nutrition, mental well-being, and habit coaching. Transform your body, mind, and life through adaptive technology that grows with you." />
-  <meta name="keywords" content="AI health app, fitness app, mental wellness, nutrition, AI coach, personalized workouts, goal tracking, NuvioFit, wellness operating system, resilience, mental health, wellbeing, AI-powered fitness" />
-  <meta name="author" content="NuvioFit — Your AI System for Health, Fitness & Mindset" />
+  <!-- Optimized meta description (broad audience + benefits) -->
+  <meta name="description" content="NuvioFit personalizes workouts, meal plans, mindset coaching, and recovery for your unique lifestyle. From beginners to athletes, get AI-driven guidance that adapts to your goals, schedule, and wearables." />
 
-  <!-- Canonical URL -->
+  <!-- Targeted meta keywords (competitive / mid / long-tail mix) -->
+  <meta name="keywords" content="AI fitness app, personalized workout app, personalized meal plan app, AI wellness coach, habit-building app, recovery tracking app, AI fitness plan for busy people, adaptive workout app, NuvioFit" />
+  <meta name="author" content="NuvioFit" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
+
+  <!-- Canonical & sitemap hint -->
   <link rel="canonical" href="https://www.nuviofit.com/" />
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
-  <!-- Favicon for all browsers and Google -->
-  <link rel="icon" type="image/png" href="https://www.nuviofit.com/nuviofit-logo.png" />
-  <link rel="shortcut icon" href="https://www.nuviofit.com/nuviofit-logo.png" type="image/png" />
-  <link rel="apple-touch-icon" href="https://www.nuviofit.com/nuviofit-logo.png" />
+  <!-- Preconnects / dns-prefetch for performance -->
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.nuviofit.com" crossorigin />
+  <link rel="dns-prefetch" href="//www.nuviofit.com" />
+
+  <!-- Theme & Favicons -->
   <meta name="theme-color" content="#ffffff" />
+  <link rel="icon" href="https://www.nuviofit.com/nuviofit-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="https://www.nuviofit.com/nuviofit-logo.png" />
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:title" content="NuvioFit — The AI Operating System for Your Health & Mind" />
-  <meta property="og:description" content="Transform your body, mind, and life with NuvioFit — an AI-powered platform for personalized fitness, nutrition, mental well-being, and habit coaching." />
+  <!-- Open Graph (social preview) -->
+  <meta property="og:locale" content="en_US" />
   <meta property="og:type" content="website" />
+  <meta property="og:title" content="NuvioFit — AI-Powered Personalized Fitness & Nutrition" />
+  <meta property="og:description" content="AI-personalized workouts, nutrition, mindset, and recovery that adapt to your goals and schedule. Built for everyone who wants full personalization." />
   <meta property="og:url" content="https://www.nuviofit.com/" />
-  <meta property="og:image" content="https://www.nuviofit.com/nuviofit-logo.png" />
+  <meta property="og:site_name" content="NuvioFit" />
+  <meta property="og:image" content="https://www.nuviofit.com/social-preview.png" />
+  <meta property="og:image:alt" content="NuvioFit — Personal AI Wellness App" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
-  <!-- Twitter -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NuvioFit — The AI Operating System for Your Health & Mind" />
-  <meta name="twitter:description" content="Transform your body, mind, and life with NuvioFit — AI-driven personalized coaching for fitness, nutrition, and mental wellness." />
-  <meta name="twitter:image" content="https://www.nuviofit.com/nuviofit-logo.png" />
-  
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-PW2WCQ85PZ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <meta name="twitter:title" content="NuvioFit — Personalized Health, Powered by AI" />
+  <meta name="twitter:description" content="Workouts, meal plans, mindset and recovery tailored to YOU — AI that evolves with your goals and schedule." />
+  <meta name="twitter:image" content="https://www.nuviofit.com/social-preview.png" />
 
-  gtag('config', 'G-PW2WCQ85PZ');
-</script>
+  <!-- hreflang (add localized versions later) -->
+  <link rel="alternate" href="https://www.nuviofit.com/" hreflang="en" />
+
+  <!-- Structured Data (Organization + WebSite + SoftwareApplication) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://www.nuviofit.com/#org",
+        "name": "NuvioFit",
+        "url": "https://www.nuviofit.com/",
+        "logo": "https://www.nuviofit.com/nuviofit-logo.png",
+        "sameAs": [
+          "https://www.instagram.com/nuviofit",
+          "https://www.linkedin.com/company/nuviofit",
+          "https://twitter.com/nuviofit"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.nuviofit.com/#website",
+        "url": "https://www.nuviofit.com/",
+        "name": "NuvioFit",
+        "publisher": { "@id": "https://www.nuviofit.com/#org" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.nuviofit.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://www.nuviofit.com/#app",
+        "name": "NuvioFit",
+        "operatingSystem": "iOS, Android, Web",
+        "applicationCategory": "HealthApplication",
+        "url": "https://www.nuviofit.com/",
+        "description": "NuvioFit personalizes fitness, nutrition, mindset, and recovery with AI — for all adults seeking full personalization and better results.",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "128" }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Analytics (Google) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PW2WCQ85PZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PW2WCQ85PZ', { 'anonymize_ip': true });
+  </script>
+
+  <!-- App sign-in or other identity (if used) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <!-- Main Scripts (defer for performance) -->
+  <script src="https://cdn.nuviofit.com/gptengineer.js" type="module" defer></script>
+  <script type="module" src="/src/main.tsx" defer></script>
 </head>
 
 <body>
