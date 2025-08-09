@@ -39,6 +39,7 @@ import { SignedIn, SignedOut } from "@clerk/clerk-react";
 
 // 🔐 Custom Auth Protection
 import  {ProtectedRoute}  from "./components/ProtectedRoute";
+import AboutYouPage from "./components/about-you/page";
 
 
 const queryClient = new QueryClient();
@@ -63,6 +64,7 @@ const App = () => {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about" element={<About />} />
+            <Route path="/about-you" element={<Aboutyou />} />
             <Route
               path="/auth/*"
               element={
@@ -92,15 +94,6 @@ const App = () => {
               element={
                     <ProtectedRoute>
                   <Editfitnessplan />
-                    </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/about-you"
-              element={
-                    <ProtectedRoute>
-                  <Aboutyou />
                     </ProtectedRoute>
               }
             />
