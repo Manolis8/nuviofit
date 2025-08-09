@@ -10,8 +10,9 @@ import { initGA } from './analytics';
 import GAListener from './GAListener';
 import { useEffect } from 'react';
 
+
 // Pages & Components
-import Welcome from "./pages/Welcome"; 
+import Welcome from "./pages/Welcome";
 import Profile from "./components/profile/page";
 import Warmup from "./pages/warmup-page";
 import Dashboard from "./pages/Dashboard";
@@ -19,6 +20,7 @@ import WorkoutPage from "./pages/workout-page";
 import GettingStarted from "./pages/GettingStarted";
 import { CalendarView } from "./pages/calendar";
 import MoodTracker from "./components/mindset/page";
+import Aboutyou from "./components/about-you/page"
 import PrivacyPolicy from "./pages/Privacypolicy";
 import TermsOfService from "./pages/Termsofservice";
 import FeedbackPage from "./components/feedback/page";
@@ -90,6 +92,15 @@ const App = () => {
               element={
                     <ProtectedRoute>
                   <Editfitnessplan />
+                    </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/about-you"
+              element={
+                    <ProtectedRoute>
+                  <Aboutyou />
                     </ProtectedRoute>
               }
             />
