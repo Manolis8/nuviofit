@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -16,10 +14,10 @@ import {
   CheckCircle,
   TrendingUp,
 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useNavigate } from "react-router-dom"
 
 export default function AboutYouPage() {
-  const router = useRouter()
+  const navigate = useNavigate()
   const [hoveredPersona, setHoveredPersona] = useState<string | null>(null)
 
   const personas = [
@@ -85,7 +83,7 @@ export default function AboutYouPage() {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="container mx-auto px-4 py-6">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-6 hover:bg-gray-50 transition-colors">
+        <Button variant="ghost" onClick={() => navigate("/")} className="mb-6 hover:bg-gray-50 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
@@ -232,13 +230,13 @@ export default function AboutYouPage() {
           <Button
             size="lg"
             className="bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-600 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 mb-4"
-            onClick={() => router.push("/questionnaire")}
+            onClick={() => navigate("/auth/signup")}
           >
             See Your Personalized Plan
             <Zap className="w-5 h-5 ml-2" />
           </Button>
           <p className="text-gray-600 text-sm max-w-md mx-auto">
-            Join thousands who've discovered fitness that actually fits their life
+            Fitness made simple — designed for your life, by YOU.
           </p>
         </div>
       </div>
