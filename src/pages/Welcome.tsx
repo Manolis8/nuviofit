@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
@@ -183,7 +182,8 @@ const Welcome = () => {
               <Link to="/" className="font-bold text-xl text-wellness-blue">Nuviofit</Link>
             </div>
             <div className="hidden md:flex space-x-4 items-center">
-              <Link to="/about" className="hover:text-wellness-blue transition-colors">About Us</Link>
+              <Link to="/about-you" className="hover:text-wellness-blue transition-colors">About YOU</Link>
+              <Link to="/about" className="hover:text-wellness-blue transition-colors">Our Company</Link>
               <Button asChild variant="outline" className="ml-2">
                 <Link to="/auth">Log In</Link>
               </Button>
