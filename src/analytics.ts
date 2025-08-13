@@ -8,6 +8,12 @@ export const logPageView = (url: string) => {
   ReactGA.send({ hitType: "pageview", page: url });
 };
 
-export const trackEvent = (name: string, params: Record<string, any> = {}) => {
-  ReactGA.event(name, params);
+// Standard GA4 event
+export const trackEvent = (action: string, params: Record<string, any> = {}) => {
+  ReactGA.event({
+    category: params.category || "Link",
+    action: action,
+    label: params.label || "",
+    ...params,
+  });
 };
