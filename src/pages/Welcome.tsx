@@ -6,6 +6,7 @@ import {
   BarChart, Smile, LayoutDashboard, Timer, Calendar,
   User, Users, Clock, LineChart, Settings, CircleCheck, Lightbulb, Quote
 } from "lucide-react";
+import { trackEvent } from "../analytics";
 import { Button } from "@/components/ui/button";
 import { 
   Carousel,
@@ -182,7 +183,9 @@ const Welcome = () => {
               <Link to="/" className="font-bold text-xl text-wellness-blue">Nuviofit</Link>
             </div>
             <div className="hidden md:flex space-x-4 items-center">
-              <Link to="/about-you" className="hover:text-wellness-blue transition-colors">About YOU</Link>
+              <Link to="/about-you" className="hover:text-wellness-blue transition-colors" onClick={() => trackEvent('about_you_click', { category: 'navigation', label: 'About YOU Link' })}>
+  About YOU
+</Link>
               <Link to="/about" className="hover:text-wellness-blue transition-colors">Our Company</Link>
               <Button asChild variant="outline" className="ml-2">
                 <Link to="/auth">Log In</Link>
