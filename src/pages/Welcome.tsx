@@ -200,7 +200,7 @@ const Welcome = () => {
               <Button asChild variant="outline" className="ml-2">
                 <Link to="/auth">Log In</Link>
               </Button>
-              <Button asChild className="bg-wellness-blue hover:bg-wellness-blue/90">
+              <Button asChild className="bg-wellness-blue hover:bg-wellness-blue/90"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
                 <Link to="/auth/sign-up">Sign Up</Link>
               </Button>
             </div>
@@ -535,7 +535,7 @@ const Welcome = () => {
             </div>
             
             <div className="mt-12">
-              <Button asChild size="lg" className="bg-wellness-teal hover:bg-wellness-teal/90">
+              <Button asChild size="lg" className="bg-wellness-teal hover:bg-wellness-teal/90"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
                 <Link to="/auth/sign-up">
                   Join Our Community <ArrowRight className="ml-2" />
                 </Link>
@@ -602,7 +602,7 @@ const Welcome = () => {
           </div>
           
           <div className="mt-12 text-center">
-            <Button asChild size="lg" className="bg-wellness-blue hover:bg-wellness-blue/90">
+            <Button asChild size="lg" className="bg-wellness-blue hover:bg-wellness-blue/90"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
               <Link to="/auth/sign-up">
                 Explore All Features
               </Link>
@@ -649,7 +649,7 @@ const Welcome = () => {
             </div>
             
             <div className="mt-12 text-center">
-              <Button asChild size="lg" className="bg-gradient-to-r from-wellness-mint to-wellness-teal hover:opacity-90 transition-all">
+              <Button asChild size="lg" className="bg-gradient-to-r from-wellness-mint to-wellness-teal hover:opacity-90 transition-all"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
                 <Link to="/auth/sign-up">
                   Start Your Journey Today
                 </Link>
@@ -709,7 +709,7 @@ const Welcome = () => {
             <p className="text-xl mb-8">
               Take the first step toward a healthier, happier you. Your future self—and the people who love you—will thank you for it.
             </p>
-            <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
+            <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
               <Link to="/auth/sign-up">
                 Begin Your Wellness Journey <ArrowRight className="ml-2" />
               </Link>
