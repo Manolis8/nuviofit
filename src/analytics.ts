@@ -17,3 +17,8 @@ export const trackEvent = (action: string, params: Record<string, any> = {}) => 
     ...params,
   });
 };
+
+export const trackClick = (action: string, label?: string, category?: string) => {
+  return () => trackEvent(action, { label, category });
+};
+
