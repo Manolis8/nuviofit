@@ -6,7 +6,7 @@ import {
   BarChart, Smile, LayoutDashboard, Timer, Calendar,
   User, Users, Clock, LineChart, Settings, CircleCheck, Lightbulb, Quote
 } from "lucide-react";
-import { trackEvent } from "../analytics";
+import { trackClick } from "../analytics";
 import { Button } from "@/components/ui/button";
 import { 
   Carousel,
@@ -183,10 +183,20 @@ const Welcome = () => {
               <Link to="/" className="font-bold text-xl text-wellness-blue">Nuviofit</Link>
             </div>
             <div className="hidden md:flex space-x-4 items-center">
-              <Link to="/about-you" className="hover:text-wellness-blue transition-colors" onClick={() => trackEvent('about_you_click', { category: 'navigation', label: 'About YOU Link' })}>
+<Link
+  to="/about-you"
+  className="hover:text-wellness-blue transition-colors"
+  onClick={trackClick('about_you_click', 'About YOU Link', 'navigation')}
+>
   About YOU
 </Link>
-              <Link to="/about" className="hover:text-wellness-blue transition-colors">Our Company</Link>
+<Link
+  to="/about"
+  className="hover:text-wellness-blue transition-colors"
+  onClick={trackClick('our_company_click', 'Our Company Link', 'navigation')}
+>
+  Our Company
+</Link>
               <Button asChild variant="outline" className="ml-2">
                 <Link to="/auth">Log In</Link>
               </Button>
@@ -224,9 +234,13 @@ const Welcome = () => {
 
       <div className="flex flex-col sm:flex-row gap-6 mb-8">
         <Link to="/auth/sign-up">
-          <Button size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg">
-            Get Started <ArrowRight className="ml-2" />
-          </Button>
+<Button
+  size="lg"
+  className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"
+  onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}
+>
+  Get Started <ArrowRight className="ml-2" />
+</Button>
         </Link>
       </div>
 
