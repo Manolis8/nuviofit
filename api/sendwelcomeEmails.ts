@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Fetch user from Supabase
     const { data: userData, error: userError } = await supabase
-      .from("users")
+      .from("onboarding_responses")
       .select("id")
       .eq("email", email)
       .single();
