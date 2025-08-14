@@ -1,21 +1,41 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { supabase } from "@/components/lib/supabaseClient";
 
-export default async function sendEmails(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
-    console.warn("⛔ Invalid method:", req.method);
-    return res.status(405).json({ message: "Only POST method is allowed" });
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Unsubscribe via GET request with token
+  if (req.method === "GET") {
+    const token = req.query.token as string;
+    if (!token) return res.status(400).send("Missing token");
+
+    const { data, error } = await supabase
+      .from("onboarding_responses")
+      .update({ unsubscribed: true })
+      .eq("id", token);
+
+    if (error) return res.status(500).send("Failed to unsubscribe");
+    return res.send("<h1>You have been unsubscribed successfully ✅</h1>");
   }
 
-  const { email, username } = req.body;
+  // Send welcome email via POST request
+  if (req.method === "POST") {
+    const { email, username } = req.body;
 
-  console.log("📩 Incoming request to send welcome email");
-  console.log("👉 Email:", email);
-  console.log("👉 Username:", username);
+    if (!email || !username) {
+      return res.status(400).json({ message: "Missing email or username" });
+    }
 
-  if (!email || !username) {
-    console.error("❌ Missing email or username in request");
-    return res.status(400).json({ message: "Missing email or username" });
-  }
+    // Fetch user from Supabase
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("id")
+      .eq("email", email)
+      .single();
+
+    if (userError || !userData) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const userId = userData.id;
 
   const htmlContent = `
 <!DOCTYPE html>
@@ -81,37 +101,47 @@ export default async function sendEmails(req: NextApiRequest, res: NextApiRespon
           <p style="margin-top: 40px; text-align: center; font-style: italic; color: #777;">
             — The NuvioFit Team
           </p>
+
+          <p style="margin-top: 20px; font-size: 14px; color: #777; text-align: center;">
+  If you want to stop receiving these emails, 
+  <a href="https://www.nuviofit.com/unsubscribe?token=${userId}" 
+     style="color: #38B2AC; text-decoration: underline;">
+     unsubscribe here
+  </a>.
+</p>
+
         </div>
       </body>
       </html>
   `;
 
-  try {
-    const response = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        "api-key": process.env.BREVO_API_KEY ?? "",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        sender: { name: "NuvioFit", email: "movement@nuviofit.com" },
-        to: [{ email, name: username }],
-        subject: "Welcome to the Club!",
-        htmlContent,
-      }),
-    });
+   try {
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "api-key": process.env.BREVO_API_KEY ?? "",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: { name: "NuvioFit", email: "movement@nuviofit.com" },
+          to: [{ email, name: username }],
+          subject: "Welcome to the Club!",
+          htmlContent,
+        }),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("❌ Brevo API error:", errorText);
-      return res.status(500).json({ message: "Failed to send email", detail: errorText });
+      if (!response.ok) {
+        const errorText = await response.text();
+        return res.status(500).json({ message: "Failed to send email", detail: errorText });
+      }
+
+      return res.status(200).json({ message: "Email sent successfully" });
+    } catch (error: any) {
+      return res.status(500).json({ message: "Server error sending email" });
     }
-
-    console.log(`✅ Welcome email sent to ${email}`);
-    return res.status(200).json({ message: "Email sent successfully" });
-
-  } catch (error: any) {
-    console.error("❌ Server error while sending email:", error.message || error);
-    return res.status(500).json({ message: "Server error sending email" });
   }
+
+  // Invalid method
+  res.setHeader("Allow", ["POST", "GET"]);
+  return res.status(405).json({ message: "Method not allowed" });
 }
