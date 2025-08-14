@@ -6,19 +6,19 @@ export default async function sendEmails(req: NextApiRequest, res: NextApiRespon
     return res.status(405).json({ message: "Only POST method is allowed" });
   }
 
-  const { email, username, id } = req.body; // <-- Added id from onboarding_responses
+  const { email, username, user_id } = req.body; // <-- Added id from onboarding_responses
 
   console.log("📩 Incoming request to send welcome email");
   console.log("👉 Email:", email);
   console.log("👉 Username:", username);
-  console.log("👉 ID:", id);
+  console.log("👉 ID:", user_id);
 
-  if (!email || !username || !id) {
-    console.error("❌ Missing email, username, or id in request");
-    return res.status(400).json({ message: "Missing email, username, or id" });
+  if (!email || !username || !user_id) {
+    console.error("❌ Missing email, username, or user_id in request");
+    return res.status(400).json({ message: "Missing email, username, or user_id" });
   }
 
-  const unsubscribeUrl = `https://www.nuviofit.com/unsubscribe?id=${id}`;
+  const unsubscribeUrl = `https://www.nuviofit.com/unsubscribe?user_id=${user_id}`;
 
   const htmlContent = `
 <!DOCTYPE html>
