@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
 // 2) Send Feedback emails to users who signed up 7 days ago and feedback_sent = false
 const feedbackUsersRes = await fetch(
-  `${supabaseUrl}/rest/v1/onboarding_responses?created_at=eq.${sevenDaysAgo}&feedback_sent=eq.false&select=email,username,user_id`,
+  `${supabaseUrl}/rest/v1/onboarding_responses?created_at=eq.${sevenDaysAgo}&feedback_sent=eq.false&select=email,username`,
   {
     headers: {
       apikey: supabaseKey,
