@@ -116,19 +116,35 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   `;
 
    try {
-      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          "api-key": process.env.BREVO_API_KEY ?? "",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          sender: { name: "NuvioFit", email: "movement@nuviofit.com" },
-          to: [{ email, name: username }],
-          subject: "Welcome to the Club!",
-          htmlContent,
-        }),
-      });
+const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+  method: "POST",
+  headers: {
+    "api-key": process.env.BREVO_API_KEY ?? "",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    sender: { name: "NuvioFit", email: "movement@nuviofit.com" },
+    to: [{ email, name: username }],
+    subject: "Welcome to the Club!",
+    htmlContent,
+  }),
+});
+
+if (!response.ok) {
+  const errorText = await response.text(); // ✅ read as text, not JSON
+  console.error("Brevo error:", errorText);
+  return res.status(500).json({
+    message: "Failed to send email",
+    detail: errorText,
+  });
+}
+
+const data = await response.json().catch(() => null); // ✅ if JSON, parse it
+return res.status(200).json({
+  message: "Email sent successfully",
+  brevoResponse: data,
+});
+
 
       if (!response.ok) {
         const errorText = await response.text();
