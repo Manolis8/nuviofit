@@ -7,7 +7,7 @@ export default async function unsubscribe(req: NextApiRequest, res: NextApiRespo
   const { token } = req.query;
 
   // Basic check for token
-  if (!token || typeof token !== "string") {
+  if (!token || typeof token !== "string") { 
     return res.status(200).send(renderPage("Invalid request", "The unsubscribe link is missing or invalid."));
   }
 
@@ -57,3 +57,4 @@ function renderPage(title: string, message: string) {
     </html>
   `;
 }
+
