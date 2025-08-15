@@ -1,13 +1,8 @@
-import sendEmails from "./sendwelcomeEmails"; // adjust the path if needed
+import sendEmails from "./sendwelcomeEmails"; // adjust the path
 
-// Test data
-const testEmail = "manolistsiftsis@gmail.com"; // replace with your inbox
-const testUsername = "TestUser";
-
-// Mock a Next.js request and response
 const req: any = {
   method: "POST",
-  body: { email: testEmail, username: testUsername },
+  body: { email: "manolistsiftsis@gmail.com", username: "TestUser" },
 };
 
 const res: any = {
@@ -21,5 +16,9 @@ const res: any = {
 };
 
 (async () => {
-  await sendEmails(req, res);
+  try {
+    await sendEmails(req, res);
+  } catch (err) {
+    console.error("Test failed:", err);
+  }
 })();
