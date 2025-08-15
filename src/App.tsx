@@ -33,7 +33,7 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Userinfo from "./pages/user-info";
 import AuthSplitScreen from "./components/AuthSplitScreen";
-import UnsubscribeSuccess from "./pages/unsubrscribe-success";
+import UnsubscribeSuccess from "./pages/unsubscribe-success";
 
 // Clerk
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
