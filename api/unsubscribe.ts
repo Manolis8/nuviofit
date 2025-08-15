@@ -1,6 +1,6 @@
 // /pages/api/unsubscribe.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "./lib/supabaseClient";
+import { supabase } from "../src/components/lib/supabaseClient";
 import jwt from "jsonwebtoken";
 
 export default async function unsubscribe(req: NextApiRequest, res: NextApiResponse) {
@@ -13,7 +13,7 @@ export default async function unsubscribe(req: NextApiRequest, res: NextApiRespo
 
   try {
     const payload = jwt.verify(token, process.env.UNSUBSCRIBE_SECRET ?? "supersecret") as { email: string };
- 
+
     const { error } = await supabase
       .from("onboarding_responses")
       .update({ unsubscribed: true })
@@ -57,4 +57,3 @@ function renderPage(title: string, message: string) {
     </html>
   `;
 }
-
