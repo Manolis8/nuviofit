@@ -1,25 +1,19 @@
-import sendEmails from "./sendwelcomeEmails.ts";
-import { NextApiRequest, NextApiResponse } from "next";
+import fetch from "node-fetch"; // Only needed if running in Node < 18
 
-// Mock request and response
-const req = {
-  method: "POST",
-  body: {
-    email: "manolistsiftsis@gmail.com.com",
-    username: "TestUser",
-  },
-} as NextApiRequest;
+async function testSend() {
+  const response = await fetch("https://www.nuviofit.com/api/sendwelcomeEmails", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: "manolistsiftsis@gmail.com",
+      username: "TestUser",
+    }),
+  });
 
-const res = {
-  status: function (code: number) {
-    console.log("Status code:", code);
-    return this;
-  },
-  json: function (data: any) {
-    console.log("Response JSON:", data);
-    return this;
-  },
-} as unknown as NextApiResponse;
+  const data = await response.json();
+  console.log("Response:", data);
+}
 
-// Call the function
-sendEmails(req, res);
+testSend().catch(console.error);
