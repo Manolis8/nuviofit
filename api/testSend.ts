@@ -1,4 +1,4 @@
-import sendEmails from "./sendwelcomeEmails";
+import sendEmails from "./sendwelcomeEmails.ts";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // Mock request and response
