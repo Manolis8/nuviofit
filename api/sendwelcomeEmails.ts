@@ -25,7 +25,7 @@ export default async function sendEmails(req: NextApiRequest, res: NextApiRespon
     { expiresIn: "7d" }
   );
 
-  const unsubscribeUrl = `https://yourdomain.com/api/unsubscribe?token=${token}`;
+  const unsubscribeUrl = `https://nuviofit.com/api/unsubscribe?token=${token}`;
 
   const htmlContent = `
 <!DOCTYPE html>
