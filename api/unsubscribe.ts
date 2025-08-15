@@ -39,3 +39,4 @@ export default function UnsubscribePage() {
 
   return <div style={{ textAlign: "center", padding: "50px" }}>{status}</div>;
 }
+
