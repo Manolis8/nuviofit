@@ -13,7 +13,7 @@ export default async function unsubscribe(req: NextApiRequest, res: NextApiRespo
 
   try {
     const payload = jwt.verify(token, process.env.UNSUBSCRIBE_SECRET ?? "supersecret") as { email: string };
-
+ 
     const { error } = await supabase
       .from("onboarding_responses")
       .update({ unsubscribed: true })
@@ -57,3 +57,4 @@ function renderPage(title: string, message: string) {
     </html>
   `;
 }
+
