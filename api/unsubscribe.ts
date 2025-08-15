@@ -1,6 +1,6 @@
 // /pages/api/unsubscribe.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "src/components/lib/supabaseClient";
+import { supabase } from "../src/components/lib/supabaseClient";
 import jwt from "jsonwebtoken";
 
 export default async function unsubscribe(req: NextApiRequest, res: NextApiResponse) {
