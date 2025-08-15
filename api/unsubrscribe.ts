@@ -1,36 +1,41 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+// UnsubscribePage.tsx
+import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import jwt from "jsonwebtoken";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
+export default function UnsubscribePage() {
+  const [status, setStatus] = useState("Processing...");
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const token = searchParams.get("token");
 
-export default async function unsubscribe(req: NextApiRequest, res: NextApiResponse) {
-  const { token } = req.query;
+  useEffect(() => {
+    async function unsubscribe() {
+      if (!token) return setStatus("Invalid request");
 
-  if (!token || typeof token !== "string") {
-    return res.status(400).send("Invalid request");
-  }
+      try {
+        const payload = jwt.verify(token, process.env.REACT_APP_UNSUBSCRIBE_SECRET || "supersecret") as { email: string };
+        
+        const { error } = await supabase
+          .from("onboarding_responses")
+          .update({ unsubscribed: true })
+          .eq("email", payload.email);
 
-  try {
-    const payload = jwt.verify(
-      token,
-      process.env.UNSUBSCRIBE_SECRET ?? "supersecret"
-    ) as { email: string };
+        if (error) {
+          console.error(error);
+          return setStatus("Failed to unsubscribe");
+        }
 
-    const { error } = await supabase
-      .from("onboarding_responses")
-      .update({ unsubscribed: true })
-      .eq("email", payload.email);
-
-    if (error) {
-      console.error("Error unsubscribing:", error);
-      return res.status(500).send("Failed to unsubscribe");
+        setStatus("You have been unsubscribed");
+        setTimeout(() => navigate("/unsubscribe-success"), 1500);
+      } catch (err) {
+        console.error(err);
+        setStatus("Invalid or expired link");
+      }
     }
+    unsubscribe();
+  }, [token, navigate]);
 
-    // Redirect to success page
-    res.redirect("/unsubscribe-success");
-
-  } catch (err) {
-    console.error("Invalid token:", err);
-    return res.status(400).send("Invalid or expired link");
-  }
+  return <div style={{ textAlign: "center", padding: "50px" }}>{status}</div>;
 }
