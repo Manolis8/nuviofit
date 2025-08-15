@@ -1,4 +1,4 @@
-import sendEmails from "./sendwelcomeEmails"; // adjust the path
+import sendwelcomeEmails from "./sendwelcomeEmails"; // adjust the path
 
 const req: any = {
   method: "POST",
@@ -17,7 +17,7 @@ const res: any = {
 
 (async () => {
   try {
-    await sendEmails(req, res);
+    await sendwelcomeEmails(req, res);
   } catch (err) {
     console.error("Test failed:", err);
   }
