@@ -1,11 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/components/lib/supabaseClient";
 import jwt from "jsonwebtoken";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL ?? "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY ?? "" // must be service role
-);
 
 export default async function unsubscribe(req: NextApiRequest, res: NextApiResponse) {
   const { token } = req.query;
