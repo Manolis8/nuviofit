@@ -1,24 +1,25 @@
-import sendwelcomeEmails from "./sendwelcomeEmails"; // adjust the path
+import sendEmails from "./sendwelcomeEmails";
+import { NextApiRequest, NextApiResponse } from "next";
 
-const req: any = {
+// Mock request and response
+const req = {
   method: "POST",
-  body: { email: "manolistsiftsis@gmail.com", username: "TestUser" },
-};
-
-const res: any = {
-  status: (code: number) => {
-    console.log("Response status:", code);
-    return res;
+  body: {
+    email: "manolistsiftsis@gmail.com.com",
+    username: "TestUser",
   },
-  json: (data: any) => {
+} as NextApiRequest;
+
+const res = {
+  status: function (code: number) {
+    console.log("Status code:", code);
+    return this;
+  },
+  json: function (data: any) {
     console.log("Response JSON:", data);
+    return this;
   },
-};
+} as unknown as NextApiResponse;
 
-(async () => {
-  try {
-    await sendwelcomeEmails(req, res);
-  } catch (err) {
-    console.error("Test failed:", err);
-  }
-})();
+// Call the function
+sendEmails(req, res);
