@@ -229,7 +229,7 @@ const Welcome = () => {
       </h1>
 
       <p className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl">
-        Join the movement of wellness revolutionaries changing how we approach health. Spots are limited (only 50 people get early access!)
+        Join the movement of wellness revolutionaries changing how we approach health. Only 50 can join—don’t miss your chance!
       </p>
 
       <div className="flex flex-col sm:flex-row gap-6 mb-8">
