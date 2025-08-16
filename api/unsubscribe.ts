@@ -36,7 +36,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).send(`Failed to update unsubscribe: ${errorText}`);
     }
 
-    res.send('You have successfully unsubscribed from our emails.');
+    // Send a prettier HTML page
+    res.setHeader('Content-Type', 'text/html');
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Unsubscribed</title>
+        <style>
+          body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+          }
+          .card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+          }
+          h1 {
+            color: #28a745;
+            margin-bottom: 20px;
+          }
+          p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 30px;
+          }
+          a.button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #0070f3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+          }
+          a.button:hover {
+            background-color: #005bb5;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <h1>✅ You have been unsubscribed</h1>
+          <p>You will no longer receive marketing emails from us.</p>
+          <a href="https://nuviofit.com/dashboard" class="button">Go to Dashboard</a>
+        </div>
+      </body>
+      </html>
+    `);
   } catch (err) {
     console.error(err);
     res.status(400).send('Invalid or expired token.');
