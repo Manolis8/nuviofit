@@ -1,59 +1,44 @@
-// /pages/api/unsubscribe.ts
-import type { NextApiRequest, NextApiResponse } from "next";
-import { supabase } from "@/components/lib/supabaseClient";
-import jwt from "jsonwebtoken";
+// /api/unsubscribe.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import jwt from 'jsonwebtoken';
+import fetch from 'node-fetch';
 
-export default async function unsubscribe(req: NextApiRequest, res: NextApiResponse) {
-  const { token } = req.query;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL!;
+const SUPABASE_API_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
 
-  // Basic check for token
-  if (!token || typeof token !== "string") {
-    return res.status(200).send(renderPage("Invalid request", "The unsubscribe link is missing or invalid."));
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const token = req.query.token as string;
+
+  if (!token) {
+    return res.status(400).send('Missing token.');
   }
 
   try {
-    const payload = jwt.verify(token, process.env.UNSUBSCRIBE_SECRET ?? "supersecret") as { email: string };
+    // Verify JWT token and extract email
+    const decoded = jwt.verify(token, UNSUBSCRIBE_SECRET) as { email: string };
+    const email = decoded.email;
 
-    const { error } = await supabase
-      .from("onboarding_responses")
-      .update({ unsubscribed: true })
-      .eq("email", payload.email);
+    // Update Supabase via REST API
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/onboarding_responses?email=eq.${encodeURIComponent(email)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_API_KEY,
+        'Authorization': `Bearer ${SUPABASE_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation', // optional, returns updated row
+      },
+      body: JSON.stringify({ unsubscribed: true }),
+    });
 
-    if (error) {
-      console.error("Error unsubscribing:", error);
-      return res.status(200).send(renderPage("Unsubscribe Failed", "We couldn’t process your request. Please try again later."));
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(500).send(`Failed to update unsubscribe: ${errorText}`);
     }
 
-    // Success page
-    return res.status(200).send(renderPage("Unsubscribed!", "You have successfully unsubscribed from our emails."));
+    res.send('You have successfully unsubscribed from our emails.');
   } catch (err) {
-    console.error("Invalid token:", err);
-    return res.status(200).send(renderPage("Invalid or Expired Link", "Your unsubscribe link is invalid or has expired."));
+    console.error(err);
+    res.status(400).send('Invalid or expired token.');
   }
-}
-
-// Simple HTML renderer for the page
-function renderPage(title: string, message: string) {
-  return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>${title}</title>
-      <style>
-        body { font-family: Arial, sans-serif; background: #f0f0f0; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .container { background: #fff; padding: 40px; border-radius: 10px; text-align: center; max-width: 500px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #38B2AC; margin-bottom: 20px; }
-        p { font-size: 16px; color: #555; }
-      </style>
-    </head>
-    <body>
-      <div class="container">
-        <h1>${title}</h1>
-        <p>${message}</p>
-      </div>
-    </body>
-    </html>
-  `;
 }
