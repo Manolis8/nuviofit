@@ -33,7 +33,6 @@ import NotFound from "./pages/NotFound";
 import About from "./pages/About";
 import Userinfo from "./pages/user-info";
 import AuthSplitScreen from "./components/AuthSplitScreen";
-import UnsubscribeSuccess from "./pages/unsubscribe-success";
 
 // Clerk
 import { SignedIn, SignedOut } from "@clerk/clerk-react";
@@ -66,7 +65,6 @@ const App = () => {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about" element={<About />} />
             <Route path="/about-you" element={<Aboutyou />} />
-            <Route path="/unsubscribe-success" element={<UnsubscribeSuccess />} />
             <Route
               path="/auth/*"
               element={
