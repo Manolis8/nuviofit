@@ -74,8 +74,6 @@ useEffect(() => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signUp, setActive: setSignUpActive } = useSignUp();
   const { signIn, setActive: setSignInActive } = useSignIn();
-  const [pendingVerification, setPendingVerification] = useState(false);
-  const [emailForVerification, setEmailForVerification] = useState("");
 
   // Setup forms with validation
   const loginForm = useForm<LoginFormValues>({
@@ -120,42 +118,26 @@ useEffect(() => {
   
 
 const onSignupSubmit = async (data: SignupFormValues) => {
-  setIsSubmitting(true); // Start loading
+  setIsSubmitting(true);
 
   try {
-    await signUp.create({
+    // Create user without email verification
+    const result = await signUp.create({
       emailAddress: data.email,
       password: data.password,
     });
 
-    await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+    // Complete signup immediately
+    await setSignUpActive({ session: result.createdSessionId });
 
-    setEmailForVerification(data.email);
-    setPendingVerification(true);
+    navigate("/getting-started");
   } catch (err: any) {
     alert("Signup failed: " + (err.errors?.[0]?.message || err.message));
   } finally {
-    setIsSubmitting(false); // Stop loading
+    setIsSubmitting(false);
   }
 };
 
-  
-  const onVerifySignupCode = async (code: string) => {
-  try {
-    const result = await signUp.attemptEmailAddressVerification({ code });
-
-    if (result.status === "complete" && result.createdSessionId) {
-      await setSignUpActive({ session: result.createdSessionId });
-      navigate("/getting-started"); // ✅ Redirect to onboarding
-    } else {
-      console.log("Result:", result);
-      alert("Verification incomplete. Please try again or check your email again.");
-    }
-  } catch (err: any) {
-    alert("Verification error: " + (err.errors?.[0]?.message || err.message));
-  }
-};
-  const [verifying, setVerifying] = useState(false);
 
 
   return (
@@ -212,10 +194,6 @@ const onSignupSubmit = async (data: SignupFormValues) => {
   onValueChange={(v) => {
     setActiveTab(v as "login" | "signup");
     navigate(`/auth/${v}`, { replace: true });
-
-    // Reset verification state
-    setPendingVerification(false);
-    setEmailForVerification("");
   }}
   className="w-full"
 >
@@ -319,37 +297,6 @@ const onSignupSubmit = async (data: SignupFormValues) => {
 
                 </form>
               </Form>
-              {pendingVerification && (
-               <form
-                onSubmit={(e) => {
-                 e.preventDefault();
-                 const formData = new FormData(e.currentTarget);
-                 const code = formData.get("code") as string;
-                 onVerifySignupCode(code);
-                 }}
-                 className="space-y-4 mt-6"
-               >
-                <label className="block text-sm font-medium text-gray-700">
-                 Enter the 6-digit code sent to <strong>{emailForVerification}</strong>
-                </label>
-
-                <Input
-                 name="code"
-                 placeholder="Enter code"
-                 className="border p-2 w-full max-w-sm"
-                />
-
-                <Button
-  type="submit"
-  disabled={verifying}
-  className="w-full bg-teal-500 hover:bg-teal-600 text-white"
->
-  {verifying ? "Verifying..." : "Verify and Continue"}
-</Button>
-
-
-               </form>
-              )}
 
               {/* Terms of Service Links */}
 <div className="text-center text-sm text-gray-500 mt-4">
