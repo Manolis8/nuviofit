@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { Mail, Instagram, Linkedin, Twitter } from "lucide-react";
 import { 
   ArrowRight, Heart, Dumbbell, Utensils, CheckSquare, 
   Watch, Sparkles, Zap, Flame, Award, Brain,
@@ -27,6 +28,7 @@ import WatchConnectModal from "@/components/WatchConnectModal";
 
 const Welcome = () => {
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
+      const [showSupport, setShowSupport] = useState(false);
 
   // Features data
   const features = [
@@ -723,39 +725,79 @@ const Welcome = () => {
       </section>
 
       {/* Footer - Keep the existing footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Nuviofit</h3>
-              <p className="text-gray-400">Your personalized wellness companion powered by artificial intelligence.</p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Features</h4>
-              <ul className="space-y-2">
-                <li><Link to="/mindset" className="text-gray-400 hover:text-white transition-colors">Mood Tracking</Link></li>
-                <li><Link to="/workout-page" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
-                <li><Link to="/nutrition" className="text-gray-400 hover:text-white transition-colors">Nutrition Guide</Link></li>
-                <li><Link to="/goals" className="text-gray-400 hover:text-white transition-colors">Goal Setting</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Company</h4>
-              <ul className="space-y-2">
-                <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
-              </ul>
-            </div>
-            <div>
-            </div>
+<footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          {/* Brand */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">NuvioFit</h3>
+            <p className="text-gray-400">
+              Your personalized fitness companion powered by artificial intelligence. 
+              Smarter workouts, healthier habits.
+            </p>
           </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400">© {new Date().getFullYear()} Nuviofit. All rights reserved.</p>
-            <p className="text-gray-400 mt-4 md:mt-0">Made with 💖 for a healthier world</p>
+
+          {/* Features */}
+          <div>
+            <h4 className="font-bold mb-4">Features</h4>
+            <ul className="space-y-2">
+              <li><Link to="/workout-page" className="text-gray-400 hover:text-white transition-colors">Fitness Plans</Link></li>
+              <li><Link to="/mindset" className="text-gray-400 hover:text-white transition-colors">Mindset Coaching</Link></li>
+              <li><Link to="/nutrition" className="text-gray-400 hover:text-white transition-colors">Nutrition Guide</Link></li>
+              <li><Link to="/goals" className="text-gray-400 hover:text-white transition-colors">Goal Setting</Link></li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h4 className="font-bold mb-4">Company</h4>
+            <ul className="space-y-2">
+              <li><Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link></li>
+            </ul>
+          </div>
+
+          {/* Support + Social */}
+          <div>
+            <h4 className="font-bold mb-4">Support</h4>
+            <button
+              onClick={() => setShowSupport(!showSupport)}
+              className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors focus:outline-none"
+            >
+              <Mail size={18} />
+              <span>Contact Support</span>
+            </button>
+            {showSupport && (
+              <div className="mt-2 bg-gray-800 text-gray-300 rounded-md p-3 text-sm">
+                <p>Email us at:</p>
+                <a 
+                  href="mailto:contact@nuviofit.com" 
+                  className="underline hover:text-white"
+                >
+                  support@nuviofit.com
+                </a>
+              </div>
+            )}
+
+            {/* Social */}
+            <h4 className="font-bold mt-6 mb-4">Follow Us</h4>
+            <div className="flex space-x-4">
+              <a href="https://www.instagram.com/nuviofit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram size={22} />
+              </a>
+            </div>
           </div>
         </div>
-      </footer>
+
+        {/* Bottom bar */}
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400">© {new Date().getFullYear()} NuvioFit. All rights reserved.</p>
+          <p className="text-gray-400 mt-4 md:mt-0">Made with 💖 for a healthier world</p>
+        </div>
+      </div>
+    </footer>
 
       <WatchConnectModal open={isWatchModalOpen} onOpenChange={setIsWatchModalOpen} />
     </div>
