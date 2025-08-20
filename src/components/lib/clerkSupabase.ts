@@ -15,13 +15,16 @@ export const useClerkSupabase = () => {
       }
 
       const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: 'clerk', // your Supabase provider name
-        token,             // pass the token here
+        provider: 'clerk',
+        token,
       });
 
-      if (error) console.error('Supabase login failed:', error);
-      else console.log('Supabase login successful', data);
+      if (error) {
+        console.error('Supabase login failed:', error);
+        return null;
+      }
 
+      console.log('Supabase login successful', data);
       return data;
     } catch (err) {
       console.error('Error getting Clerk token:', err);
