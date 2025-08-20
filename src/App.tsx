@@ -44,16 +44,17 @@ import AboutYouPage from "./components/about-you/page";
 
   const { signInToSupabase } = useClerkSupabase();
 
-  useEffect(() => {
-    // Automatically log into Supabase when Clerk user is signed in
-    signInToSupabase();
-  }, []);
 
 const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
     initGA();
+  }, []);
+
+    useEffect(() => {
+    // Automatically log into Supabase when Clerk user is signed in
+    signInToSupabase();
   }, []);
 
   return (
