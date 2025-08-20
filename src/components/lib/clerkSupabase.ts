@@ -7,13 +7,16 @@ export const useClerkSupabase = () => {
 
   const signInToSupabase = async () => {
     try {
-      // Get JWT from Clerk (make sure template is "supabase" or whatever you called it)
       const token = await getToken({ template: 'supabase' });
 
-      // Sign in to Supabase using OIDC
+      if (!token) {
+        console.error('No token received from Clerk');
+        return null;
+      }
+
       const { data, error } = await supabase.auth.signInWithIdToken({
-        provider: 'oidc',
-        token,
+        provider: 'clerk', // your Supabase provider name
+        token,             // pass the token here
       });
 
       if (error) console.error('Supabase login failed:', error);
