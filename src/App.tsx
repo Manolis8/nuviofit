@@ -9,6 +9,7 @@ import React from "react";
 import { initGA } from './analytics';
 import GAListener from './GAListener';
 import { useEffect } from 'react';
+import { useClerkSupabase } from "@/components/lib/clerkSupabase";
 
 
 // Pages & Components
@@ -41,6 +42,12 @@ import { SignedIn, SignedOut } from "@clerk/clerk-react";
 import  {ProtectedRoute}  from "./components/ProtectedRoute";
 import AboutYouPage from "./components/about-you/page";
 
+  const { signInToSupabase } = useClerkSupabase();
+
+  useEffect(() => {
+    // Automatically log into Supabase when Clerk user is signed in
+    signInToSupabase();
+  }, []);
 
 const queryClient = new QueryClient();
 
