@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, useAuth } from "@clerk/nextjs";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
 
@@ -11,49 +11,58 @@ import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 export default function FeedbackPage() {
   const { user } = useUser();
+  const { getToken } = useAuth(); // Clerk JWT
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleBack = () => {
-  navigate("/dashboard");
-};
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!feedback.trim()) return;
-    if (!user) {
-      alert("You must be signed in to send feedback.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const { data: onboardData, error: onboardError } = await supabase
-        .from("onboarding_responses")
-        .select("username")
-        .eq("user_id", user.id)
-        .single();
-
-      if (onboardError) throw onboardError;
-
-      const username = onboardData?.username || "unknown";
-      const email = user.emailAddresses?.[0]?.emailAddress ?? "";
-
-      const { error: insertError } = await supabase
-        .from("feedback")
-        .insert([{ user_id: user.id, username, email, message: feedback }]);
-
-      if (insertError) throw insertError;
-
-      setIsSubmitted(true);
-    } catch (error) {
-      alert("There was an error sending your feedback. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleBack = () => {
+    navigate("/dashboard");
   };
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!feedback.trim()) return;
+  if (!user) {
+    alert("You must be signed in to send feedback.");
+    return;
+  }
+
+  setIsSubmitting(true);
+  try {
+    // Get Clerk token if needed (for RLS policies)
+    const token = await getToken({ template: "supabase" });
+
+    // Supabase client (no setAuth needed)
+    // You could use token with a custom header if you want, but default client works for signed-in users
+    const { data: onboardData, error: onboardError } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || "unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+    const { error: insertError } = await supabase
+      .from("feedback")
+      .insert([{ user_id: user.id, username, email, message: feedback }]);
+
+    if (insertError) throw insertError;
+
+    setIsSubmitted(true);
+  } catch (error) {
+    console.error(error);
+    alert("There was an error sending your feedback. Please try again later.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   if (isSubmitted) {
     return (
