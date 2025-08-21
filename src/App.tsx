@@ -180,7 +180,7 @@ useSyncSupabaseAuth();
               element={
                    <ProtectedRoute>
                   <Userinfo />
-                    </ProtectedRoute>
+                    </ProtectedRoute> 
               }
             />
 
