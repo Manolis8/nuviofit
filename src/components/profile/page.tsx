@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react"
 import { supabase } from "@/components/lib/supabaseClient";
-
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 
 
@@ -25,13 +26,14 @@ const achievements = [
 
 export default function ProfilePage() {
 
-
+  const { getToken } = useAuth(); // Clerk JWT
 const { user } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  
 
   useEffect(() => {
     async function fetchUserData() {
@@ -60,6 +62,20 @@ const { user } = useUser();
     setError(null);
     setStatus(null);
 
+    const token = await getToken({ template: "supabase" });
+    
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
+          },
+        },
+      }
+    );
+
     if (!user?.id) {
       setError("You must be logged in.");
       return;
@@ -70,14 +86,17 @@ const { user } = useUser();
       return;
     }
 
-    const { error: insertError } = await supabase.from("feedback").insert([
-      {
-        user_id: user.id,
-        email,
-        username,
-        message: feedbackText, // assuming you add a 'feedback' TEXT column
-      },
-    ]);
+const { error: insertError } = await supabaseClientWithAuth
+  .from("feedback")
+  .insert([
+    {
+      user_id: user.id,
+      email,
+      username,
+      message: feedbackText,
+    },
+  ]);
+
 
     if (insertError) {
       console.error(insertError);
