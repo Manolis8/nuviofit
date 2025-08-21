@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,20 +35,21 @@ const handleSubmit = async (e: React.FormEvent) => {
   setIsSubmitting(true);
   try {
     // 1️⃣ Get Clerk token for RLS
-    const token = await getToken({ template: "supabase" });
 
-    // 2️⃣ Create a Supabase client with the token
-    const supabaseClientWithAuth = createClient(
-      process.env.VITE_SUPABASE_URL!,
-      process.env.VITE_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass the token for RLS
-          },
-        },
-      }
-    );
+const token = await getToken({ template: "supabase" });
+
+const supabaseClientWithAuth = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
+      },
+    },
+  }
+);
+
 
     // 3️⃣ Use the client for queries
     const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
