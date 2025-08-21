@@ -8,8 +8,11 @@ import { useUser } from "@clerk/clerk-react"
 import { addDays } from "date-fns";
 import Link from "next/link";
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 export function AIChatCoach() {
+    const { getToken } = useAuth(); // Clerk JWT
   const { user, isLoaded } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -132,36 +135,58 @@ const checkAndResetMessages = async () => {
   };
 
   // --------------------- Manual Feedback Sender (Optional) ---------------------
-  async function sendFeedback(formData: { name: string; email: string; message: string }) {
-    if (!user?.id) throw new Error("User not logged in.");
+async function sendFeedback(formData: { name: string; email: string; message: string }) {
+  if (!user?.id) throw new Error("User not logged in.");
 
-    const { data, error: fetchError } = await supabase
-      .from("onboarding_responses")
-      .select("username")
-      .eq("user_id", user.id)
-      .single();
+  // 1. Get Clerk JWT for Supabase
+  const token = await getToken({ template: "supabase" });
+  if (!token) throw new Error("Failed to get Supabase token from Clerk.");
 
-    if (fetchError) {
-      console.error("Failed to fetch username:", fetchError.message);
-      throw fetchError;
-    }
-
-    const username = data?.username || formData.name || "Unknown";
-
-    const { error: insertError } = await supabase.from("feedback").insert([
-      {
-        user_id: user.id,
-        email: user.emailAddresses[0]?.emailAddress,
-        username,
-        message: formData.message,
+  // 2. Create a Supabase client using that token
+  const supabaseWithAuth = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    ]);
-
-    if (insertError) {
-      console.error("Failed to send feedback:", insertError.message);
-      throw insertError;
     }
+  );
+
+  // 3. Fetch username from onboarding_responses
+  const { data, error: fetchError } = await supabaseWithAuth
+    .from("onboarding_responses")
+    .select("username")
+    .eq("user_id", user.id)
+    .single();
+
+  if (fetchError) {
+    console.error("Failed to fetch username:", fetchError.message);
+    throw fetchError;
   }
+
+  const username = data?.username || formData.name || "Unknown";
+
+  // 4. Insert into feedback
+  const { error: insertError } = await supabaseWithAuth.from("feedback").insert([
+    {
+      user_id: user.id,
+      email: user.emailAddresses[0]?.emailAddress,
+      username,
+      message: formData.message,
+    },
+  ]);
+
+  if (insertError) {
+    console.error("Failed to send feedback:", insertError.message);
+    throw insertError;
+  }
+
+  console.log("Feedback sent successfully!");
+}
+
 
   // --------------------- Render ---------------------
   return (
