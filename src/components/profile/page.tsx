@@ -663,7 +663,7 @@ useEffect(() => {
                   >
                     💬 Send Feedback
                   </Button>
-                </div>
+                </div> 
               </CardContent>
             </Card>
           </motion.div>
