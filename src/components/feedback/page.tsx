@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
 
 import { Button } from "@/components/ui/button";
@@ -10,16 +10,16 @@ import { Label } from "@/components/ui/label";
 import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 export default function FeedbackPage() {
-  const router = useRouter();
   const { user } = useUser();
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleBack = () => {
-    router.push("/dashboard");
-  };
+const navigate = useNavigate();
 
+const handleBack = () => {
+  navigate("/dashboard");
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!feedback.trim()) return;
