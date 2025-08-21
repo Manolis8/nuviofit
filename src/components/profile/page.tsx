@@ -25,7 +25,12 @@ const achievements = [
   { emoji: "👑", title: "Fitness Royalty", unlocked: false },
 ]
 
+interface FeedbackData {
+  message: string;
+}
+
 export default function ProfilePage() {
+
 
   const { getToken } = useAuth(); // Clerk JWT
 const { user } = useUser();
@@ -111,49 +116,53 @@ const { error: insertError } = await supabaseClientWithAuth
 
 
 // This function sends the feedback to Supabase.
-async function sendFeedback(formData: { name: string; email: string; message: string }) {
+async function sendFeedback(user: any, formData: FeedbackData) {
   if (!user?.id) throw new Error("User not logged in.");
 
-  try {
-    // 1️⃣ Get Clerk token for RLS
-const token = await getToken({ template: "supabase" });
-const supabaseClientWithAuth = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-  {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`,
+  // 1️⃣ Get Clerk token
+  const token = await getToken({ template: "supabase" });
+
+  // 2️⃣ Create a Supabase client with auth headers
+  const supabase = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
+    {
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
+    }
+  );
+
+  // 3️⃣ Fetch username (optional)
+  const { data: onboardData, error: onboardError } = await supabase
+    .from("onboarding_responses")
+    .select("username")
+    .eq("user_id", user.id)
+    .single();
+
+  if (onboardError) console.warn("Username fetch failed:", onboardError.message);
+
+  const username = onboardData?.username || "Unknown";
+  const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+  // 4️⃣ Insert feedback
+  const { error: insertError } = await supabase.from("feedback").insert([
+    {
+      user_id: user.id,
+      username,
+      email,
+      message: formData.message,
     },
+  ]);
+
+  if (insertError) {
+    console.error("Failed to send feedback:", insertError.message);
+    throw insertError;
   }
-);
 
-
-    // 2️⃣ Fetch username from onboarding_responses
-    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
-      .from("onboarding_responses")
-      .select("username")
-      .eq("user_id", user.id)
-      .single();
-
-    if (onboardError) throw onboardError;
-
-    const username = onboardData?.username || formData.name || "Unknown";
-    const email = user.emailAddresses?.[0]?.emailAddress ?? formData.email ?? "";
-
-    // 3️⃣ Insert feedback
-    const { error: insertError } = await supabaseClientWithAuth
-      .from("feedback")
-      .insert([{ user_id: user.id, username, email, message: formData.message }]);
-
-    if (insertError) throw insertError;
-
-    console.log("Feedback sent successfully!");
-  } catch (error) {
-    console.error("Failed to send feedback:", error);
-    throw error;
-  }
+  return true;
 }
 
 
@@ -598,9 +607,14 @@ useEffect(() => {
         <div className="flex gap-2">
 <Button
   onClick={async () => {
+    if (!user) {
+      alert("You must be signed in to send feedback.");
+      return;
+    }
+
     setStatus("Sending...");
     try {
-      await sendFeedback(formData);
+      await sendFeedback(user, { message: formData.message });
       setStatus("Feedback sent!");
       setFormData({ name: "", email: "", message: "" });
       setTimeout(() => {
@@ -616,6 +630,7 @@ useEffect(() => {
 >
   Send Feedback
 </Button>
+
 
 
           <Button variant="outline" onClick={() => setShowFeedback(false)}>
