@@ -15,6 +15,7 @@ export function useSyncSupabaseAuth() {
           refresh_token: "", // Clerk handles refresh automatically
         });
       }
+      console.log("Syncing Supabase token:", token);
     };
     syncSession();
   }, [getToken]);
