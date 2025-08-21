@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useUser, useAuth } from "@clerk/nextjs";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,12 +33,24 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   setIsSubmitting(true);
   try {
-    // Get Clerk token if needed (for RLS policies)
+    // 1️⃣ Get Clerk token for RLS
     const token = await getToken({ template: "supabase" });
 
-    // Supabase client (no setAuth needed)
-    // You could use token with a custom header if you want, but default client works for signed-in users
-    const { data: onboardData, error: onboardError } = await supabase
+    // 2️⃣ Create a Supabase client with the token
+    const supabaseClientWithAuth = createClient(
+      process.env.VITE_SUPABASE_URL!,
+      process.env.VITE_SUPABASE_ANON_KEY!,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the token for RLS
+          },
+        },
+      }
+    );
+
+    // 3️⃣ Use the client for queries
+    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -48,7 +61,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     const username = onboardData?.username || "unknown";
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseClientWithAuth
       .from("feedback")
       .insert([{ user_id: user.id, username, email, message: feedback }]);
 
@@ -62,6 +75,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setIsSubmitting(false);
   }
 };
+
 
 
   if (isSubmitted) {
