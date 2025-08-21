@@ -9,7 +9,8 @@ import React from "react";
 import { initGA } from './analytics';
 import GAListener from './GAListener';
 import { useEffect } from 'react';
-import { useClerkSupabase } from "@/components/lib/clerkSupabase";
+import { useSyncSupabaseAuth } from "@/components/lib/useSyncSupabaseAuth";
+
 
 
 // Pages & Components
@@ -51,11 +52,7 @@ const App = () => {
     initGA();
   }, []);
 
-    const { signInToSupabase } = useClerkSupabase();
-    useEffect(() => {
-    // Automatically log into Supabase when Clerk user is signed in
-    signInToSupabase();
-  }, []);
+useSyncSupabaseAuth();
 
   return (
     <QueryClientProvider client={queryClient}>
