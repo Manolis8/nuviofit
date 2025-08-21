@@ -1,71 +1,59 @@
-import React, { useState } from "react"
-import { useUser } from "@clerk/nextjs"
+import React, { useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/components/lib/supabaseClient";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { ArrowLeft, Send, CheckCircle } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 export default function FeedbackPage() {
-
-  const navigate = useNavigate()
-  const { user, isLoaded, isSignedIn } = useUser()
-  const [feedback, setFeedback] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const router = useRouter();
+  const { user } = useUser();
+  const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleBack = () => {
-    navigate("/dashboard")
-  }
+    router.push("/dashboard");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!feedback.trim()) return
+    e.preventDefault();
+    if (!feedback.trim()) return;
     if (!user) {
-      alert("You must be signed in to send feedback.")
-      return
+      alert("You must be signed in to send feedback.");
+      return;
     }
 
-    setIsSubmitting(true)
-
+    setIsSubmitting(true);
     try {
-      // 1. Get username from onboarding_responses table
       const { data: onboardData, error: onboardError } = await supabase
         .from("onboarding_responses")
         .select("username")
         .eq("user_id", user.id)
-        .single()
+        .single();
 
-      if (onboardError) {
-        console.error("Error fetching username:", onboardError)
-        throw onboardError
-      }
+      if (onboardError) throw onboardError;
 
-      const username = onboardData?.username || "unknown"
+      const username = onboardData?.username || "unknown";
+      const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
-      // 2. Insert feedback into feedback table
-      const { error: insertError } = await supabase.from("feedback").insert({
-        user_id: user.id,
-        username: username,
-        email: user.emailAddresses[0]?.emailAddress || "",
-        message: feedback,
-      })
+      const { error: insertError } = await supabase
+        .from("feedback")
+        .insert([{ user_id: user.id, username, email, message: feedback }]);
 
-      if (insertError) {
-        console.error("Error inserting feedback:", insertError)
-        throw insertError
-      }
+      if (insertError) throw insertError;
 
-      setIsSubmitted(true)
+      setIsSubmitted(true);
     } catch (error) {
-      alert("There was an error sending your feedback. Please try again later.")
+      alert("There was an error sending your feedback. Please try again later.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (isSubmitted) {
     return (
