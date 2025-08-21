@@ -127,21 +127,40 @@ async function sendFeedback(formData: { name: string; email: string; message: st
 
   const username = data?.username || formData.name || "Unknown";
 
-  // Insert feedback to Supabase
-  const { error: insertError } = await supabase.from("feedback").insert([
+  // Get Clerk token
+  const token = await getToken({ template: "supabase" });
+
+  // Create a Supabase client with the token
+  const supabaseClientWithAuth = createClient(
+    import.meta.env.VITE_SUPABASE_URL,
+    import.meta.env.VITE_SUPABASE_ANON_KEY,
     {
-      user_id: user.id,
-      email: user.emailAddresses[0]?.emailAddress,
-      username,
-      message: formData.message,
-    },
-  ]);
+      global: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    }
+  );
+
+  // Insert feedback using authenticated client
+  const { error: insertError } = await supabaseClientWithAuth
+    .from("feedback")
+    .insert([
+      {
+        user_id: user.id,
+        email: user.emailAddresses[0]?.emailAddress,
+        username,
+        message: formData.message,
+      },
+    ]);
 
   if (insertError) {
     console.error("Failed to send feedback:", insertError.message);
     throw insertError;
   }
 }
+
 
 
   const [isOpen, setIsOpen] = useState(false)
@@ -663,7 +682,7 @@ useEffect(() => {
                   >
                     💬 Send Feedback
                   </Button>
-                </div> 
+                </div>
               </CardContent>
             </Card>
           </motion.div>
