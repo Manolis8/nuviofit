@@ -113,51 +113,45 @@ const { error: insertError } = await supabaseClientWithAuth
 async function sendFeedback(formData: { name: string; email: string; message: string }) {
   if (!user?.id) throw new Error("User not logged in.");
 
-  // Fetch username from onboarding_responses
-  const { data, error: fetchError } = await supabase
-    .from("onboarding_responses")
-    .select("username")
-    .eq("user_id", user.id)
-    .single();
+  try {
+    // 1️⃣ Get Clerk token for RLS
+    const token = await getToken({ template: "supabase" });
 
-  if (fetchError) {
-    console.error("Failed to fetch username:", fetchError.message);
-    throw fetchError;
-  }
-
-  const username = data?.username || formData.name || "Unknown";
-
-  // Get Clerk token
-  const token = await getToken({ template: "supabase" });
-
-  // Create a Supabase client with the token
-  const supabaseClientWithAuth = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    }
-  );
-
-  // Insert feedback using authenticated client
-  const { error: insertError } = await supabaseClientWithAuth
-    .from("feedback")
-    .insert([
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
       {
-        user_id: user.id,
-        email: user.emailAddresses[0]?.emailAddress,
-        username,
-        message: formData.message,
-      },
-    ]);
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      }
+    );
 
-  if (insertError) {
-    console.error("Failed to send feedback:", insertError.message);
-    throw insertError;
+    // 2️⃣ Fetch username from onboarding_responses
+    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || formData.name || "Unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? formData.email ?? "";
+
+    // 3️⃣ Insert feedback
+    const { error: insertError } = await supabaseClientWithAuth
+      .from("feedback")
+      .insert([{ user_id: user.id, username, email, message: formData.message }]);
+
+    if (insertError) throw insertError;
+
+    console.log("Feedback sent successfully!");
+  } catch (error) {
+    console.error("Failed to send feedback:", error);
+    throw error;
   }
 }
 
