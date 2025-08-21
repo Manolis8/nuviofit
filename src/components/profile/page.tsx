@@ -15,6 +15,7 @@ import { useAuth } from "@clerk/nextjs";
 
 
 
+
 const achievements = [
   { emoji: "🔥", title: "First Workout", unlocked: false },
   { emoji: "💪", title: "Week Warrior", unlocked: false },
@@ -115,19 +116,19 @@ async function sendFeedback(formData: { name: string; email: string; message: st
 
   try {
     // 1️⃣ Get Clerk token for RLS
-    const token = await getToken({ template: "supabase" });
+const token = await getToken({ template: "supabase" });
+const supabaseClientWithAuth = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+  {
+    global: {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  }
+);
 
-    const supabaseClientWithAuth = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      }
-    );
 
     // 2️⃣ Fetch username from onboarding_responses
     const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
