@@ -70,6 +70,7 @@ useSyncSupabaseAuth();
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/about" element={<About />} />
             <Route path="/about-you" element={<Aboutyou />} />
+            <Route path="/waitlist" element={<Waitlist />} />
             <Route
               path="/auth/*"
               element={
@@ -180,7 +181,7 @@ useSyncSupabaseAuth();
               element={
                    <ProtectedRoute>
                   <Userinfo />
-                    </ProtectedRoute> 
+                    </ProtectedRoute>
               }
             />
 
