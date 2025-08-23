@@ -9,10 +9,12 @@ import { ChefHat, Utensils, Apple } from "lucide-react"
 import React, { useEffect } from "react";
 import { useUser } from "@clerk/clerk-react"; 
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 export function GoalChallengeTracker() {
   const [showWaitlist, setShowWaitlist] = useState(false)
-
+  const { getToken } = useAuth(); // Clerk JWT
   const [showPopup, setShowPopup] = useState(false);
     const { user } = useUser();
     const [username, setUsername] = useState("");
@@ -58,25 +60,45 @@ export function GoalChallengeTracker() {
       );
     };
   
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError("");
-      setStatus(null);
-  
-      if (!user?.id) {
-        setError("You must be logged in.");
-        return;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setStatus(null);
+
+  if (!user?.id) {
+    setError("You must be logged in.");
+    return;
+  }
+
+  if (selectedOptions.length === 0) {
+    setError("Please select at least one option.");
+    return;
+  }
+
+  try {
+    // 1️⃣ Get Clerk token
+    const token = await getToken({ template: "supabase" });
+
+    // 2️⃣ Create authenticated Supabase client
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: {
+            Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
+          },
+        },
       }
-  
-      if (selectedOptions.length === 0) {
-        setError("Please select at least one option.");
-        return;
-      }
-  
-      setLoading(true);
-      setStatus("Sending...");
-  
-      const { error } = await supabase.from("waitlist_features").insert([
+    );
+
+    setLoading(true);
+    setStatus("Sending...");
+
+    // 3️⃣ Use the authenticated client for RLS-protected insert
+    const { error } = await supabaseClientWithAuth
+      .from("waitlist_features")
+      .insert([
         {
           user_id: user.id,
           email,
@@ -87,22 +109,27 @@ export function GoalChallengeTracker() {
           smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
         },
       ]);
-  
-      if (error) {
-        console.error(error);
-        setError("Failed to join waitlist. Try again.");
-        setStatus("Failed to send.");
-      } else {
-        setStatus("Success! We'll notify you.");
-        setSelectedOptions([]);
-        setTimeout(() => {
-          setShowPopup(false);
-          setStatus(null);
-        }, 1500);
-      }
-  
-      setLoading(false);
-    };
+
+    if (error) {
+      console.error(error);
+      setError("Failed to join waitlist. Try again.");
+      setStatus("Failed to send.");
+    } else {
+      setStatus("Success! We'll notify you.");
+      setSelectedOptions([]);
+      setTimeout(() => {
+        setShowPopup(false);
+        setStatus(null);
+      }, 1500);
+    }
+  } catch (err) {
+    console.error(err);
+    setError("Authentication failed. Please refresh and try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Card className="relative overflow-hidden">
