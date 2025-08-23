@@ -86,7 +86,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       {
         global: {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
+            Authorization: `Bearer ${token}`,
           },
         },
       }
@@ -95,8 +95,20 @@ const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
     setStatus("Sending...");
 
-    // 3️⃣ Use the authenticated client for RLS-protected insert
-    const { error } = await supabaseClientWithAuth
+    // 3️⃣ Fetch username from onboarding_responses
+    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || "unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+    // 4️⃣ Insert into waitlist_features using authenticated client
+    const { error: insertError } = await supabaseClientWithAuth
       .from("waitlist_features")
       .insert([
         {
@@ -110,8 +122,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         },
       ]);
 
-    if (error) {
-      console.error(error);
+    if (insertError) {
+      console.error(insertError);
       setError("Failed to join waitlist. Try again.");
       setStatus("Failed to send.");
     } else {
@@ -122,6 +134,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         setStatus(null);
       }, 1500);
     }
+
   } catch (err) {
     console.error(err);
     setError("Authentication failed. Please refresh and try again.");
@@ -129,6 +142,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setLoading(false);
   }
 };
+
 
 
   return (
