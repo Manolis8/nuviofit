@@ -76,8 +76,12 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    // 1️⃣ Get Clerk token
+    // 1️⃣ Get Clerk token for Supabase
     const token = await getToken({ template: "supabase" });
+
+    if (!token) {
+      throw new Error("Failed to retrieve authentication token.");
+    }
 
     // 2️⃣ Create authenticated Supabase client
     const supabaseClientWithAuth = createClient(
@@ -102,17 +106,20 @@ const handleSubmit = async (e: React.FormEvent) => {
       .eq("user_id", user.id)
       .single();
 
-    if (onboardError) throw onboardError;
+    if (onboardError) {
+      console.error("Onboarding fetch error:", onboardError);
+      throw onboardError;
+    }
 
     const username = onboardData?.username || "unknown";
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
-    // 4️⃣ Insert into waitlist_features using authenticated client
+    // 4️⃣ Insert into waitlist_features
     const { error: insertError } = await supabaseClientWithAuth
       .from("waitlist_features")
       .insert([
         {
-          user_id: user.id,
+          user_id: user.id, // must match auth.uid()::text in policies
           email,
           username,
           nutrition: selectedOptions.includes("Nutrition"),
@@ -123,7 +130,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       ]);
 
     if (insertError) {
-      console.error(insertError);
+      console.error("Insert error:", insertError);
       setError("Failed to join waitlist. Try again.");
       setStatus("Failed to send.");
     } else {
@@ -134,14 +141,14 @@ const handleSubmit = async (e: React.FormEvent) => {
         setStatus(null);
       }, 1500);
     }
-
   } catch (err) {
-    console.error(err);
+    console.error("Submission error:", err);
     setError("Authentication failed. Please refresh and try again.");
   } finally {
     setLoading(false);
   }
 };
+
 
 
 
@@ -252,7 +259,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                           Cancel
                         </button>
                       </div>
-         
+        
                       {error && <p className="text-red-500 text-sm">{error}</p>}
                       {status && <p className="text-sm text-center mt-2">{status}</p>}
                     </form>
