@@ -76,22 +76,14 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    // 1️⃣ Get Clerk token for Supabase
     const token = await getToken({ template: "supabase" });
 
-    if (!token) {
-      throw new Error("Failed to retrieve authentication token.");
-    }
-
-    // 2️⃣ Create authenticated Supabase client
     const supabaseClientWithAuth = createClient(
       import.meta.env.VITE_SUPABASE_URL,
       import.meta.env.VITE_SUPABASE_ANON_KEY,
       {
         global: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       }
     );
@@ -99,27 +91,24 @@ const handleSubmit = async (e: React.FormEvent) => {
     setLoading(true);
     setStatus("Sending...");
 
-    // 3️⃣ Fetch username from onboarding_responses
+    // Fetch username
     const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
       .single();
 
-    if (onboardError) {
-      console.error("Onboarding fetch error:", onboardError);
-      throw onboardError;
-    }
+    if (onboardError) throw onboardError;
 
     const username = onboardData?.username || "unknown";
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
-    // 4️⃣ Insert into waitlist_features
+    // Insert into waitlist_features
     const { error: insertError } = await supabaseClientWithAuth
       .from("waitlist_features")
       .insert([
         {
-          user_id: user.id, // must match auth.uid()::text in policies
+          user_id: user.id,
           email,
           username,
           nutrition: selectedOptions.includes("Nutrition"),
@@ -141,6 +130,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         setStatus(null);
       }, 1500);
     }
+
   } catch (err) {
     console.error("Submission error:", err);
     setError("Authentication failed. Please refresh and try again.");
@@ -148,6 +138,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setLoading(false);
   }
 };
+
 
 
 
