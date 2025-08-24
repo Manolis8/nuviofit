@@ -92,7 +92,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     setStatus("Sending...");
 
     // Fetch username
-    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
+    const { data: onboardData, error: onboardError } = await supabase
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
