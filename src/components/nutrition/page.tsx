@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button"
 import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react"; 
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 
 export default function NutritionPage() {
   const [showPopup, setShowPopup] = useState(false);
   const { user } = useUser();
+  const { getToken } = useAuth(); // Clerk JWT
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -54,38 +57,66 @@ export default function NutritionPage() {
     );
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setStatus(null);
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setStatus(null);
 
-    if (!user?.id) {
-      setError("You must be logged in.");
-      return;
-    }
+  if (!user?.id) {
+    setError("You must be logged in.");
+    return;
+  }
 
-    if (selectedOptions.length === 0) {
-      setError("Please select at least one option.");
-      return;
-    }
+  if (selectedOptions.length === 0) {
+    setError("Please select at least one option.");
+    return;
+  }
+
+  try {
+    const token = await getToken({ template: "supabase" });
+
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      }
+    );
 
     setLoading(true);
     setStatus("Sending...");
 
-    const { error } = await supabase.from("waitlist_features").insert([
-      {
-        user_id: user.id,
-        email,
-        username,
-        nutrition: selectedOptions.includes("Nutrition"),
-        meditation: selectedOptions.includes("Meditation"),
-        goal_tracking: selectedOptions.includes("Goal Tracking"),
-        smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
-      },
-    ]);
+    // Fetch username
+    const { data: onboardData, error: onboardError } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
 
-    if (error) {
-      console.error(error);
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || "unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+    // Insert into waitlist_features
+    const { error: insertError } = await supabaseClientWithAuth
+      .from("waitlist_features")
+      .insert([
+        {
+          user_id: user.id,
+          email,
+          username,
+          nutrition: selectedOptions.includes("Nutrition"),
+          meditation: selectedOptions.includes("Meditation"),
+          goal_tracking: selectedOptions.includes("Goal Tracking"),
+          smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
+        },
+      ]);
+
+    if (insertError) {
+      console.error("Insert error:", insertError);
       setError("Failed to join waitlist. Try again.");
       setStatus("Failed to send.");
     } else {
@@ -97,8 +128,13 @@ export default function NutritionPage() {
       }, 1500);
     }
 
+  } catch (err) {
+    console.error("Submission error:", err);
+    setError("Authentication failed. Please refresh and try again.");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <>
