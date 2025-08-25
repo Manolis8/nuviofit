@@ -8,11 +8,14 @@ import { useUser } from "@clerk/clerk-react";
 import { supabase } from "@/components/lib/supabaseClient";
 import { Brain, Heart, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 export default function MindsetPage() {
 
   const [showPopup, setShowPopup] = useState(false);
     const { user } = useUser();
+    const { getToken } = useAuth(); // Clerk JWT
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<string | null>(null);
@@ -56,25 +59,53 @@ export default function MindsetPage() {
       );
     };
   
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError("");
-      setStatus(null);
-  
-      if (!user?.id) {
-        setError("You must be logged in.");
-        return;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setStatus(null);
+
+  if (!user?.id) {
+    setError("You must be logged in.");
+    return;
+  }
+
+  if (selectedOptions.length === 0) {
+    setError("Please select at least one option.");
+    return;
+  }
+
+  try {
+    const token = await getToken({ template: "supabase" });
+
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       }
-  
-      if (selectedOptions.length === 0) {
-        setError("Please select at least one option.");
-        return;
-      }
-  
-      setLoading(true);
-      setStatus("Sending...");
-  
-      const { error } = await supabase.from("waitlist_features").insert([
+    );
+
+    setLoading(true);
+    setStatus("Sending...");
+
+    // Fetch username
+    const { data: onboardData, error: onboardError } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || "unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+    // Insert into waitlist_features
+    const { error: insertError } = await supabaseClientWithAuth
+      .from("waitlist_features")
+      .insert([
         {
           user_id: user.id,
           email,
@@ -85,22 +116,27 @@ export default function MindsetPage() {
           smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
         },
       ]);
-  
-      if (error) {
-        console.error(error);
-        setError("Failed to join waitlist. Try again.");
-        setStatus("Failed to send.");
-      } else {
-        setStatus("Success! We'll notify you.");
-        setSelectedOptions([]);
-        setTimeout(() => {
-          setShowPopup(false);
-          setStatus(null);
-        }, 1500);
-      }
-  
-      setLoading(false);
-    };
+
+    if (insertError) {
+      console.error("Insert error:", insertError);
+      setError("Failed to join waitlist. Try again.");
+      setStatus("Failed to send.");
+    } else {
+      setStatus("Success! We'll notify you.");
+      setSelectedOptions([]);
+      setTimeout(() => {
+        setShowPopup(false);
+        setStatus(null);
+      }, 1500);
+    }
+
+  } catch (err) {
+    console.error("Submission error:", err);
+    setError("Authentication failed. Please refresh and try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <>
