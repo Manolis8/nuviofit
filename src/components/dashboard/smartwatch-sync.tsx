@@ -14,10 +14,14 @@ import { Navbar } from "@/components/navigation/navbar"
 import { Progress } from "@/components/ui/progress"
 import {Coffee} from "lucide-react"
 import { Activity, Crown } from "lucide-react"
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
+
 
 export function SmartwatchSync() {
 const [showPopup, setShowPopup] = useState(false);
     const { user } = useUser();
+              const { getToken } = useAuth(); // Clerk JWT
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<string | null>(null);
@@ -61,25 +65,53 @@ const [showPopup, setShowPopup] = useState(false);
       );
     };
   
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      setError("");
-      setStatus(null);
-  
-      if (!user?.id) {
-        setError("You must be logged in.");
-        return;
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  setStatus(null);
+
+  if (!user?.id) {
+    setError("You must be logged in.");
+    return;
+  }
+
+  if (selectedOptions.length === 0) {
+    setError("Please select at least one option.");
+    return;
+  }
+
+  try {
+    const token = await getToken({ template: "supabase" });
+
+    const supabaseClientWithAuth = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
       }
-  
-      if (selectedOptions.length === 0) {
-        setError("Please select at least one option.");
-        return;
-      }
-  
-      setLoading(true);
-      setStatus("Sending...");
-  
-      const { error } = await supabase.from("waitlist_features").insert([
+    );
+
+    setLoading(true);
+    setStatus("Sending...");
+
+    // Fetch username
+    const { data: onboardData, error: onboardError } = await supabase
+      .from("onboarding_responses")
+      .select("username")
+      .eq("user_id", user.id)
+      .single();
+
+    if (onboardError) throw onboardError;
+
+    const username = onboardData?.username || "unknown";
+    const email = user.emailAddresses?.[0]?.emailAddress ?? "";
+
+    // Insert into waitlist_features
+    const { error: insertError } = await supabaseClientWithAuth
+      .from("waitlist_features")
+      .insert([
         {
           user_id: user.id,
           email,
@@ -90,22 +122,27 @@ const [showPopup, setShowPopup] = useState(false);
           smartwatch_sync: selectedOptions.includes("Smartwatch Sync"),
         },
       ]);
-  
-      if (error) {
-        console.error(error);
-        setError("Failed to join waitlist. Try again.");
-        setStatus("Failed to send.");
-      } else {
-        setStatus("Success! We'll notify you.");
-        setSelectedOptions([]);
-        setTimeout(() => {
-          setShowPopup(false);
-          setStatus(null);
-        }, 1500);
-      }
-  
-      setLoading(false);
-    };
+
+    if (insertError) {
+      console.error("Insert error:", insertError);
+      setError("Failed to join waitlist. Try again.");
+      setStatus("Failed to send.");
+    } else {
+      setStatus("Success! We'll notify you.");
+      setSelectedOptions([]);
+      setTimeout(() => {
+        setShowPopup(false);
+        setStatus(null);
+      }, 1500);
+    }
+
+  } catch (err) {
+    console.error("Submission error:", err);
+    setError("Authentication failed. Please refresh and try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Card className="border-none shadow-lg">
