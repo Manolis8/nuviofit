@@ -115,15 +115,13 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
 useEffect(() => {
   const fetchCount = async () => {
-    const { data } = await supabaseClient
-      .from("onboarding_responses")
-      .select("workout_count")
-      .eq("user_id", user.id)
-      .single();
+const { data } = await supabaseClient
+  .from("onboarding_responses")
+  .select("workout_count")
+  .eq("user_id", user.id)
+  .maybeSingle();
 
-    if (data?.workout_count) {
-      setWeeklyCount(data.workout_count);
-    }
+if (data?.workout_count) setWeeklyCount(data.workout_count);
   };
 
   if (user?.id) fetchCount();
