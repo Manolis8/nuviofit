@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js"; 
 import { useAuth } from "@clerk/nextjs";
 
 export function CalendarView() {
