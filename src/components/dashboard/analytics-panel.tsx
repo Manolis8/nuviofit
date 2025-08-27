@@ -9,6 +9,8 @@ import { useEffect, useState } from "react"
 import { Lock } from "lucide-react";
 import { useUser } from "@clerk/clerk-react"
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 
 const stepsData = [
@@ -32,6 +34,7 @@ const moodData = [
 ]
 
 export function AnalyticsPanel() {
+      const { getToken } = useAuth(); // Clerk JWT
   const today = new Date();
 const startOfWeek = new Date(today);
 
@@ -62,12 +65,42 @@ const [stepsForm, setStepsForm] = useState({
 
   const [entries, setEntries] = useState([])
 
+  const [supabaseClient, setSupabaseClient] = useState(supabase);
+
+  useEffect(() => {
+    const initSupabase = async () => {
+      if (!user) return;
+
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
+
+        const client = createClient(
+          import.meta.env.VITE_SUPABASE_URL,
+          import.meta.env.VITE_SUPABASE_ANON_KEY,
+          {
+            global: {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          }
+        );
+
+        setSupabaseClient(client); // override the supabase variable locally
+      } catch (err) {
+        console.error("Failed to init supabase client:", err);
+      }
+    };
+
+    initSupabase();
+  }, [user, getToken]);
+
+
 const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
   const { name, value } = e.target;
   setForm((prev) => ({ ...prev, [name]: value }));
 };
   const fetchEntries = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("onboarding_responses")
       .select("*")
       .order("created_at", { ascending: false })
@@ -116,7 +149,7 @@ const handleSubmit = async () => {
   startOfWeek.setDate(today.getDate() - dayIndex);
   const weekStartStr = startOfWeek.toISOString().split("T")[0];
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("onboarding_responses")
     .select("*")
     .eq("user_id", user.id)
@@ -146,7 +179,7 @@ const updatedEnergyText = Object.entries(energyObj)
   }
 
   if (data) {
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseClient
       .from("onboarding_responses")
       .update({
         steps: updatedStepsText,
@@ -158,7 +191,7 @@ const updatedEnergyText = Object.entries(energyObj)
 
     if (updateError) console.error("Update error:", updateError);
   } else {
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseClient
       .from("onboarding_responses")
       .insert({
         user_id: user.id,
@@ -184,7 +217,7 @@ useEffect(() => {
     startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
     const weekStartStr = startOfWeek.toISOString().split("T")[0];
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("onboarding_responses")
       .select("mood, energy")
       .eq("user_id", user.id)
