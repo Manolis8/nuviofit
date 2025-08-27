@@ -10,15 +10,47 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
 
 export function CalendarView() {
   const { user } = useUser()
+      const { getToken } = useAuth(); // Clerk JWT
   const [weeklyCount, setWeeklyCount] = useState(0);
     const [workoutDays, setWorkoutDays] = useState(0);
     const [workoutDaysPerWeek, setWorkoutDaysPerWeek] = useState<number | null>(null);
   const { weeklyFocusPlan } = useFullFitnessPlan(user)
     const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
   
+  const [supabaseClient, setSupabaseClient] = useState(supabase);
+
+  useEffect(() => {
+    const initSupabase = async () => {
+      if (!user) return;
+
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
+
+        const client = createClient(
+          import.meta.env.VITE_SUPABASE_URL,
+          import.meta.env.VITE_SUPABASE_ANON_KEY,
+          {
+            global: {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          }
+        );
+
+        setSupabaseClient(client); // override the supabase variable locally
+      } catch (err) {
+        console.error("Failed to init supabase client:", err);
+      }
+    };
+
+    initSupabase();
+  }, [user, getToken]);
+
   const baseDate = new Date();
 const jsDay = baseDate.getDay(); // 0 = Sunday
 const currentWeekDay = jsDay === 0 ? 7 : jsDay;
@@ -39,7 +71,7 @@ const formattedEnd = endOfWeek.toLocaleDateString("en-US", {
 });
   useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -82,7 +114,7 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
 useEffect(() => {
   const fetchCount = async () => {
-    const { data } = await supabase
+    const { data } = await supabaseClient
       .from("onboarding_responses")
       .select("workout_count")
       .eq("user_id", user.id)
