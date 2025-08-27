@@ -1,18 +1,51 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/components/lib/supabaseClient";
+import { createClient } from "@supabase/supabase-js";
+import { useAuth } from "@clerk/nextjs";
+
 
 export default function useFullFitnessPlan(user) {
   const [fullPlan, setFullPlan] = useState([]);
   const [weeklyPlan, setWeeklyPlan] = useState([]);
+        const { getToken } = useAuth(); // Clerk JWT
 const [weeklyFocusPlan, setWeeklyFocusPlan] = useState([]);
 
+
+const [supabaseClient, setSupabaseClient] = useState(supabase);
+
+useEffect(() => {
+  const initSupabase = async () => {
+    if (!user) return;
+
+    try {
+      const token = await getToken({ template: "supabase" });
+      if (!token) throw new Error("Failed to get Supabase token from Clerk.");
+
+      const client = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        {
+          global: {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        }
+      );
+
+      setSupabaseClient(client); // ✅ store the authenticated client in state
+    } catch (err) {
+      console.error("Failed to initialize Supabase client:", err);
+    }
+  };
+
+  initSupabase();
+}, [user, getToken]);
 
 useEffect(() => {
   if (!user?.id) return;
 
   const fetchPlan = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
