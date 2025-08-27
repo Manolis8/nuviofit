@@ -45,18 +45,26 @@ useEffect(() => {
   if (!user?.id) return;
 
   const fetchPlan = async () => {
-    const { data, error } = await supabaseClient
-      .from("onboarding_responses")
-      .select("fitness_plan")
-      .eq("user_id", user.id)
-      .single();
+if (!user?.id || !supabaseClient) return;
 
-    if (error || !data?.fitness_plan) {
-      console.error("❌ Failed to fetch fitness plan", error);
-      return;
-    }
+const { data, error } = await supabaseClient
+  .from("onboarding_responses")
+  .select("fitness_plan")
+  .eq("user_id", user.id)
+  .maybeSingle(); // <— Safe for 0 rows
 
-    const planText = data.fitness_plan.replace(/\r\n/g, "\n");
+if (error) {
+  console.error("❌ Failed to fetch fitness plan:", error);
+  return;
+}
+
+if (!data || !data.fitness_plan) {
+  console.warn("⚠️ No fitness plan found for this user");
+  return;
+}
+
+const planText = data.fitness_plan.replace(/\r\n/g, "\n");
+
     const cleanPlanText = planText.split(/Day\s*1:/i).join("Day 1:");
     const rawSections = cleanPlanText
       .split(/(?=Day\s*\d+:)/g)
