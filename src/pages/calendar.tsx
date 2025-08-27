@@ -71,6 +71,7 @@ const formattedEnd = endOfWeek.toLocaleDateString("en-US", {
 });
   useEffect(() => {
   const fetchPlan = async () => {
+        if (!user || !supabaseClient) return;
 const { data, error } = await supabaseClient
   .from("onboarding_responses")
   .select("fitness_plan")
@@ -110,11 +111,12 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
   };
 
   if (user?.id) fetchPlan();
-}, [user]);
+}, [user, supabaseClient]);
 
 
 useEffect(() => {
   const fetchCount = async () => {
+        if (!user || !supabaseClient) return;
 const { data } = await supabaseClient
   .from("onboarding_responses")
   .select("workout_count")
@@ -125,8 +127,7 @@ if (data?.workout_count) setWeeklyCount(data.workout_count);
   };
 
   if (user?.id) fetchCount();
-}, [user]);
-
+}, [user, supabaseClient]);
   return (
     <>
       <Navbar />
