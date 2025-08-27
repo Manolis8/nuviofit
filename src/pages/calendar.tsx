@@ -22,34 +22,38 @@ export function CalendarView() {
   const { weeklyFocusPlan } = useFullFitnessPlan(user)
     const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
   
-  const [supabaseClient, setSupabaseClient] = useState(supabase);
+// ==========================
+// Initialize Supabase with Auth
+// ==========================
+const [supabaseClient, setSupabaseClient] = useState(supabase);
 
-  useEffect(() => {
-    const initSupabase = async () => {
-      if (!user) return;
+useEffect(() => {
+  const initSupabase = async () => {
+    if (!user) return;
 
-      try {
-        const token = await getToken({ template: "supabase" });
-        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
+    try {
+      const token = await getToken({ template: "supabase" });
+      if (!token) throw new Error("Failed to get Supabase token from Clerk.");
 
-        const client = createClient(
-          import.meta.env.VITE_SUPABASE_URL,
-          import.meta.env.VITE_SUPABASE_ANON_KEY,
-          {
-            global: {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          }
-        );
+      const client = createClient(
+        import.meta.env.VITE_SUPABASE_URL,
+        import.meta.env.VITE_SUPABASE_ANON_KEY,
+        {
+          global: {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        }
+      );
 
-        setSupabaseClient(client); // override the supabase variable locally
-      } catch (err) {
-        console.error("Failed to init supabase client:", err);
-      }
-    };
+      setSupabaseClient(client); // ✅ store the authenticated client in state
+    } catch (err) {
+      console.error("Failed to initialize Supabase client:", err);
+    }
+  };
 
-    initSupabase();
-  }, [user, getToken]);
+  initSupabase();
+}, [user, getToken]);
+
 
   const baseDate = new Date();
 const jsDay = baseDate.getDay(); // 0 = Sunday
