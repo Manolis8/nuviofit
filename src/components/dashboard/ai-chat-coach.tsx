@@ -11,6 +11,7 @@ import { supabase } from "@/components/lib/supabaseClient";
 import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
 
+
 export function AIChatCoach() {
     const { getToken } = useAuth(); // Clerk JWT
   const { user, isLoaded } = useUser();
@@ -26,6 +27,37 @@ export function AIChatCoach() {
   const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
 
 
+  const [supabaseClient, setSupabaseClient] = useState(supabase);
+
+  useEffect(() => {
+    const initSupabase = async () => {
+      if (!user) return;
+
+      try {
+        const token = await getToken();
+        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
+
+        const client = createClient(
+          import.meta.env.VITE_SUPABASE_URL,
+          import.meta.env.VITE_SUPABASE_ANON_KEY,
+          {
+            global: {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          }
+        );
+
+        setSupabaseClient(client); // override the supabase variable locally
+      } catch (err) {
+        console.error("Failed to init supabase client:", err);
+      }
+    };
+
+    initSupabase();
+  }, [user, getToken]);
+
+
+
   // --------------------- Fetch User Data ---------------------
   useEffect(() => {
     if (!user) return;
@@ -33,7 +65,7 @@ export function AIChatCoach() {
     setEmail(user.emailAddresses[0]?.emailAddress || "");
 
     const fetchUserData = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from("onboarding_responses")
         .select("username")
         .eq("user_id", user.id)
@@ -54,7 +86,7 @@ export function AIChatCoach() {
     if (!user || !isLoaded) return;
 
 const checkAndResetMessages = async () => {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("onboarding_responses")
     .select("messages_left, last_reset_at")
     .eq("user_id", user.id)
@@ -75,7 +107,7 @@ const checkAndResetMessages = async () => {
   setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
 
   if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseClient
       .from("onboarding_responses")
       .update({
         messages_left: 30,
@@ -99,64 +131,14 @@ const checkAndResetMessages = async () => {
     checkAndResetMessages();
   }, [user, isLoaded]);
 
-  // --------------------- Submit Feedback ---------------------
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setStatus(null);
-
-    if (!user?.id) {
-      setError("You must be logged in.");
-      return;
-    }
-
-    if (!feedbackText.trim()) {
-      setError("Feedback cannot be empty.");
-      return;
-    }
-
-    const { error: insertError } = await supabase.from("feedback").insert([
-      {
-        user_id: user.id,
-        email,
-        username,
-        message: feedbackText,
-      },
-    ]);
-
-    if (insertError) {
-      console.error(insertError);
-      setError("Failed to submit feedback.");
-      setStatus("Error");
-    } else {
-      setStatus("Feedback submitted successfully!");
-      setFeedbackText("");
-    }
-  };
 
   // --------------------- Manual Feedback Sender (Optional) ---------------------
 async function sendFeedback(formData: { name: string; email: string; message: string }) {
   if (!user?.id) throw new Error("User not logged in.");
 
-  // 1. Get Clerk JWT for Supabase
-  const token = await getToken({ template: "supabase" });
-  if (!token) throw new Error("Failed to get Supabase token from Clerk.");
-
-  // 2. Create a Supabase client using that token
-  const supabaseWithAuth = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    }
-  );
 
   // 3. Fetch username from onboarding_responses
-  const { data, error: fetchError } = await supabaseWithAuth
+  const { data, error: fetchError } = await supabaseClient
     .from("onboarding_responses")
     .select("username")
     .eq("user_id", user.id)
@@ -170,7 +152,7 @@ async function sendFeedback(formData: { name: string; email: string; message: st
   const username = data?.username || formData.name || "Unknown";
 
   // 4. Insert into feedback
-  const { error: insertError } = await supabaseWithAuth.from("feedback").insert([
+  const { error: insertError } = await supabaseClient.from("feedback").insert([
     {
       user_id: user.id,
       email: user.emailAddresses[0]?.emailAddress,
