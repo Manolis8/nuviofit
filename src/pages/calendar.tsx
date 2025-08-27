@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
-import { createClient } from "@supabase/supabase-js"; 
+import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
 
 export function CalendarView() {
@@ -71,16 +71,17 @@ const formattedEnd = endOfWeek.toLocaleDateString("en-US", {
 });
   useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabaseClient
-      .from("onboarding_responses")
-      .select("fitness_plan")
-      .eq("user_id", user.id)
-      .single();
+const { data, error } = await supabaseClient
+  .from("onboarding_responses")
+  .select("fitness_plan")
+  .eq("user_id", user.id)
+  .maybeSingle();
 
-    if (error || !data?.fitness_plan) {
-      console.error("❌ Failed to fetch plan", error);
-      return;
-    }
+if (!data?.fitness_plan) {
+  console.warn("No fitness plan found for this user");
+  return;
+}
+
 
     const planText = data.fitness_plan?.replace(/\r\n/g, "\n");
 
@@ -296,4 +297,3 @@ useEffect(() => {
     </>
   )
 }
- 
