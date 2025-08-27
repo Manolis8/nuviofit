@@ -29,7 +29,7 @@ export function CalendarView() {
       if (!user) return;
 
       try {
-        const token = await getToken();
+        const token = await getToken({ template: "supabase" });
         if (!token) throw new Error("Failed to get Supabase token from Clerk.");
 
         const client = createClient(
