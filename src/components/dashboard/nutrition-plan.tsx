@@ -13,14 +13,13 @@ import { Target, TrendingUp, Award} from "lucide-react"
 import { Navbar } from "@/components/navigation/navbar"
 import { Progress } from "@/components/ui/progress"
 import {Coffee} from "lucide-react"
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export function NutritionPlan() {
 
 const [showPopup, setShowPopup] = useState(false);
     const { user } = useUser();
-          const { getToken } = useAuth(); // Clerk JWT
+    const { getClient } = useSupabaseClientWithAuth();
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [status, setStatus] = useState<string | null>(null);
@@ -32,8 +31,8 @@ const [showPopup, setShowPopup] = useState(false);
       async function fetchUsername() {
         if (!user) return;
         setEmail(user.emailAddresses[0]?.emailAddress || "");
-  
-        const { data, error } = await supabase
+          const supabaseAuthClient = await getClient();
+        const { data, error } = await supabaseAuthClient
           .from("onboarding_responses")
           .select("username")
           .eq("user_id", user.id)
@@ -80,23 +79,12 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    const token = await getToken({ template: "supabase" });
-
-    const supabaseClientWithAuth = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      }
-    );
-
+        const supabaseAuthClient = await getClient();
     setLoading(true);
     setStatus("Sending...");
 
     // Fetch username
-    const { data: onboardData, error: onboardError } = await supabase
+    const { data: onboardData, error: onboardError } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -108,7 +96,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
     // Insert into waitlist_features
-    const { error: insertError } = await supabaseClientWithAuth
+    const { error: insertError } = await supabaseAuthClient
       .from("waitlist_features")
       .insert([
         {
