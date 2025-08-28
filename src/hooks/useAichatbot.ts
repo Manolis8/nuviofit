@@ -1,13 +1,16 @@
 import { supabase } from "@/components/lib/supabaseClient";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 const MAX_MESSAGES = 30
 
 // Fetch or initialize quota, reset if month passed
 export async function fetchUserQuota() {
-  const { data: { user } } = await supabase.auth.getUser()
+      const { getClient } = useSupabaseClientWithAuth();
+              const supabaseAuthClient = await getClient();
+  const { data: { user } } = await supabaseAuthClient.auth.getUser()
   if (!user) throw new Error("No user logged in")
 
-  let { data: quota, error } = await supabase
+  let { data: quota, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("*")
     .eq("user_id", user.id)
@@ -15,7 +18,7 @@ export async function fetchUserQuota() {
 
   if (!quota) {
     const now = new Date()
-    const { error: insertError } = await supabase
+    const { error: insertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .insert({
         user_id: user.id,
@@ -38,7 +41,7 @@ export async function fetchUserQuota() {
   oneMonthLater.setMonth(oneMonthLater.getMonth() + 1)
 
   if (now > oneMonthLater) {
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAuthClient
       .from("onboarding_responses")
       .update({
         messages_left: MAX_MESSAGES,
@@ -56,10 +59,12 @@ export async function fetchUserQuota() {
 
 // Get message history from supabase (your table name might differ)
 export async function fetchUserMessages() {
-  const { data: { user } } = await supabase.auth.getUser()
+        const { getClient } = useSupabaseClientWithAuth();
+                const supabaseAuthClient = await getClient();
+  const { data: { user } } = await supabaseAuthClient.auth.getUser()
   if (!user) throw new Error("No user logged in")
 
-  const { data: messages, error } = await supabase
+  const { data: messages, error } = await supabaseAuthClient
     .from("onboarding_responses") // replace with your actual messages table name
     .select("*")
     .eq("user_id", user.id)
@@ -84,10 +89,12 @@ export async function canSendMessage() {
 
 // Decrement message quota by 1, throw if no messages left
 export async function sendMessageAndDecrement() {
-  const { data: { user } } = await supabase.auth.getUser()
+        const { getClient } = useSupabaseClientWithAuth();
+                  const supabaseAuthClient = await getClient();
+  const { data: { user } } = await supabaseAuthClient.auth.getUser()
   if (!user) throw new Error("No user logged in")
 
-  let { data: quota, error } = await supabase
+  let { data: quota, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("messages_left")
     .eq("user_id", user.id)
@@ -100,7 +107,7 @@ export async function sendMessageAndDecrement() {
     throw new Error("No messages left for this month")
   }
 
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseAuthClient
     .from("onboarding_responses")
     .update({
       messages_left: quota.messages_left - 1
