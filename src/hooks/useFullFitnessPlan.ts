@@ -11,7 +11,7 @@ const [weeklyFocusPlan, setWeeklyFocusPlan] = useState([]);
 
 
 useEffect(() => {
-  if (!user?.id) return;
+  if (!user?.id) return; 
 
   const fetchPlan = async () => {
     const supabaseClient = await getClient();
