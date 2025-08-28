@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Exercise } from "@/components/lib/frontendOpenai";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/clerk-react";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export interface UserProfile {
   setupFinished?: boolean;
@@ -39,6 +40,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [setupFinished, setSetupFinished] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
+      const { getClient } = useSupabaseClientWithAuth();
 
   const { user } = useUser();
 
@@ -51,8 +53,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const userId = user.id;
-
-      const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("*")
         .eq("user_id", userId)
