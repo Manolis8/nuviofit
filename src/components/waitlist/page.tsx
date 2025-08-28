@@ -1,20 +1,19 @@
 import { supabase } from "@/components/lib/supabaseClient";
 import type React from "react"
-import { useAuth } from "@clerk/nextjs";
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Mail, User, Zap, MessageCircle, Lock, Instagram, Twitter, Youtube } from "lucide-react"
 import Link from "next/link"
-import { createClient } from "@supabase/supabase-js";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export default function WaitlistPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-    const { getToken } = useAuth(); // Clerk JWT
+    const { getClient } = useSupabaseClientWithAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -24,21 +23,9 @@ export default function WaitlistPage() {
 
 const displayName = name.trim() === '' ? 'user' : name.trim()
 
-const token = await getToken({ template: "supabase" });
+        const supabaseAuthClient = await getClient();
 
-const supabaseClientWithAuth = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-  {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
-      },
-    },
-  }
-);
-
-const { data, error } = await supabaseClientWithAuth
+const { data, error } = await supabaseAuthClient
   .from('waitlist')
   .insert([{ email: email.trim(), name: displayName }])
 
