@@ -9,10 +9,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
-import { getSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export function CalendarView() {
   const { user } = useUser()
+  const { getClient } = useSupabaseClientWithAuth();
   const [weeklyCount, setWeeklyCount] = useState(0);
     const [workoutDays, setWorkoutDays] = useState(0);
     const [workoutDaysPerWeek, setWorkoutDaysPerWeek] = useState<number | null>(null);
@@ -46,7 +47,7 @@ useEffect(() => {
   const fetchPlan = async () => {
     if (!user) return;
 
-    const supabaseAuthClient = await getSupabaseClientWithAuth();
+    const supabaseAuthClient = await getClient();
 
     const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
@@ -91,7 +92,7 @@ useEffect(() => {
   const fetchCount = async () => {
     if (!user) return;
 
-    const supabaseAuthClient = await getSupabaseClientWithAuth();
+    const supabaseAuthClient = await getClient();
 
     const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
