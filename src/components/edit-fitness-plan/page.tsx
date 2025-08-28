@@ -7,6 +7,7 @@ import Link from "next/link"
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/nextjs";
 import { aiEditFitnessPlan } from "@/components/lib/EditFitnessPlan";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 const LoadingSkeleton = () => (
@@ -55,6 +56,7 @@ export default function EditFitnessPlanPage() {
   const [fitnessPlan, setFitnessPlan] = useState<string>(""); 
   const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
   const [editPlanTimes, setEditPlanTimes] = useState<number>(0);
+      const { getClient } = useSupabaseClientWithAuth();
 
 
 // -------------------------Reset logic-----------------
@@ -63,7 +65,8 @@ useEffect(() => {
   if (!user || !isLoaded) return;
 
   const checkAndResetPlanEditLimit = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("editplantimes, last_reset_at")
       .eq("user_id", user.id)
@@ -83,7 +86,8 @@ useEffect(() => {
     setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
 
     if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
-      const { error: updateError } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { error: updateError } = await supabaseAuthClient
         .from("onboarding_responses")
         .update({
           editplantimes: 1,
@@ -115,7 +119,8 @@ const handleGeneratePlan = async () => {
   // Proceed to AI generate plan...
 
   // After generating successfully:
-  const { error: updateError } = await supabase
+          const supabaseAuthClient = await getClient();
+  const { error: updateError } = await supabaseAuthClient
     .from("onboarding_responses")
     .update({
       editplantimes: editPlanTimes - 1,
@@ -135,8 +140,8 @@ const handleGeneratePlan = async () => {
 useEffect(() => {
   const fetchFitnessPlan = async () => {
     if (!user) return;
-
-    const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -189,8 +194,8 @@ useEffect(() => {
     setFitnessPlan(updatedPlan);
     setHasChanges(true);
     setPrompt("");
-
-    await supabase
+        const supabaseAuthClient = await getClient();
+    await supabaseAuthClient
       .from("onboarding_responses")
       .update({
         editplantimes: editPlanTimes - 1
@@ -222,8 +227,8 @@ const handleCancel = () => {
 const handleSavePlanToSupabase = async (planToSave: string) => {
   if (!user) return;
   setIsLoading(true);
-
-  const { error } = await supabase
+        const supabaseAuthClient = await getClient();
+  const { error } = await supabaseAuthClient
     .from("onboarding_responses")
     .update({ fitness_plan: planToSave })
     .eq("user_id", user.id);
