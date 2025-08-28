@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { useUser, useAuth } from "@clerk/nextjs";
+import { useUser} from "@clerk/nextjs";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
-import { createClient } from "@supabase/supabase-js";
-
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,7 +12,7 @@ import { ArrowLeft, Send, CheckCircle } from "lucide-react";
 
 export default function FeedbackPage() {
   const { user } = useUser();
-  const { getToken } = useAuth(); // Clerk JWT
+    const { getClient } = useSupabaseClientWithAuth();
   const [feedback, setFeedback] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -34,25 +33,10 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   setIsSubmitting(true);
   try {
-    // 1️⃣ Get Clerk token for RLS
-
-const token = await getToken({ template: "supabase" });
-
-const supabaseClientWithAuth = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-  {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
-      },
-    },
-  }
-);
-
+        const supabaseAuthClient = await getClient();
 
     // 3️⃣ Use the client for queries
-    const { data: onboardData, error: onboardError } = await supabaseClientWithAuth
+    const { data: onboardData, error: onboardError } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -63,7 +47,7 @@ const supabaseClientWithAuth = createClient(
     const username = onboardData?.username || "unknown";
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
-    const { error: insertError } = await supabaseClientWithAuth
+    const { error: insertError } = await supabaseAuthClient
       .from("feedback")
       .insert([{ user_id: user.id, username, email, message: feedback }]);
 
