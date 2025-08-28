@@ -10,8 +10,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react"
 import { supabase } from "@/components/lib/supabaseClient";
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 
@@ -31,7 +30,7 @@ interface FeedbackData {
 
 export default function ProfilePage() {
 
-  const { getToken } = useAuth(); // Clerk JWT
+    const { getClient } = useSupabaseClientWithAuth();
 const { user } = useUser();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -45,8 +44,8 @@ const { user } = useUser();
       if (!user) return;
 
       setEmail(user.emailAddresses[0]?.emailAddress || "");
-
-      const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("username")
         .eq("user_id", user.id)
@@ -67,19 +66,7 @@ const { user } = useUser();
     setError(null);
     setStatus(null);
 
-    const token = await getToken({ template: "supabase" });
-    
-    const supabaseClientWithAuth = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`, // Pass the Clerk token for RLS
-          },
-        },
-      }
-    );
+        const supabaseAuthClient = await getClient();
 
     if (!user?.id) {
       setError("You must be logged in.");
@@ -91,7 +78,7 @@ const { user } = useUser();
       return;
     }
 
-const { error: insertError } = await supabaseClientWithAuth
+const { error: insertError } = await supabaseAuthClient
   .from("feedback")
   .insert([
     {
@@ -117,25 +104,10 @@ const { error: insertError } = await supabaseClientWithAuth
 // This function sends the feedback to Supabase.
 async function sendFeedback(user: any, formData: FeedbackData) {
   if (!user?.id) throw new Error("User not logged in.");
-
-  // 1️⃣ Get Clerk token
-  const token = await getToken({ template: "supabase" });
-
-  // 2️⃣ Create a Supabase client with auth headers
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    }
-  );
+        const supabaseAuthClient = await getClient();
 
   // 3️⃣ Fetch username (optional)
-  const { data: onboardData, error: onboardError } = await supabase
+  const { data: onboardData, error: onboardError } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("username")
     .eq("user_id", user.id)
@@ -187,8 +159,8 @@ const [formData, setFormData] = useState({
       async function fetchUsername() {
         if (!user) return;
         setEmail(user.emailAddresses[0]?.emailAddress || "");
-  
-        const { data, error } = await supabase
+          const supabaseAuthClient = await getClient();
+        const { data, error } = await supabaseAuthClient
           .from("onboarding_responses")
           .select("username")
           .eq("user_id", user.id)
@@ -235,23 +207,13 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   try {
-    const token = await getToken({ template: "supabase" });
-
-    const supabaseClientWithAuth = createClient(
-      import.meta.env.VITE_SUPABASE_URL,
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
-      {
-        global: {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      }
-    );
+        const supabaseAuthClient = await getClient();
 
     setLoading(true);
     setStatus("Sending...");
 
     // Fetch username
-    const { data: onboardData, error: onboardError } = await supabase
+    const { data: onboardData, error: onboardError } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -263,7 +225,7 @@ const handleSubmit = async (e: React.FormEvent) => {
     const email = user.emailAddresses?.[0]?.emailAddress ?? "";
 
     // Insert into waitlist_features
-    const { error: insertError } = await supabaseClientWithAuth
+    const { error: insertError } = await supabaseAuthClient
       .from("waitlist_features")
       .insert([
         {
@@ -310,7 +272,8 @@ const handleSubmit = async (e: React.FormEvent) => {
 
 useEffect(() => {
   const fetchUsername = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -329,7 +292,8 @@ useEffect(() => {
 
 useEffect(() => {
   const fetchJoinDate = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from('onboarding_responses')
       .select('created_at')
       .eq('user_id', user.id) // make sure you have the current user's ID
@@ -380,7 +344,8 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchJoinDate = async () => {
-      const { data, error } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from('onboarding_responses')
         .select('created_at')
         .eq('user_id', user.id) // make sure you have the current user's ID
