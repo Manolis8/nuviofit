@@ -1,17 +1,22 @@
-import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
+import { createClient } from "@supabase/supabase-js";
 
-export const getSupabaseClientWithAuth = async () => {
-const { getToken } = useAuth(); // Clerk JWT
-  const token = await getToken({ template: "supabase" });
+export const useSupabaseClientWithAuth = () => {
+  const { getToken } = useAuth();
 
-  return createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-    {
-      global: {
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    }
-  );
+  const getClient = async () => {
+    const token = await getToken({ template: "supabase" });
+
+    return createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      {
+        global: {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      }
+    );
+  };
+
+  return { getClient };
 };
