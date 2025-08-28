@@ -9,9 +9,11 @@ import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export function CalendarView() {
   const { user } = useUser()
+      const { getClient } = useSupabaseClientWithAuth();
   const [weeklyCount, setWeeklyCount] = useState(0);
   const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
     const [workoutDays, setWorkoutDays] = useState(0);
@@ -40,7 +42,8 @@ startOfWeek.setDate(baseDate.getDate() - currentWeekDay + 1); // Monday
 
     if (isMonday && lastReset !== weekKey) {
       // It's Monday and we haven't reset yet this week
-      const { error } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { error } = await supabaseAuthClient
         .from("onboarding_responses")
         .update({ workout_count: 0 })
         .eq("user_id", user.id);
@@ -57,7 +60,8 @@ startOfWeek.setDate(baseDate.getDate() - currentWeekDay + 1); // Monday
       localStorage.removeItem("last_week_reset");
     } else {
       // It's still Monday, already reset — fetch existing count
-      const { data } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { data } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("workout_count")
         .eq("user_id", user.id)
@@ -85,7 +89,8 @@ const formattedEnd = endOfWeek.toLocaleDateString("en-US", {
 });
   useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -128,7 +133,8 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
 useEffect(() => {
   const fetchCount = async () => {
-    const { data } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("workout_count")
       .eq("user_id", user.id)
