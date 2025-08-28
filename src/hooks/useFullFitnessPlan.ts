@@ -1,70 +1,39 @@
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { supabase } from "@/components/lib/supabaseClient";
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
-
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export default function useFullFitnessPlan(user) {
   const [fullPlan, setFullPlan] = useState([]);
   const [weeklyPlan, setWeeklyPlan] = useState([]);
-        const { getToken } = useAuth(); // Clerk JWT
 const [weeklyFocusPlan, setWeeklyFocusPlan] = useState([]);
+  const { getClient } = useSupabaseClientWithAuth();
 
 
-const [supabaseClient, setSupabaseClient] = useState(supabase);
-
-useEffect(() => {
-  const initSupabase = async () => {
-    if (!user) return;
-
-    try {
-      const token = await getToken({ template: "supabase" });
-      if (!token) throw new Error("Failed to get Supabase token from Clerk.");
-
-      const client = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
-        {
-          global: {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        }
-      );
-
-      setSupabaseClient(client); // ✅ store the authenticated client in state
-    } catch (err) {
-      console.error("Failed to initialize Supabase client:", err);
-    }
-  };
-
-  initSupabase();
-}, [user, getToken]);
 
 useEffect(() => {
   if (!user?.id) return;
 
   const fetchPlan = async () => {
-if (!user?.id || !supabaseClient) return;
+    const supabaseClient = await getClient();
+    if (!supabaseClient) return;
 
-const { data, error } = await supabaseClient
-  .from("onboarding_responses")
-  .select("fitness_plan")
-  .eq("user_id", user.id)
-  .maybeSingle(); // <— Safe for 0 rows
+    const { data, error } = await supabaseClient
+      .from("onboarding_responses")
+      .select("fitness_plan")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-if (error) {
-  console.error("❌ Failed to fetch fitness plan:", error);
-  return;
-}
+    if (error) {
+      console.error("❌ Failed to fetch fitness plan:", error);
+      return;
+    }
 
-if (!data || !data.fitness_plan) {
-  console.warn("⚠️ No fitness plan found for this user");
-  return;
-}
+    if (!data?.fitness_plan) {
+      console.warn("⚠️ No fitness plan found for this user");
+      return;
+    }
 
-const planText = data.fitness_plan.replace(/\r\n/g, "\n");
-
+    const planText = data.fitness_plan.replace(/\r\n/g, "\n");
     const cleanPlanText = planText.split(/Day\s*1:/i).join("Day 1:");
     const rawSections = cleanPlanText
       .split(/(?=Day\s*\d+:)/g)
