@@ -1,4 +1,3 @@
-
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react"
 import { motion } from "framer-motion"
 import { Navbar } from "@/components/navigation/navbar"
@@ -10,12 +9,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/components/lib/supabaseClient";
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan"
 import { useUser } from "@clerk/clerk-react"
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
+import { getSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export function CalendarView() {
   const { user } = useUser()
-      const { getToken } = useAuth(); // Clerk JWT
   const [weeklyCount, setWeeklyCount] = useState(0);
     const [workoutDays, setWorkoutDays] = useState(0);
     const [workoutDaysPerWeek, setWorkoutDaysPerWeek] = useState<number | null>(null);
@@ -25,34 +22,6 @@ export function CalendarView() {
 // ==========================
 // Initialize Supabase with Auth
 // ==========================
-const [supabaseClient, setSupabaseClient] = useState(supabase);
-
-useEffect(() => {
-  const initSupabase = async () => {
-    if (!user) return;
-
-    try {
-      const token = await getToken({ template: "supabase" });
-      if (!token) throw new Error("Failed to get Supabase token from Clerk.");
-
-      const client = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
-        {
-          global: {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        }
-      );
-
-      setSupabaseClient(client); // ✅ store the authenticated client in state
-    } catch (err) {
-      console.error("Failed to initialize Supabase client:", err);
-    }
-  };
-
-  initSupabase();
-}, [user, getToken]);
 
 
   const baseDate = new Date();
@@ -73,65 +42,77 @@ const formattedEnd = endOfWeek.toLocaleDateString("en-US", {
   month: "short",
   day: "numeric",
 });
-  useEffect(() => {
+useEffect(() => {
   const fetchPlan = async () => {
-        if (!user || !supabaseClient) return;
-const { data, error } = await supabaseClient
-  .from("onboarding_responses")
-  .select("fitness_plan")
-  .eq("user_id", user.id)
-  .maybeSingle();
+    if (!user) return;
 
-if (!data?.fitness_plan) {
-  console.warn("No fitness plan found for this user");
-  return;
-}
+    const supabaseAuthClient = await getSupabaseClientWithAuth();
 
+    const { data, error } = await supabaseAuthClient
+      .from("onboarding_responses")
+      .select("fitness_plan")
+      .eq("user_id", user.id)
+      .maybeSingle();
 
-    const planText = data.fitness_plan?.replace(/\r\n/g, "\n");
-
-const countWorkoutDays = (plan: string) => {
-  const sections = plan
-    .split(/(?=Day\s*\d+:)/gi)
-    .filter(section => /^Day\s*\d+:/i.test(section.trim()));
-
-  const workoutDays = sections.filter(section =>
-    !/rest day/i.test(section)
-  );
-
-  return workoutDays.length;
-};
-
-setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
-
-    if (!planText) {
-      console.warn("⚠️ No plan text found");
+    if (error) {
+      console.error("❌ Error fetching fitness plan:", error.message);
       return;
     }
 
+    if (!data?.fitness_plan) {
+      console.warn("⚠️ No fitness plan found for this user");
+      return;
+    }
+
+    const planText = data.fitness_plan.replace(/\r\n/g, "\n");
+
+    const countWorkoutDays = (plan: string) => {
+      const sections = plan
+        .split(/(?=Day\s*\d+:)/gi)
+        .filter(section => /^Day\s*\d+:/i.test(section.trim()));
+
+      const workoutDays = sections.filter(section =>
+        !/rest day/i.test(section)
+      );
+
+      return workoutDays.length;
+    };
+
     const workoutCount = countWorkoutDays(planText);
+    setWorkoutDaysPerWeek(workoutCount);
     setWorkoutDays(workoutCount);
-    
   };
 
   if (user?.id) fetchPlan();
-}, [user, supabaseClient]);
+}, [user]);
 
 
 useEffect(() => {
   const fetchCount = async () => {
-        if (!user || !supabaseClient) return;
-const { data } = await supabaseClient
-  .from("onboarding_responses")
-  .select("workout_count")
-  .eq("user_id", user.id)
-  .maybeSingle();
+    if (!user) return;
 
-if (data?.workout_count) setWeeklyCount(data.workout_count);
+    const supabaseAuthClient = await getSupabaseClientWithAuth();
+
+    const { data, error } = await supabaseAuthClient
+      .from("onboarding_responses")
+      .select("workout_count")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      console.error("❌ Error fetching workout count:", error.message);
+      return;
+    }
+
+    if (data?.workout_count) {
+      setWeeklyCount(data.workout_count);
+    }
   };
 
   if (user?.id) fetchCount();
-}, [user, supabaseClient]);
+}, [user]);
+
+
   return (
     <>
       <Navbar />
