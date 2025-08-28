@@ -6,11 +6,13 @@ import { Play, RotateCcw, Pause, SkipForward, Timer, CheckCircle } from 'lucide-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import useFullFitnessPlan from "@/hooks/useFullFitnessPlan";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 export function WorkoutModule() {
   const todayKey = new Date().toDateString();
   const { user } = useUser()
+      const { getClient } = useSupabaseClientWithAuth();
 const workoutCompletedTodayed = localStorage.getItem("workout_done_" + todayKey) === "true";
   const [isWorkoutActive, setIsWorkoutActive] = useState(false)
   const [currentExercise, setCurrentExercise] = useState(0)
@@ -46,8 +48,8 @@ const isTodayRestDayed = !todayPlan || todayPlan.exercises.length === 0;
 useEffect(() => {
   const fetchPlan = async () => {
     if (!user?.id) return;
-
-    const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
