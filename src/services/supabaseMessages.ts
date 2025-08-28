@@ -1,4 +1,5 @@
 import { supabase } from "@/components/lib/supabaseClient";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export async function decrementMessagesLeft(userId: string) {
   if (!userId) {
@@ -7,7 +8,9 @@ export async function decrementMessagesLeft(userId: string) {
   }
 
   // Fetch current messages_left
-  const { data, error } = await supabase
+      const { getClient } = useSupabaseClientWithAuth();
+              const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses") // double-check table name here!
     .select("messages_left")
     .eq("user_id", userId)
@@ -27,7 +30,7 @@ export async function decrementMessagesLeft(userId: string) {
   }
 
   // Update messages_left
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseAuthClient
     .from("onboarding_responses")
     .update({ messages_left: newCount })
     .eq("user_id", userId);
