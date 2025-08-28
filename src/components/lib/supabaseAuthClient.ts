@@ -13,10 +13,11 @@ export const useSupabaseClientWithAuth = () => {
       {
         global: {
           headers: { Authorization: `Bearer ${token}` },
-        },
+        }, 
       }
     );
   };
 
   return { getClient };
 };
+
