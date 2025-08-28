@@ -1,8 +1,11 @@
 import { supabase } from "@/components/lib/supabaseClient";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export async function generateFitnessPlan(userId: string) {
+      const { getClient } = useSupabaseClientWithAuth();
   // ✅ 1. Fetch onboarding data
-  const { data, error } = await supabase
+          const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("*")
     .eq("user_id", userId)
@@ -164,7 +167,7 @@ if (!result.reply) {
   const generatedPlan = result.reply;
 
   // ✅ 4. Save to Supabase
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabaseAuthClient
   .from("onboarding_responses")
   .upsert({
     user_id: userId,
