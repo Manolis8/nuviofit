@@ -8,13 +8,12 @@ import { useUser } from "@clerk/clerk-react"
 import { addDays } from "date-fns";
 import Link from "next/link";
 import { supabase } from "@/components/lib/supabaseClient";
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 export function AIChatCoach() {
-    const { getToken } = useAuth(); // Clerk JWT
   const { user, isLoaded } = useUser();
+    const { getClient } = useSupabaseClientWithAuth();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
@@ -27,37 +26,6 @@ export function AIChatCoach() {
   const [nextResetDate, setNextResetDate] = useState<Date | null>(null);
 
 
-  const [supabaseClient, setSupabaseClient] = useState(supabase);
-
-  useEffect(() => {
-    const initSupabase = async () => {
-      if (!user) return;
-
-      try {
-        const token = await getToken();
-        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
-
-        const client = createClient(
-          import.meta.env.VITE_SUPABASE_URL,
-          import.meta.env.VITE_SUPABASE_ANON_KEY,
-          {
-            global: {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          }
-        );
-
-        setSupabaseClient(client); // override the supabase variable locally
-      } catch (err) {
-        console.error("Failed to init supabase client:", err);
-      }
-    };
-
-    initSupabase();
-  }, [user, getToken]);
-
-
-
   // --------------------- Fetch User Data ---------------------
   useEffect(() => {
     if (!user) return;
@@ -65,7 +33,8 @@ export function AIChatCoach() {
     setEmail(user.emailAddresses[0]?.emailAddress || "");
 
     const fetchUserData = async () => {
-      const { data, error } = await supabaseClient
+          const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("username")
         .eq("user_id", user.id)
@@ -86,7 +55,8 @@ export function AIChatCoach() {
     if (!user || !isLoaded) return;
 
 const checkAndResetMessages = async () => {
-  const { data, error } = await supabaseClient
+      const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("messages_left, last_reset_at")
     .eq("user_id", user.id)
@@ -107,7 +77,8 @@ const checkAndResetMessages = async () => {
   setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
 
   if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
-    const { error: updateError } = await supabaseClient
+        const supabaseAuthClient = await getClient();
+    const { error: updateError } = await supabaseAuthClient
       .from("onboarding_responses")
       .update({
         messages_left: 30,
@@ -138,7 +109,8 @@ async function sendFeedback(formData: { name: string; email: string; message: st
 
 
   // 3. Fetch username from onboarding_responses
-  const { data, error: fetchError } = await supabaseClient
+      const supabaseAuthClient = await getClient();
+  const { data, error: fetchError } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("username")
     .eq("user_id", user.id)
@@ -152,7 +124,8 @@ async function sendFeedback(formData: { name: string; email: string; message: st
   const username = data?.username || formData.name || "Unknown";
 
   // 4. Insert into feedback
-  const { error: insertError } = await supabaseClient.from("feedback").insert([
+  
+  const { error: insertError } = await supabaseAuthClient.from("feedback").insert([
     {
       user_id: user.id,
       email: user.emailAddresses[0]?.emailAddress,
