@@ -6,8 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useUser } from "@clerk/nextjs"
 import { supabase } from "@/components/lib/supabaseClient";
-import { createClient } from "@supabase/supabase-js";
-import { useAuth } from "@clerk/nextjs";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 const motivationalQuotes = [
   "💪 Keep going — you're are doing great!",
@@ -19,7 +18,6 @@ const motivationalQuotes = [
 ]
 
 export function UserWelcomeSection() {
-        const { getToken } = useAuth(); // Clerk JWT
   const [currentQuote, setCurrentQuote] = useState(motivationalQuotes[0])
   const [weeklyProgress] = useState(4)
   const [currentStreak] = useState(6)
@@ -29,39 +27,11 @@ export function UserWelcomeSection() {
   const [workoutDays, setWorkoutDays] = useState(0);
   const [workoutDaysPerWeek, setWorkoutDaysPerWeek] = useState<number | null>(null);
 
-  
+    const { getClient } = useSupabaseClientWithAuth();
 const [usernameError, setUsernameError] = useState("");
 const [usernameAvailable, setUsernameAvailable] = useState(true);
 const [checkingUsername, setCheckingUsername] = useState(false);
 
-  const [supabaseClient, setSupabaseClient] = useState(supabase);
-
-  useEffect(() => {
-    const initSupabase = async () => {
-      if (!user) return;
-
-      try {
-        const token = await getToken();
-        if (!token) throw new Error("Failed to get Supabase token from Clerk.");
-
-        const client = createClient(
-          import.meta.env.VITE_SUPABASE_URL,
-          import.meta.env.VITE_SUPABASE_ANON_KEY,
-          {
-            global: {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          }
-        );
-
-        setSupabaseClient(client); // override the supabase variable locally
-      } catch (err) {
-        console.error("Failed to init supabase client:", err);
-      }
-    };
-
-    initSupabase();
-  }, [user, getToken]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -70,9 +40,12 @@ const [checkingUsername, setCheckingUsername] = useState(false);
 
     return () => clearInterval(interval)
   }, [])
+
   useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabaseClient
+        const supabaseAuthClient = await getClient();
+        
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -124,7 +97,9 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
     if (isMonday && lastReset !== weekKey) {
       // It's Monday and we haven't reset yet this week
-      const { error } = await supabaseClient
+              const supabaseAuthClient = await getClient();
+        
+      const { error } = await supabaseAuthClient
         .from("onboarding_responses")
         .update({ workout_count: 0 })
         .eq("user_id", user.id);
@@ -141,7 +116,8 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
       localStorage.removeItem("last_week_reset");
     } else {
       // It's still Monday, already reset — fetch existing count
-      const { data } = await supabaseClient
+              const supabaseAuthClient = await getClient();
+      const { data } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("workout_count")
         .eq("user_id", user.id)
@@ -174,7 +150,8 @@ useEffect(() => {
 
   useEffect(() => {
   const fetchCount = async () => {
-    const { data } = await supabaseClient
+            const supabaseAuthClient = await getClient();
+    const { data } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("workout_count")
       .eq("user_id", user.id)
@@ -191,7 +168,8 @@ useEffect(() => {
 
 useEffect(() => {
   const fetchUsername = async () => {
-    const { data, error } = await supabaseClient
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
