@@ -16,9 +16,10 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export default function OnboardingPage() {
-  
+      const { getClient } = useSupabaseClientWithAuth();
   const [step, setStep] = useState(0)
   const totalSteps = 18
   const totalQuestionSteps = 15;
@@ -85,9 +86,9 @@ const handleWelcomeEmail = async () => {
     console.log("Missing email");
     return;
   }
-
+        const supabaseAuthClient = await getClient();
   // Fetch username from Supabase
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("username")
     .eq("user_id", user.id)
@@ -142,7 +143,8 @@ const generatePlan = async () => {
   try {
     let onboardingData = null;
     for (let i = 0; i < 3; i++) {
-      const { data, error } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("*")
         .eq("user_id", user_id)
@@ -171,8 +173,8 @@ const generatePlan = async () => {
       ...onboardingData,
       fitness_plan: result,
     };
-
-    const { error: upsertError } = await supabase
+        const supabaseAuthClient = await getClient();
+    const { error: upsertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
 
@@ -248,8 +250,8 @@ const handleSubmit = async () => {
 
   // Ensure email is set here:
   const emailToSave = user.emailAddresses?.[0]?.emailAddress || formData.email;
-
-  const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .upsert(
       [
