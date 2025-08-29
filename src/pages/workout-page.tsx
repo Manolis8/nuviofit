@@ -15,11 +15,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { useUserContext } from "@/context/UserContext";
 import React, { useRef } from "react";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 export default function WorkoutPage() {
   const { user, isLoaded } = useUser();
-
+    const { getClient } = useSupabaseClientWithAuth();
 const [workoutStats, setWorkoutStats] = useState({
   duration: "",
   calories: "",
@@ -31,8 +32,8 @@ const [workoutStats, setWorkoutStats] = useState({
 useEffect(() => {
   const fetchPlan = async () => {
     if (!user?.id) return;
-
-    const { data, error } = await supabase
+        const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -117,7 +118,8 @@ useEffect(() => {
   if (!user_id) return; // wait for user
 
   const fetchData = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("*")
       .eq("user_id", user_id)
@@ -199,7 +201,8 @@ useEffect(() => {
 
     if (isMonday && lastReset !== weekKey) {
       // It's Monday and we haven't reset yet this week
-      const { error } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { error } = await supabaseAuthClient
         .from("onboarding_responses")
         .update({ workout_count: 0 })
         .eq("user_id", user.id);
@@ -216,7 +219,8 @@ useEffect(() => {
       localStorage.removeItem("last_week_reset");
     } else {
       // It's still Monday, already reset — fetch existing count
-      const { data } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { data } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("workout_count")
         .eq("user_id", user.id)
@@ -257,7 +261,8 @@ const { setupFinished } = useUserContext();
 
   useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -302,9 +307,9 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 useEffect(() => {
   const fetchUserProfile = async () => {
     if (!user) return;
+        const supabaseAuthClient = await getClient();
 
-
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select(`
         fitness_why,
