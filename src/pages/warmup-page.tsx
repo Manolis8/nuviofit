@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/clerk-react"
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 // Enhanced motivational messages
 const motivationalMessages = [
@@ -353,6 +354,7 @@ const resetTimer = () => {
 
 export default function WorkoutPage() {
 const navigate = useNavigate()
+    const { getClient } = useSupabaseClientWithAuth();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
   const [currentSet, setCurrentSet] = useState(1)
   const [isResting, setIsResting] = useState(false)
@@ -451,7 +453,8 @@ useEffect(() => {
   let isMounted = true;
 
   const fetchFitnessPlan = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select(`
         workout_level,
