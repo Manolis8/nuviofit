@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { useNavigate } from "react-router-dom"
 import { useEffect, useRef, useState } from "react"
 import { supabase } from "@/components/lib/supabaseClient";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 import { useUser } from "@clerk/clerk-react"
 
 // Enhanced motivational messages
@@ -353,6 +354,7 @@ const resetTimer = () => {
 
 export default function WorkoutPage() {
 const navigate = useNavigate()
+    const { getClient } = useSupabaseClientWithAuth();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
   const [currentSet, setCurrentSet] = useState(1)
   const [isResting, setIsResting] = useState(false)
@@ -461,7 +463,8 @@ useEffect(() => {
   let isMounted = true;
 
   const fetchFitnessPlan = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select(`
         workout_level,
@@ -624,7 +627,8 @@ setTodayTotalCalories(parsedTotalCalories);
 const [weeklyCount, setWeeklyCount] = useState(0);
 useEffect(() => {
   const fetchPlan = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("fitness_plan")
       .eq("user_id", user.id)
@@ -667,7 +671,8 @@ setWorkoutDaysPerWeek(countWorkoutDays(planText)); // ✅ Save result into state
 
 useEffect(() => {
   const fetchCount = async () => {
-    const { data } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("workout_count")
       .eq("user_id", user.id)
@@ -731,8 +736,11 @@ const finishWorkout = async () => {
   const userId = user?.id;
   if (!userId) return;
 
-  // Fetch current count
-  const { data, error } = await supabase
+  // ✅ Use your new helper function to get a client
+  const supabaseAuthClient = await getClient();
+
+  // 1️⃣ Fetch current count
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("workout_count")
     .eq("user_id", userId)
@@ -743,6 +751,7 @@ const finishWorkout = async () => {
     return;
   }
 
+  // 2️⃣ Update the count
   const updatedCount = (data.workout_count || 0) + 1;
 
   const { error: updateError } = await supabase
