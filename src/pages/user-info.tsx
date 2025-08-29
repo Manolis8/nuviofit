@@ -23,9 +23,11 @@ import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
 import { useUser } from "@clerk/clerk-react"
 import { addDays } from "date-fns";
 import { supabase } from "@/components/lib/supabaseClient";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export default function UserInfoPage() {
 const { user, isLoaded } = useUser();
+    const { getClient } = useSupabaseClientWithAuth();
   const [username, setUsername] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
   const [status, setStatus] = useState<string | null>(null);
@@ -44,7 +46,8 @@ const { user, isLoaded } = useUser();
     setEmail2(user.emailAddresses[0]?.emailAddress || "");
 
     const fetchUserData = async () => {
-      const { data, error } = await supabase
+              const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("username")
         .eq("user_id", user.id)
@@ -65,7 +68,8 @@ const { user, isLoaded } = useUser();
     if (!user || !isLoaded) return;
 
 const checkAndResetMessages = async () => {
-  const { data, error } = await supabase
+          const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("messages_left, last_reset_at")
     .eq("user_id", user.id)
@@ -86,7 +90,8 @@ const checkAndResetMessages = async () => {
   setNextResetDate(today < thisMonthResetDate ? thisMonthResetDate : nextMonthResetDate);
 
   if (!lastResetDate || (lastResetDate < thisMonthResetDate && today >= thisMonthResetDate)) {
-    const { error: updateError } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { error: updateError } = await supabaseAuthClient
       .from("onboarding_responses")
       .update({
         messages_left: 40,
@@ -136,7 +141,8 @@ const [fetchedUsername, setFetchedUsername] = useState("");
 
 useEffect(() => {
   const fetchUsername = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("username")
       .eq("user_id", user.id)
@@ -259,7 +265,8 @@ const performReauthentication = async () => {
 };
 
 const updateUsernameInSupabase = async (userId: string, newUsername: string) => {
-  const { data, error } = await supabase
+          const supabaseAuthClient = await getClient();
+  const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .update({ username: newUsername })
     .eq("user_id", userId);
@@ -340,7 +347,8 @@ const handlePasswordChange = async (newPassword) => {
 const handleDeleteAccount = async () => {
   try {
     // 1. Delete user row from Supabase
-    const { error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { error } = await supabaseAuthClient
       .from("onboarding_responses")
       .delete()
       .eq("user_id", clerk.user.id);
@@ -372,7 +380,8 @@ const handleDeleteAccount = async () => {
 
 useEffect(() => {
   const fetchJoinDate = async () => {
-    const { data, error } = await supabase
+            const supabaseAuthClient = await getClient();
+    const { data, error } = await supabaseAuthClient
       .from('onboarding_responses')
       .select('created_at')
       .eq('user_id', user.id) // make sure you have the current user's ID
