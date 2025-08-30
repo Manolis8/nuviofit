@@ -86,7 +86,8 @@ const handleWelcomeEmail = async () => {
     console.log("Missing email");
     return;
   }
-        const supabaseAuthClient = await getClient();
+const supabaseAuthClient = await getClient();
+
   // Fetch username from Supabase
   const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
@@ -143,7 +144,7 @@ const generatePlan = async () => {
   try {
     let onboardingData = null;
     for (let i = 0; i < 3; i++) {
-              const supabaseAuthClient = await getClient();
+const supabaseAuthClient = await getClient();
       const { data, error } = await supabaseAuthClient
         .from("onboarding_responses")
         .select("*")
@@ -173,7 +174,8 @@ const generatePlan = async () => {
       ...onboardingData,
       fitness_plan: result,
     };
-        const supabaseAuthClient = await getClient();
+const supabaseAuthClient = await getClient();
+
     const { error: upsertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
@@ -250,7 +252,7 @@ const handleSubmit = async () => {
 
   // Ensure email is set here:
   const emailToSave = user.emailAddresses?.[0]?.emailAddress || formData.email;
-        const supabaseAuthClient = await getClient();
+const supabaseAuthClient = await getClient();
   const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .upsert(
