@@ -142,20 +142,20 @@ const generatePlan = async () => {
   setIsGenerating(true);
 
   try {
-    let onboardingData = null;
-    for (let i = 0; i < 3; i++) {
-const supabaseAuthClient = await getClient();
-      const { data, error } = await supabaseAuthClient
-        .from("onboarding_responses")
-        .select("*")
-        .eq("user_id", user_id)
-        .maybeSingle();
+    // ✅ Create the Supabase client once
+    const supabaseAuthClient = await getClient();
 
-      if (data) {
-        onboardingData = data;
-        break;
-      }
-      await new Promise((res) => setTimeout(res, 300));
+    // Try fetching onboarding data
+    const { data: onboardingData, error: fetchError } = await supabaseAuthClient
+      .from("onboarding_responses")
+      .select("*")
+      .eq("user_id", user_id)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error("❌ Supabase fetch error:", fetchError);
+      alert("Failed to fetch your onboarding data.");
+      return;
     }
 
     if (!onboardingData) {
@@ -163,39 +163,40 @@ const supabaseAuthClient = await getClient();
       return;
     }
 
-    const result = await generateFitnessPlan(user_id);
-
-    if (!result) {
+    // Generate the fitness plan
+    const planResult = await generateFitnessPlan(user_id);
+    if (!planResult) {
       alert("❌ Plan generation failed. Please try again.");
       return;
     }
 
+    // Prepare updated row
     const updatedRow = {
       ...onboardingData,
-      fitness_plan: result,
+      fitness_plan: planResult,
     };
-const supabaseAuthClient = await getClient();
 
+    // Upsert using RLS-safe client
     const { error: upsertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
 
     if (upsertError) {
-      console.error("Error saving fitness plan:", upsertError);
-      alert("❌ Failed to save fitness plan.");
+      console.error("❌ Supabase upsert error:", upsertError);
+      alert("Failed to save your fitness plan.");
       return;
     }
 
-    setPlanGenerated(true); // If you have this state somewhere
+    setPlanGenerated(true);
     navigate("/dashboard"); // Redirect after success
-
-  } catch (err) {
+  } catch (err: any) {
     console.error("❌ Failed to generate plan:", err);
     alert("Failed to generate plan: " + (err.message || err));
   } finally {
     setIsGenerating(false);
   }
 };
+
 
 
 
