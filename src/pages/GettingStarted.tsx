@@ -164,7 +164,8 @@ const generatePlan = async () => {
     }
 
     // Generate the fitness plan
-    const planResult = await generateFitnessPlan(user_id);
+    const planResult = await generateFitnessPlan(supabaseAuthClient, user_id);
+
     if (!planResult) {
       alert("❌ Plan generation failed. Please try again.");
       return;
