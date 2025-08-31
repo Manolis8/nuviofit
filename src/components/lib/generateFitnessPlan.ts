@@ -1,10 +1,8 @@
 import { supabase } from "@/components/lib/supabaseClient";
-import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
-export async function generateFitnessPlan(userId: string) {
-      const { getClient } = useSupabaseClientWithAuth();
+export async function generateFitnessPlan( supabaseAuthClient: any, userId: string) {
   // ✅ 1. Fetch onboarding data
-          const supabaseAuthClient = await getClient();
+
   const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("*")
