@@ -194,5 +194,5 @@ useSyncSupabaseAuth();
     </QueryClientProvider>
 )
 };
-
+  
 export default App;
