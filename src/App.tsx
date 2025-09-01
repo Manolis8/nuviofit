@@ -17,7 +17,7 @@ import { useSyncSupabaseAuth } from "@/components/lib/useSyncSupabaseAuth";
 import Welcome from "./pages/Welcome";
 import Profile from "./components/profile/page";
 import Warmup from "./pages/warmup-page";
-import Dashboard from "./pages/Dashboard";    
+import Dashboard from "./pages/Dashboard";
 import WorkoutPage from "./pages/workout-page";
 import GettingStarted from "./pages/GettingStarted";
 import { CalendarView } from "./pages/calendar";
@@ -71,19 +71,25 @@ useSyncSupabaseAuth();
             <Route path="/about" element={<About />} />
             <Route path="/about-you" element={<Aboutyou />} />
             <Route path="/waitlist" element={<Waitlist />} />
-            <Route
-              path="/auth/*"
-              element={
-                <>
-                  <SignedOut>
-                    <AuthSplitScreen />
-                  </SignedOut>
-                  <SignedIn>
-                    <Navigate to="/dashboard" />
-                  </SignedIn>
-                </>
-              }
-            />
+<Route path="/auth/*">
+  <Route
+    index
+    element={
+      <SignedOut>
+        <AuthSplitScreen />
+      </SignedOut>
+    }
+  />
+  <Route
+    index
+    element={
+      <SignedIn>
+        <Navigate to="/dashboard" replace />
+      </SignedIn>
+    }
+  />
+</Route>
+
 
             {/* Protected Routes */}
             
