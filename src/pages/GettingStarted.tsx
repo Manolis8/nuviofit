@@ -15,12 +15,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input" 
+import { Input } from "@/components/ui/input"
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 import { markQuizCompleted } from "@/components/lib/markQuizCompleted";
 
 export default function OnboardingPage() {
       const { getClient } = useSupabaseClientWithAuth();
+        const [quizCompleted, setQuizCompleted] = useState<boolean | null>(null); // null = loading
   const [step, setStep] = useState(0)
   const totalSteps = 18
   const totalQuestionSteps = 15;
@@ -31,6 +32,7 @@ const [isDataSaved, setIsDataSaved] = useState(false);
   const { user, isLoaded } = useUser();
       const [email, setEmail] = useState("");
         const [username, setUsername] = useState("");
+          const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchEmail() {
@@ -40,6 +42,38 @@ const [isDataSaved, setIsDataSaved] = useState(false);
 
     fetchEmail();
   }, [user]);
+
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchOnboarding = async () => {
+      const supabaseAuthClient = await getClient();
+      const { data, error } = await supabaseAuthClient
+        .from("onboarding_responses")
+        .select("quiz_completed")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!error && data) {
+        setQuizCompleted(data.quiz_completed);
+        // Redirect immediately if quiz already completed
+        if (data.quiz_completed) {
+          navigate("/dashboard", { replace: true });
+        }
+      } else {
+        console.error("Failed to fetch onboarding data:", error);
+        setQuizCompleted(false); // default to not completed
+      }
+    };
+
+    fetchOnboarding();
+  }, [user, navigate]);
+
+  // While loading, you can show a loader
+  if (quizCompleted === null) {
+    return <p>Loading...</p>;
+  }
 
 
 useEffect(() => {
@@ -78,45 +112,7 @@ const welcomeEmailSent = async (email, username) => {
   }
 };
 
-const [welcomeSent, setWelcomeSent] = useState(false); // prevent multiple sends
-
-const handleWelcomeEmail = async () => {
-  const email = user?.emailAddresses?.[0]?.emailAddress;
-
-  if (!email) {
-    console.log("Missing email");
-    return;
-  }
-const supabaseAuthClient = await getClient();
-
-  // Fetch username from Supabase
-  const { data, error } = await supabaseAuthClient
-    .from("onboarding_responses")
-    .select("username")
-    .eq("user_id", user.id)
-    .single();
-
-  if (error || !data?.username) {
-    console.log("Could not fetch username from Supabase:", error);
-    return;
-  }
-
-  const username = data.username;
-
-  if (welcomeSent) {
-    console.log("Welcome email already sent");
-    return;
-  }
-
-  await welcomeEmailSent(email, username);
-  setWelcomeSent(true);
-};
-
-
-
-const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
-const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 const {
   setupFinished,
@@ -195,11 +191,6 @@ const generatePlan = async () => {
   }
 };
 
-
-
-
-
-  const navigate = useNavigate();
 
 const nextStep = async () => {
   if (step < totalSteps - 1) {
@@ -1353,7 +1344,7 @@ if (step === 0) {
   </div>
 )}
             </CardContent>
-          </Card> 
+          </Card>
         </div>
       </main>
     </div>
