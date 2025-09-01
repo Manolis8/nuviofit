@@ -16,7 +16,7 @@ export const ProtectedRoute = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded } = useUser();      
   const supabaseHook = useSupabaseClientWithAuth();
 
   const [loading, setLoading] = useState(true);
@@ -84,3 +84,4 @@ export const ProtectedRoute = ({
 
   return <>{children}</>;
 };
+
