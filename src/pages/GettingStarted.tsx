@@ -1336,7 +1336,7 @@ if (step === 0) {
         <span className="relative z-10 flex items-center gap-2">
           Next
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </span>
+        </span> 
         <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
       </Button>
     )}
