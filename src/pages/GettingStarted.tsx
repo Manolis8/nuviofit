@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
+import { markQuizCompleted } from "@/components/lib/markQuizCompleted";
 
 export default function OnboardingPage() {
       const { getClient } = useSupabaseClientWithAuth();
@@ -189,6 +190,7 @@ const generatePlan = async () => {
     }
 
     setPlanGenerated(true);
+    await markQuizCompleted();
     navigate("/dashboard"); // Redirect after success
   } catch (err: any) {
     console.error("❌ Failed to generate plan:", err);
