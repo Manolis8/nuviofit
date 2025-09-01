@@ -5,7 +5,8 @@ export function useMarkQuizCompleted() {
 
   return async function markQuizCompleted(): Promise<void> {
     const supabaseAuthClient = await getClient();
- 
+
+    // Get the logged-in user
     const {
       data: { user },
       error: userError,
@@ -15,14 +16,14 @@ export function useMarkQuizCompleted() {
       throw new Error("User not found or not authenticated");
     }
 
+    // Update record by user_id (to match your select query)
     const { error } = await supabaseAuthClient
       .from("onboarding_responses")
       .update({ quiz_completed: true })
-      .eq("id", user.id);
+      .eq("user_id", user.id);
 
     if (error) {
       throw new Error(`Failed to mark quiz as completed: ${error.message}`);
     }
   };
 }
-
