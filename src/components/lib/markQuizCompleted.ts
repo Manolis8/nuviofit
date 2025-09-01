@@ -5,7 +5,7 @@ export function useMarkQuizCompleted() {
 
   return async function markQuizCompleted(): Promise<void> {
     const supabaseAuthClient = await getClient();
-
+ 
     const {
       data: { user },
       error: userError,
@@ -25,3 +25,4 @@ export function useMarkQuizCompleted() {
     }
   };
 }
+
