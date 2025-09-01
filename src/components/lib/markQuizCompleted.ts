@@ -1,29 +1,49 @@
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient";
 
+/**
+ * Hook to mark the current user's quiz as completed in the onboarding_responses table.
+ */
 export function useMarkQuizCompleted() {
   const { getClient } = useSupabaseClientWithAuth();
 
   return async function markQuizCompleted(): Promise<void> {
     const supabaseAuthClient = await getClient();
 
-    // Get the logged-in user
+    // Get the authenticated user
     const {
       data: { user },
       error: userError,
     } = await supabaseAuthClient.auth.getUser();
 
     if (userError || !user) {
-      throw new Error("User not found or not authenticated");
+      throw new Error("❌ User not found or not authenticated");
     }
 
-    // Update record by user_id (to match your select query)
-    const { error } = await supabaseAuthClient
+    const user_id = user.id;
+
+    // Check if onboarding record exists
+    const { data: onboardingData, error: fetchError } = await supabaseAuthClient
+      .from("onboarding_responses")
+      .select("id")
+      .eq("user_id", user_id)
+      .maybeSingle();
+
+    if (fetchError) {
+      throw new Error(`❌ Failed to fetch onboarding record: ${fetchError.message}`);
+    }
+
+    if (!onboardingData) {
+      throw new Error("❌ No onboarding record found for this user.");
+    }
+
+    // Mark quiz as completed
+    const { error: updateError } = await supabaseAuthClient
       .from("onboarding_responses")
       .update({ quiz_completed: true })
-      .eq("user_id", user.id);
+      .eq("user_id", user_id);
 
-    if (error) {
-      throw new Error(`Failed to mark quiz as completed: ${error.message}`);
+    if (updateError) {
+      throw new Error(`❌ Failed to mark quiz as completed: ${updateError.message}`);
     }
   };
 }
