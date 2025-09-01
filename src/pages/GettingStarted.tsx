@@ -33,6 +33,44 @@ const [isDataSaved, setIsDataSaved] = useState(false);
       const [email, setEmail] = useState("");
         const [username, setUsername] = useState("");
           const navigate = useNavigate();
+            const [planGenerated, setPlanGenerated] = useState(false);
+  const [plan, setPlan] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+const [loadingS, setLoadingS] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+const {
+  setupFinished,
+  setSetupFinished,
+  userProfile,
+  setUserProfile,
+  loading
+} = useUserContext();
+const [usernameError, setUsernameError] = useState("");
+  const [formData, setFormData] = useState({
+  achievements: "",
+  workoutHistory: "",
+  fitnessWhy: [] as string[],
+  otherWhy: "",
+  futureVision: "",
+  resilienceTrigger: "",
+  pushingComfort: "",
+  consistencyBlocker: "",
+  customBlocker: "",
+  supportSystem: "",
+  customSupport: "",
+  WhatToImprove: [] as string[],
+  TrainingMethod: [] as string[],
+  TrainingFrequency: "",
+  TrainingDuration: "",
+  WorkoutLevel: "",
+  injuries: "",
+  recommedations: "",
+  fitnessPlans: "",
+  username: "",
+  email: "",  
+});
+
+
 
   useEffect(() => {
     async function fetchEmail() {
@@ -89,9 +127,6 @@ useEffect(() => {
 
 
 
-  const [planGenerated, setPlanGenerated] = useState(false);
-  const [plan, setPlan] = useState("");
-
 const welcomeEmailSent = async (email, username) => {
   try {
     const response = await fetch("/api/brevo", {
@@ -111,16 +146,6 @@ const welcomeEmailSent = async (email, username) => {
     console.error("❌ Error sending welcome email:", error);
   }
 };
-
-const [isGenerating, setIsGenerating] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
-const {
-  setupFinished,
-  setSetupFinished,
-  userProfile,
-  setUserProfile,
-  loading
-} = useUserContext();
 
 
 if (!isLoaded) return <div>Loading...</div>;
@@ -199,30 +224,6 @@ const nextStep = async () => {
   }
 };
 
-  const [formData, setFormData] = useState({
-  achievements: "",
-  workoutHistory: "",
-  fitnessWhy: [] as string[],
-  otherWhy: "",
-  futureVision: "",
-  resilienceTrigger: "",
-  pushingComfort: "",
-  consistencyBlocker: "",
-  customBlocker: "",
-  supportSystem: "",
-  customSupport: "",
-  WhatToImprove: [] as string[],
-  TrainingMethod: [] as string[],
-  TrainingFrequency: "",
-  TrainingDuration: "",
-  WorkoutLevel: "",
-  injuries: "",
-  recommedations: "",
-  fitnessPlans: "",
-  username: "",
-  email: "",  
-});
-
 
 useEffect(() => {
   if (setupFinished) {
@@ -290,7 +291,6 @@ const supabaseAuthClient = await getClient();
   setFormData((prev) => ({ ...prev, [field]: value }));
 };
 
-const [loadingS, setLoadingS] = useState(false);
 
 const sendWelcomeEmail = async (email: string, username: string) => {
   console.log("📤 Sending welcome email to", email);
@@ -342,7 +342,6 @@ await generatePlan();
     await sendWelcomeEmail(formData.email, formData.username);
   };
 
-const [usernameError, setUsernameError] = useState("");
 
 
   const prevStep = () => {
