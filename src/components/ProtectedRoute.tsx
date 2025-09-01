@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"; 
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -14,15 +14,16 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // ✅ Hooks always at the top
   const { user, isLoaded } = useUser();
+  const { getClient } = useSupabaseClientWithAuth();
   const [loading, setLoading] = useState(true);
 
-  const { getClient } = useSupabaseClientWithAuth(); // ✅ safe, inside component
-
   useEffect(() => {
-    if (!isLoaded) return;
-
     const checkAccess = async () => {
+      if (!isLoaded) return;
+
       if (!user) {
         navigate("/auth/login", { replace: true, state: { from: location.pathname } });
         return;
@@ -37,13 +38,12 @@ export const ProtectedRoute = ({
           .eq("user_id", user.id)
           .maybeSingle();
 
-        if (error) console.error("Failed to fetch onboarding data:", error);
+        if (error) console.error(error);
 
         const quizCompleted = data?.quiz_completed || false;
 
         if (!quizCompleted && !allowedBeforeQuiz) {
-          // Block all pages except quiz page
-          navigate("/quiz", { replace: true });
+          navigate("/getting-started", { replace: true });
         }
 
         setLoading(false);
@@ -54,7 +54,7 @@ export const ProtectedRoute = ({
     };
 
     checkAccess();
-  }, [user, isLoaded, navigate, location.pathname, allowedBeforeQuiz, getClient]);
+  }, [user, isLoaded, getClient, navigate, location.pathname, allowedBeforeQuiz]);
 
   if (!isLoaded || loading) return null;
 
