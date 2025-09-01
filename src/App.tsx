@@ -155,7 +155,7 @@ useSyncSupabaseAuth();
             <Route
               path="/getting-started"
               element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedBeforeQuiz={true}>
                   <GettingStarted />
                     </ProtectedRoute>
               }
