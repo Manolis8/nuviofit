@@ -17,7 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
-import { markQuizCompleted } from "@/components/lib/markQuizCompleted";
+import { useMarkQuizCompleted } from "@/components/lib/markQuizCompleted";
 
 export default function OnboardingPage() {
       const { getClient } = useSupabaseClientWithAuth();
@@ -116,7 +116,7 @@ const supabaseAuthClient = await getClient();
 
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
-
+const markQuizCompleted = useMarkQuizCompleted();
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 const {
