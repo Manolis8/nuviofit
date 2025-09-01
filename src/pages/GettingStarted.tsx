@@ -116,9 +116,6 @@ const [usernameError, setUsernameError] = useState("");
     fetchOnboarding();
   }, [user, navigate, getClient]);
 
-  if (quizCompleted === null) {
-    return <p>Loading...</p>;
-  }
 
 
 useEffect(() => {
@@ -132,27 +129,6 @@ useEffect(() => {
   }
 }, [user]);
 
-
-
-const welcomeEmailSent = async (email, username) => {
-  try {
-    const response = await fetch("/api/brevo", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, username }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to send welcome email");
-    }
-
-    const data = await response.json();
-    console.log("✅ Welcome email sent", data);
-    return data;
-  } catch (error) {
-    console.error("❌ Error sending welcome email:", error);
-  }
-};
 
 
 if (!isLoaded) return <div>Loading...</div>;
