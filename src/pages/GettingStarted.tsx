@@ -6,7 +6,7 @@ import { ArrowRight, Loader2 } from "lucide-react";
 
 import { useUser } from "@clerk/clerk-react";
 import { generateFitnessPlan } from "@/components/lib/generateFitnessPlan";
-
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "@/context/UserContext";
@@ -21,7 +21,7 @@ import { markQuizCompleted } from "@/components/lib/markQuizCompleted";
 
 export default function OnboardingPage() {
       const { getClient } = useSupabaseClientWithAuth();
-        const [quizCompleted, setQuizCompleted] = useState<boolean | null>(null); // null = loading
+          const [quizCompleted, setQuizCompleted] = useState<boolean | null>(null);
   const [step, setStep] = useState(0)
   const totalSteps = 18
   const totalQuestionSteps = 15;
@@ -86,29 +86,36 @@ const [usernameError, setUsernameError] = useState("");
     if (!user) return;
 
     const fetchOnboarding = async () => {
-      const supabaseAuthClient = await getClient();
-      const { data, error } = await supabaseAuthClient
-        .from("onboarding_responses")
-        .select("quiz_completed")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      try {
+        // ✅ Explicitly type the Supabase client
+        const supabase: SupabaseClient = await getClient();
 
-      if (!error && data) {
-        setQuizCompleted(data.quiz_completed);
-        // Redirect immediately if quiz already completed
-        if (data.quiz_completed) {
-          navigate("/dashboard", { replace: true });
+        const { data, error } = await supabase
+          .from("onboarding_responses")
+          .select("quiz_completed")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          setQuizCompleted(data.quiz_completed);
+
+          // Redirect immediately if quiz already completed
+          if (data.quiz_completed) {
+            navigate("/dashboard", { replace: true });
+          }
+        } else {
+          console.error("Failed to fetch onboarding data:", error);
+          setQuizCompleted(false);
         }
-      } else {
-        console.error("Failed to fetch onboarding data:", error);
-        setQuizCompleted(false); // default to not completed
+      } catch (err) {
+        console.error("Unexpected error fetching onboarding data:", err);
+        setQuizCompleted(false);
       }
     };
 
     fetchOnboarding();
-  }, [user, navigate]);
+  }, [user, navigate, getClient]);
 
-  // While loading, you can show a loader
   if (quizCompleted === null) {
     return <p>Loading...</p>;
   }
@@ -1336,7 +1343,7 @@ if (step === 0) {
         <span className="relative z-10 flex items-center gap-2">
           Next
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </span> 
+        </span>
         <span className="absolute inset-0 -z-10 translate-y-full bg-gradient-to-r from-[#3db9b1] via-[#4a91d8] to-[#8a6ad0] opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"></span>
       </Button>
     )}
