@@ -17,7 +17,7 @@ import { useSyncSupabaseAuth } from "@/components/lib/useSyncSupabaseAuth";
 import Welcome from "./pages/Welcome";
 import Profile from "./components/profile/page";
 import Warmup from "./pages/warmup-page";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/Dashboard";    
 import WorkoutPage from "./pages/workout-page";
 import GettingStarted from "./pages/GettingStarted";
 import { CalendarView } from "./pages/calendar";
