@@ -152,15 +152,14 @@ useSyncSupabaseAuth();
                     </ProtectedRoute>
               }
             />
-<Route
-  path="/getting-started"
-  element={
-    <ProtectedRoute allowedBeforeQuiz={true}>
-      <GettingStarted />
-    </ProtectedRoute>
-  }
-/>
-
+            <Route
+              path="/getting-started"
+              element={
+                    <ProtectedRoute allowedBeforeQuiz={true}>
+                  <GettingStarted />
+                    </ProtectedRoute>
+              }
+            />
             <Route
               path="/calendar"
               element={
