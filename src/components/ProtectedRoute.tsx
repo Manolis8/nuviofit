@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient";
 
 type ProtectedRouteProps = {
@@ -15,12 +16,10 @@ export const ProtectedRoute = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Hooks always at the top
   const { user, isLoaded } = useUser();
   const supabaseHook = useSupabaseClientWithAuth();
-  const [loading, setLoading] = useState(true);
 
-  // Always show this component, hide content only while loading
+  const [loading, setLoading] = useState(true);
   const [quizCompleted, setQuizCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -33,13 +32,10 @@ export const ProtectedRoute = ({
       }
 
       try {
-        const supabaseAuthClient = await supabaseHook.getClient();
-        if (!supabaseAuthClient) {
-          setLoading(false);
-          return;
-        }
+        // ✅ Explicitly type the client to SupabaseClient
+        const supabase: SupabaseClient = await supabaseHook.getClient();
 
-        let { data, error } = await supabaseAuthClient
+        let { data, error } = await supabase
           .from("onboarding_responses")
           .select("quiz_completed")
           .eq("user_id", user.id)
@@ -51,9 +47,9 @@ export const ProtectedRoute = ({
           return;
         }
 
-        // If no onboarding row exists, create it
+        // If no onboarding row exists, create one
         if (!data) {
-          const { data: newData, error: insertError } = await supabaseAuthClient
+          const { data: newData, error: insertError } = await supabase
             .from("onboarding_responses")
             .insert({ user_id: user.id, quiz_completed: false })
             .select()
