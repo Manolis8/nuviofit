@@ -15,22 +15,29 @@ export const ProtectedRoute = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Hooks always at the top
+  // ✅ Always at the top
   const { user, isLoaded } = useUser();
-  const { getClient } = useSupabaseClientWithAuth();
+  const supabaseHook = useSupabaseClientWithAuth(); // do not destructure here
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAccess = async () => {
-      if (!isLoaded) return;
+    // Only run when Clerk is loaded
+    if (!isLoaded) return;
 
+    const checkAccess = async () => {
       if (!user) {
         navigate("/auth/login", { replace: true, state: { from: location.pathname } });
         return;
       }
 
       try {
-        const supabaseAuthClient = await getClient();
+        const supabaseAuthClient = await supabaseHook.getClient(); // safe, hook already called
+
+        if (!supabaseAuthClient) {
+          console.error("Supabase client not ready");
+          setLoading(false);
+          return;
+        }
 
         const { data, error } = await supabaseAuthClient
           .from("onboarding_responses")
@@ -38,7 +45,7 @@ export const ProtectedRoute = ({
           .eq("user_id", user.id)
           .maybeSingle();
 
-        if (error) console.error(error);
+        if (error) console.error("Failed to fetch onboarding data:", error);
 
         const quizCompleted = data?.quiz_completed || false;
 
@@ -48,13 +55,13 @@ export const ProtectedRoute = ({
 
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("ProtectedRoute error:", err);
         setLoading(false);
       }
     };
 
     checkAccess();
-  }, [user, isLoaded, getClient, navigate, location.pathname, allowedBeforeQuiz]);
+  }, [isLoaded, user, navigate, location.pathname, allowedBeforeQuiz, supabaseHook]);
 
   if (!isLoaded || loading) return null;
 
