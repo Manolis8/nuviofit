@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider } from "@/context/UserContext";
 import React from "react";
-import { initGA } from './analytics';  
+import { initGA } from './analytics';
 import GAListener from './GAListener';
 import { useEffect } from 'react';
 import { useSyncSupabaseAuth } from "@/components/lib/useSyncSupabaseAuth";
@@ -194,5 +194,5 @@ useSyncSupabaseAuth();
     </QueryClientProvider>
 )
 };
-  
+
 export default App;
