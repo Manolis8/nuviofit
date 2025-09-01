@@ -15,39 +15,37 @@ export const ProtectedRoute = ({
 }: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const { user, isLoaded } = useUser();      
-  const supabaseHook = useSupabaseClientWithAuth();
+  const { user, isLoaded } = useUser();
+  const { getClient } = useSupabaseClientWithAuth();
 
   const [loading, setLoading] = useState(true);
   const [quizCompleted, setQuizCompleted] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkAccess = async () => {
-      if (!isLoaded) return;
+    if (!isLoaded) return;
 
+    const checkAccess = async () => {
       if (!user) {
         navigate("/auth/login", { replace: true, state: { from: location.pathname } });
         return;
       }
 
       try {
-        // ✅ Explicitly type the client to SupabaseClient
-        const supabase: SupabaseClient = await supabaseHook.getClient();
+        const supabase: SupabaseClient = await getClient();
 
-        let { data, error } = await supabase
+        const { data, error } = await supabase
           .from("onboarding_responses")
           .select("quiz_completed")
           .eq("user_id", user.id)
           .maybeSingle();
 
         if (error) {
-          console.error(error);
+          console.error("Supabase error:", error);
           setLoading(false);
           return;
         }
 
-        // If no onboarding row exists, create one
+        // Create record if missing
         if (!data) {
           const { data: newData, error: insertError } = await supabase
             .from("onboarding_responses")
@@ -56,32 +54,31 @@ export const ProtectedRoute = ({
             .single();
 
           if (insertError) {
-            console.error(insertError);
+            console.error("Insert error:", insertError);
             setLoading(false);
             return;
           }
 
-          data = newData;
+          setQuizCompleted(newData.quiz_completed);
+        } else {
+          setQuizCompleted(data.quiz_completed);
         }
 
-        setQuizCompleted(data.quiz_completed);
-
-        if (!data.quiz_completed && !allowedBeforeQuiz) {
+        // Redirect if quiz incomplete
+        if (!data?.quiz_completed && !allowedBeforeQuiz) {
           navigate("/getting-started", { replace: true });
         }
-
-        setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("Unexpected error:", err);
+      } finally {
         setLoading(false);
       }
     };
 
     checkAccess();
-  }, [isLoaded, user, navigate, location.pathname, allowedBeforeQuiz, supabaseHook]);
+  }, [isLoaded, user, getClient, navigate, location.pathname, allowedBeforeQuiz]);
 
   if (!isLoaded || loading || quizCompleted === null) return null;
 
   return <>{children}</>;
 };
-
