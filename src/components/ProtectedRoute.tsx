@@ -5,7 +5,7 @@ import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient";
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
-  allowedBeforeQuiz?: boolean;
+  allowedBeforeQuiz?: boolean; // true for quiz/getting-started page
 };
 
 export const ProtectedRoute = ({
@@ -15,14 +15,13 @@ export const ProtectedRoute = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Always at the top
+  // ✅ Hooks always at the top
   const { user, isLoaded } = useUser();
-  const supabaseHook = useSupabaseClientWithAuth(); // do not destructure here
+  const supabaseHook = useSupabaseClientWithAuth(); // do not destructure getClient
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only run when Clerk is loaded
-    if (!isLoaded) return;
+    if (!isLoaded) return; // wait until Clerk finishes loading
 
     const checkAccess = async () => {
       if (!user) {
@@ -31,24 +30,46 @@ export const ProtectedRoute = ({
       }
 
       try {
-        const supabaseAuthClient = await supabaseHook.getClient(); // safe, hook already called
-
+        const supabaseAuthClient = await supabaseHook.getClient();
         if (!supabaseAuthClient) {
           console.error("Supabase client not ready");
           setLoading(false);
           return;
         }
 
-        const { data, error } = await supabaseAuthClient
+        // Fetch the user's onboarding record
+        let { data, error } = await supabaseAuthClient
           .from("onboarding_responses")
           .select("quiz_completed")
           .eq("user_id", user.id)
           .maybeSingle();
 
-        if (error) console.error("Failed to fetch onboarding data:", error);
+        if (error) {
+          console.error("Failed to fetch onboarding data:", error);
+          setLoading(false);
+          return;
+        }
 
-        const quizCompleted = data?.quiz_completed || false;
+        // If no onboarding row exists, create it
+        if (!data) {
+          const { data: newData, error: insertError } = await supabaseAuthClient
+            .from("onboarding_responses")
+            .insert({ user_id: user.id, quiz_completed: false })
+            .select()
+            .single();
 
+          if (insertError) {
+            console.error("Failed to create onboarding record:", insertError);
+            setLoading(false);
+            return;
+          }
+
+          data = newData;
+        }
+
+        const quizCompleted = data.quiz_completed;
+
+        // Block access to protected pages if quiz not completed
         if (!quizCompleted && !allowedBeforeQuiz) {
           navigate("/getting-started", { replace: true });
         }
@@ -63,7 +84,7 @@ export const ProtectedRoute = ({
     checkAccess();
   }, [isLoaded, user, navigate, location.pathname, allowedBeforeQuiz, supabaseHook]);
 
-  if (!isLoaded || loading) return null;
+  if (!isLoaded || loading) return null; // show nothing until check finishes
 
   return <>{children}</>;
 };
