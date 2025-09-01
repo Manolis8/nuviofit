@@ -71,25 +71,19 @@ useSyncSupabaseAuth();
             <Route path="/about" element={<About />} />
             <Route path="/about-you" element={<Aboutyou />} />
             <Route path="/waitlist" element={<Waitlist />} />
-<Route path="/auth/*">
-  <Route
-    index
-    element={
-      <SignedOut>
-        <AuthSplitScreen />
-      </SignedOut>
-    }
-  />
-  <Route
-    index
-    element={
-      <SignedIn>
-        <Navigate to="/dashboard" replace />
-      </SignedIn>
-    }
-  />
-</Route>
-
+            <Route
+              path="/auth/*"
+              element={
+                <>
+                  <SignedOut>
+                    <AuthSplitScreen />
+                  </SignedOut>
+                  <SignedIn>
+                    <Navigate to="/dashboard" />
+                  </SignedIn>
+                </>
+              }
+            />
 
             {/* Protected Routes */}
             
@@ -158,14 +152,15 @@ useSyncSupabaseAuth();
                     </ProtectedRoute>
               }
             />
-            <Route
-              path="/getting-started"
-              element={
-                    <ProtectedRoute allowedBeforeQuiz={true}>
-                  <GettingStarted />
-                    </ProtectedRoute>
-              }
-            />
+<Route
+  path="/getting-started"
+  element={
+    <ProtectedRoute allowedBeforeQuiz={true}>
+      <GettingStarted />
+    </ProtectedRoute>
+  }
+/>
+
             <Route
               path="/calendar"
               element={
