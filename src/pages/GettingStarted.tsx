@@ -17,7 +17,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
-import { useMarkQuizCompleted } from "@/components/lib/markQuizCompleted";
+import { markQuizCompleted } from "@/components/lib/markQuizCompleted";
 
 export default function OnboardingPage() {
       const { getClient } = useSupabaseClientWithAuth();
@@ -116,7 +116,6 @@ const supabaseAuthClient = await getClient();
 
 const [dataSaved, setDataSaved] = useState(false);
 const [isGenerating, setIsGenerating] = useState(false);
-const markQuizCompleted = useMarkQuizCompleted();
 const [isSaving, setIsSaving] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 const {
@@ -143,7 +142,6 @@ const generatePlan = async () => {
   setIsGenerating(true);
 
   try {
-    // ✅ Create the Supabase client once
     const supabaseAuthClient = await getClient();
 
     // Fetch onboarding data
@@ -172,13 +170,8 @@ const generatePlan = async () => {
       return;
     }
 
-    // Prepare updated row
-    const updatedRow = {
-      ...onboardingData,
-      fitness_plan: planResult,
-    };
-
     // Upsert the updated row
+    const updatedRow = { ...onboardingData, fitness_plan: planResult };
     const { error: upsertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
@@ -189,12 +182,10 @@ const generatePlan = async () => {
       return;
     }
 
+    // ✅ Mark quiz as completed
+    await markQuizCompleted(supabaseAuthClient, user_id);
+
     setPlanGenerated(true);
-
-    // ✅ Mark quiz as completed using the updated hook
-    const markQuiz = useMarkQuizCompleted();
-    await markQuiz({ id: user_id });
-
     navigate("/dashboard"); // Redirect after success
   } catch (err: any) {
     console.error("❌ Failed to generate plan:", err);
@@ -203,7 +194,6 @@ const generatePlan = async () => {
     setIsGenerating(false);
   }
 };
-
 
 
 
