@@ -146,7 +146,7 @@ const generatePlan = async () => {
     // ✅ Create the Supabase client once
     const supabaseAuthClient = await getClient();
 
-    // Try fetching onboarding data
+    // Fetch onboarding data
     const { data: onboardingData, error: fetchError } = await supabaseAuthClient
       .from("onboarding_responses")
       .select("*")
@@ -178,7 +178,7 @@ const generatePlan = async () => {
       fitness_plan: planResult,
     };
 
-    // Upsert using RLS-safe client
+    // Upsert the updated row
     const { error: upsertError } = await supabaseAuthClient
       .from("onboarding_responses")
       .upsert(updatedRow, { onConflict: "user_id" });
@@ -190,7 +190,11 @@ const generatePlan = async () => {
     }
 
     setPlanGenerated(true);
-    await markQuizCompleted();
+
+    // ✅ Mark quiz as completed using the updated hook
+    const markQuiz = useMarkQuizCompleted();
+    await markQuiz({ id: user_id });
+
     navigate("/dashboard"); // Redirect after success
   } catch (err: any) {
     console.error("❌ Failed to generate plan:", err);
@@ -199,6 +203,7 @@ const generatePlan = async () => {
     setIsGenerating(false);
   }
 };
+
 
 
 
