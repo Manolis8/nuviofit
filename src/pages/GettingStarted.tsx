@@ -1353,7 +1353,7 @@ if (step === 0) {
   </div>
 )}
             </CardContent>
-          </Card>
+          </Card> 
         </div>
       </main>
     </div>
