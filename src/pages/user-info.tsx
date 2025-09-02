@@ -690,7 +690,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
             )}
             {!isPasswordStrengthValid && newPassword.length > 0 && (
               <p className="text-sm text-red-500">
-                Password must include at least one uppercase letter, one lowercase letter, and one number.
+                Password must include at least one letter, and one number.
               </p>
             )}
 
