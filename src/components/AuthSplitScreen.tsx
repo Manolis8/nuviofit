@@ -15,6 +15,7 @@ import { useLocation, Navigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Loader2 } from "lucide-react";
 
 // Define validation schemas
 const loginSchema = z.object({
@@ -29,14 +30,17 @@ const signupSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" })
-    .refine(
-      (val) => /[a-zA-Z]/.test(val) && /\d/.test(val),
-      "Password must contain at least one letter and one number"
-    ),
+    .refine((val) => /[a-zA-Z]/.test(val), {
+      message: "Password must contain at least one letter",
+    })
+    .refine((val) => /\d/.test(val), {
+      message: "Password must contain at least one number",
+    }),
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms of service",
   }),
 });
+
 
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -288,10 +292,17 @@ const onSignupSubmit = async (data: SignupFormValues) => {
 
 <Button
   type="submit"
-  className="w-full bg-wellness-teal hover:bg-wellness-teal/90 mt-6"
+  className="w-full bg-wellness-teal hover:bg-wellness-teal/90 mt-6 flex items-center justify-center gap-2"
   disabled={isSubmitting}
 >
-  {isSubmitting ? "Loading..." : "Create Account"}
+  {isSubmitting ? (
+    <>
+      <Loader2 className="w-5 h-5 animate-spin" />
+      Creating your account...
+    </>
+  ) : (
+    "Create Account"
+  )}
 </Button>
 
                 </form>
