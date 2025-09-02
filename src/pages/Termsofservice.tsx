@@ -21,7 +21,7 @@ const TermsOfService = () => {
       <p className="mb-4">You may not share or sell your account. You may not upload viruses, spam, or anything harmful to the website. You may not copy or steal content, designs, or ideas from this platform.</p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">5. Intellectual Property</h2>
-      <p className="mb-4">All logos, designs, texts, tools, and features on this website belong to [Your Website Name]. You are allowed to use the service, but you do not own the content. You cannot copy, resell, or redistribute it.</p>
+      <p className="mb-4">All logos, designs, texts, tools, and features on this website belong to Nuviofit. You are allowed to use the service, but you do not own the content. You cannot copy, resell, or redistribute it.</p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">6. Termination of Your Account</h2>
       <p className="mb-4">We may suspend or delete your account at any time if you break these terms, misuse the platform, or cause harm to other users or the service.</p>
