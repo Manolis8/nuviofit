@@ -77,7 +77,7 @@ useEffect(() => {
     if (isGenerating && step === 17) {
       e.preventDefault();
       e.returnValue =
-        "⚠️ Plan generation is in progress. Leaving now may disrupt the process. Please wait until it completes.";
+        "⚠️ Plan generation is in progress. It’s recommended to wait until it completes before leaving the page.";
     }
   };
 
@@ -85,16 +85,18 @@ useEffect(() => {
   return () => window.removeEventListener("beforeunload", handleBeforeUnload);
 }, [isGenerating, step]);
 
+
 // 🚫 Block in-app navigation for step 17
 const handleNavigate = (to: string) => {
   if (isGenerating && step === 17) {
     const confirmLeave = window.confirm(
-      "⚠️ Plan generation is in progress. Leaving now may disrupt the process. Please wait until it completes."
+      "⚠️ Plan generation is in progress. It’s recommended to wait until it completes before navigating away."
     );
     if (!confirmLeave) return; // User chose "Cancel"
   }
   navigate(to);
 };
+
 
 
 
