@@ -410,7 +410,7 @@ const onSignupSubmit = async (data: SignupFormValues) => {
     </Link>
     <Link
       to="/privacy-policy"
-      className="text-wellness-lavender hover:text-wellness-lavender/90 hover:underline"
+      className="text-wellness-lavender hover:text-wellness-lavender/90 hover:underline"     
     >
       Privacy Policy
     </Link>
