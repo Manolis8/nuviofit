@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react";
 import React, { useRef } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
-
+import { useContext } from "react";
+import { UNSAFE_NavigationContext as NavigationContext } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { generateFitnessPlan } from "@/components/lib/generateFitnessPlan";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -69,6 +70,31 @@ const [usernameError, setUsernameError] = useState("");
   username: "",
   email: "",  
 });
+
+// 🚫 Warn on tab close / refresh for step 17
+useEffect(() => {
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (isGenerating && step === 17) {
+      e.preventDefault();
+      e.returnValue =
+        "⚠️ Plan generation is in progress. Leaving now may disrupt the process. Please wait until it completes.";
+    }
+  };
+
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+}, [isGenerating, step]);
+
+// 🚫 Block in-app navigation for step 17
+const handleNavigate = (to: string) => {
+  if (isGenerating && step === 17) {
+    const confirmLeave = window.confirm(
+      "⚠️ Plan generation is in progress. Leaving now may disrupt the process. Please wait until it completes."
+    );
+    if (!confirmLeave) return; // User chose "Cancel"
+  }
+  navigate(to);
+};
 
 
 
