@@ -42,7 +42,7 @@ const PrivacyPolicy = () => {
 
       <h2 className="text-xl font-semibold mt-6 mb-2">6. Your Rights</h2>
       <p className="mb-4">
-        Depending on your country, you have the right to access, correct, or delete your data. Contact us at [Insert Contact Email].
+        Depending on your country, you have the right to access, correct, or delete your data. Contact us at contact@nuviofit.com.
       </p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">7. Cookies</h2>
