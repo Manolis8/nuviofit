@@ -7,7 +7,7 @@ const TermsOfService = () => {
       <p className="mb-4">Effective Date: 13/07/2025</p>
       <p className="mb-4">Website Owner: Nuviofit</p>
       <p className="mb-4">Location: Greece</p>
-
+                                                   
       <h2 className="text-xl font-semibold mt-6 mb-2">1. Acceptance of Terms</h2>
       <p className="mb-4">By creating an account and using this website, you agree to follow these Terms of Service. If you don't agree, please don't use this website.</p>
 
