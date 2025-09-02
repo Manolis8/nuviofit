@@ -776,7 +776,7 @@ const Welcome = () => {
                   href="mailto:contact@nuviofit.com" 
                   className="underline hover:text-white"
                 >
-                  support@nuviofit.com
+                  contact@nuviofit.com
                 </a>
               </div>
             )}
