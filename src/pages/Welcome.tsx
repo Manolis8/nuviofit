@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from "react"
 import { Link } from "react-router-dom";
 import { Mail, Instagram, Linkedin, Twitter } from "lucide-react";
 import { 
@@ -31,6 +31,26 @@ const Welcome = () => {
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
       const [showSupport, setShowSupport] = useState(false);
         const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+          const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on outside click or scroll
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+    function handleScroll() {
+      setIsMobileMenuOpen(false)
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    window.addEventListener("scroll", handleScroll)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }
+)
 
   // Features data
   const features = [
@@ -181,7 +201,7 @@ const howItWorks = [
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Navbar - New fixed navigation */}
-    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-full bg-gradient-to-r from-[#9F7AEA] via-[#63B3ED] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
+<nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-full bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
       <div className="flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="font-bold text-xl text-white">
@@ -190,72 +210,55 @@ const howItWorks = [
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
-          <Link
-            to="/about-you"
-            className="text-white/90 hover:text-white transition-colors font-medium"
-          >
+          <Link to="/about-you" className="text-white/90 hover:text-white font-medium">
             About YOU
           </Link>
-          <Link
-            to="/about"
-            className="text-white/90 hover:text-white transition-colors font-medium"
-          >
+          <Link to="/about" className="text-white/90 hover:text-white font-medium">
             Our Company
           </Link>
-          <Button
-            variant="outline"
-            className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
-          >
+          <button className="border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent px-4 py-2 rounded-full font-medium">
             Log In
-          </Button>
-          <Button className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6">
+          </button>
+          <button className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6 py-2 rounded-full">
             Sign Up
-          </Button>
+          </button>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10"
+          <button
+            className="text-white hover:bg-white/10 p-2 rounded-full"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
-            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
+            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden mt-2 border-t border-white/20 rounded-b-2xl bg-white/10 backdrop-blur-lg px-4 py-4 space-y-3">
+        <div
+          ref={dropdownRef}
+          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[85%] rounded-full bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
+        >
           <Link
             to="/about-you"
-            className="block text-white/90 hover:text-white font-medium py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
+            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-full transition"
           >
             About YOU
           </Link>
           <Link
             to="/about"
-            className="block text-white/90 hover:text-white font-medium py-2"
-            onClick={() => setIsMobileMenuOpen(false)}
+            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-full transition"
           >
             Our Company
           </Link>
-          <Button
-            variant="outline"
-            className="w-full border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <button className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent px-4 py-2 rounded-full font-medium">
             Log In
-          </Button>
-          <Button
-            className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          </button>
+          <button className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-full">
             Sign Up
-          </Button>
+          </button>
         </div>
       )}
     </nav>
