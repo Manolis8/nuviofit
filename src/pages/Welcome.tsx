@@ -421,71 +421,72 @@ const howItWorks = [
       </div>
       
       <div className="flex flex-col md:flex-row gap-12 items-center">
-        {/* Problem Column */}
-        <div className="md:w-1/2">
-          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">The Problem</h3>
-          <div className="bg-[#FFE5E5] rounded-xl p-6 mb-8 border border-red-100">
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                  <Zap size={16} className="text-red-500" />
-                </div>
-                <span>Generic workout plans that don’t consider your goals, fitness level, or schedule</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                  <Zap size={16} className="text-red-500" />
-                </div>
-                <span>Hours wasted figuring out which exercises to do each day</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                  <Zap size={16} className="text-red-500" />
-                </div>
-                <span>No clear guidance on progression, so results plateau or stall</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                  <Zap size={16} className="text-red-500" />
-                </div>
-                <span>Low motivation and lack of accountability lead to quitting before seeing results</span>
-              </li>
-            </ul>
-          </div>
+{/* Problem Column */}
+<div className="md:w-1/2">
+  <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">The Problem</h3>
+  <div className="bg-[#FFE5E5] rounded-xl p-6 mb-8 border border-red-100">
+    <ul className="space-y-4">
+      <li className="flex items-start">
+        <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+          <Zap size={16} className="text-red-500" />
         </div>
-        
-        {/* Solution Column */}
-        <div className="md:w-1/2">
-          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Solution</h3>
-          <div className="bg-[#E6F7F6] rounded-xl p-6 border border-green-100">
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                  <Sparkles size={16} className="text-green-500" />
-                </div>
-                <span>💪 <strong>AI-Powered Personalized Workouts</strong>: Tailored plans for your body, goals, and schedule</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                  <Sparkles size={16} className="text-green-500" />
-                </div>
-                <span>✅ <strong>All-in-One Platform</strong>: Follow, track, and succeed in one place</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                  <Sparkles size={16} className="text-green-500" />
-                </div>
-                <span>⚡ <strong>Progress-Focused Guidance</strong>: Clear steps so every workout counts</span>
-              </li>
-              <li className="flex items-start">
-                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                  <Sparkles size={16} className="text-green-500" />
-                </div>
-                <span>🌟 <strong>Motivation & Accountability</strong>: Daily reminders and milestones to keep you consistent</span>
-              </li>
-            </ul>
-          </div>
+        <span>Generic workout plans that don’t match your body, goals, or schedule</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+          <Zap size={16} className="text-red-500" />
         </div>
+        <span>Confusion about which exercises to do and how to structure workouts</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+          <Zap size={16} className="text-red-500" />
+        </div>
+        <span>Wasting time on trial-and-error routines that don’t produce results</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+          <Zap size={16} className="text-red-500" />
+        </div>
+        <span>Lack of confidence that your workouts will actually help you reach your goals</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+{/* Solution Column */}
+<div className="md:w-1/2">
+  <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Solution</h3>
+  <div className="bg-[#E6F7F6] rounded-xl p-6 border border-green-100">
+    <ul className="space-y-4">
+      <li className="flex items-start">
+        <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+          <Sparkles size={16} className="text-green-500" />
+        </div>
+        <span><strong>AI-Powered Personalized Workouts</strong>: Every plan is custom-built for your body, goals, and schedule</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+          <Sparkles size={16} className="text-green-500" />
+        </div>
+        <span><strong>Clear Exercise Structure</strong>: Know exactly what exercises to do, in what order, and how long</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+          <Sparkles size={16} className="text-green-500" />
+        </div>
+        <span><strong>Time-Efficient Workouts</strong>: Start seeing results without wasting hours on random routines</span>
+      </li>
+      <li className="flex items-start">
+        <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+          <Sparkles size={16} className="text-green-500" />
+        </div>
+        <span><strong>Confidence in Results</strong>: Follow a plan designed to actually help you reach your fitness goals</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
       </div>
       
       <div className="mt-12 text-center">
