@@ -245,16 +245,37 @@ const howItWorks = [
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10 p-2 rounded-lg"
-            onClick={() => setIsMobileMenuOpen(prev => !prev)}
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
-        </div>
+<div className="md:hidden">
+  <Button
+    variant="ghost"
+    size="icon"
+    className="text-white hover:bg-white/10 p-2 rounded-lg"
+    onClick={() => setIsMobileMenuOpen(prev => !prev)}
+  >
+    <Menu className="h-6 w-6" /> {/* Always shows hamburger icon */}
+  </Button>
+</div>
+
+{/* Mobile Dropdown */}
+{isMobileMenuOpen && (
+  <div
+    ref={dropdownRef}
+    className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[85%] bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] rounded-2xl backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
+  >
+    <Link to="/about-you" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
+      About YOU
+    </Link>
+    <Link to="/about" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
+      Our Company
+    </Link>
+    <Button asChild className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent rounded-lg">
+      <Link to="/auth/login">Log In</Link>
+    </Button>
+    <Button asChild className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-lg">
+      <Link to="/auth/sign-up">Sign Up</Link>
+    </Button>
+  </div>
+)}
       </div>
 
       {/* Mobile Dropdown */}
