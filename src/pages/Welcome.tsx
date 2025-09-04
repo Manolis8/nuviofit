@@ -725,7 +725,7 @@ const howItWorks = [
         </div>
       </section>
       
-      {/* Testimonials - MOVED BELOW HOW IT WORKS */}
+      {/* Testimonials - MOVED BELOW HOW IT WORKS 
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -763,7 +763,7 @@ const howItWorks = [
             </Carousel>
           </div>
         </div>
-      </section>
+      </section>*/}
 
       <section className="relative py-16 md:py-24 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] overflow-hidden">
         {/* Decorative blur elements */}
@@ -808,7 +808,6 @@ const howItWorks = [
                 Generate Plan →
                 </Link>
               </Button>
-
               <p className="text-white/80 text-sm font-medium">Limited Early Access — Don't Miss Out.</p>
             </div>
           </div>
