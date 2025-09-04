@@ -751,7 +751,7 @@ const howItWorks = [
               </a>
             </div>
           </div>
-        </div>
+        </div>    
 
         {/* Bottom bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
