@@ -217,88 +217,39 @@ const howItWorks = [
       </nav>
       
       {/* Hero Section - With padding top to account for navbar */}
-<section className="relative py-20 md:py-32 mt-16 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] overflow-hidden">
-  <div className="container mx-auto px-4">
-    <div className="flex flex-col items-center text-center max-w-4xl mx-auto relative z-10">
-      {/* Top Badge */}
-      <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-sm">
-        <Sparkles className="text-[#38B2AC] mr-2 h-5 w-5" />
-        <span className="text-sm font-medium">AI-Powered Fitness</span>
-      </div>
+    <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
+      <div className="max-w-4xl mx-auto text-center space-y-8">
+        
+        {/* Main Headline */}
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
+          Personalized AI Workouts for a Stronger, Healthier You.
+        </h1>
 
-      {/* Headline */}
-      <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC]">
-        Transform Your Mind <br /> and Body with NuvioFit
-      </h1>
+        {/* Subheadline with subtle urgency */}
+        <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+          Every day you wait, progress slips further away.
+        </p>
 
-      {/* Subheadline with urgency */}
-      <p className="text-xl md:text-2xl mb-6 text-gray-700 max-w-3xl">
-        Every day you wait, progress slips further away. The body you want could have already started forming weeks ago.
-      </p>
+        {/* Scarcity Line */}
+        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
+          <span className="text-yellow-300">⚡</span>
+          Only 50 people can join — don't miss your chance!
+        </div>
 
-      {/* Scarcity line */}
-      <div className="inline-flex items-center gap-2 bg-purple-100 border border-purple-200 rounded-full px-6 py-3 mb-8 text-purple-800 font-semibold">
-        <span className="text-orange-500">⚡</span>
-        Only 50 people can join — don’t miss your chance!
-      </div>
-
-      {/* CTA Button */}
-      <div className="flex flex-col sm:flex-row gap-6 mb-8">
-        <Link to="/auth/sign-up">
+        {/* CTA Button */}
+        <div className="space-y-4">
           <Button
             size="lg"
-            className="text-lg px-8 py-6 bg-gradient-to-r from-[#9F7AEA] to-[#63B3ED] text-white font-bold rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
-            onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}
+            className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
           >
-            Get Started <ArrowRight className="ml-2" />
+            Get Started →
           </Button>
-        </Link>
-      </div>
 
-      {/* Supporting line */}
-      <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-600">
-        <CircleCheck className="h-4 w-4 text-[#38B2AC]" />
-        <span>No credit card required</span>
-        <span className="mx-2">•</span>
-        <CircleCheck className="h-4 w-4 text-[#38B2AC]" />
-        <span>Free to get started</span>
-      </div>
-
-      {/* Feature icons row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-        <div className="flex flex-col items-center">
-          <div className="bg-red-100/70 rounded-full p-4 mb-3">
-            <Heart className="text-red-400 h-6 w-6" />
-          </div>
-          <p className="font-medium">Mood Tracking</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-blue-100/70 rounded-full p-4 mb-3">
-            <Dumbbell className="text-blue-400 h-6 w-6" />
-          </div>
-          <p className="font-medium">Fitness Plans</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-green-100/70 rounded-full p-4 mb-3">
-            <Utensils className="text-green-400 h-6 w-6" />
-          </div>
-          <p className="font-medium">Nutrition Guide</p>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-purple-100/70 rounded-full p-4 mb-3">
-            <Watch className="text-purple-400 h-6 w-6" />
-          </div>
-          <p className="font-medium">Smartwatch Data</p>
+          {/* Supporting Text */}
+          <p className="text-white/80 text-sm">No credit card required • Free to get started</p>
         </div>
       </div>
-    </div>
-  </div>
-
-  {/* Decorative background */}
-  <div className="absolute top-20 left-10 w-72 h-72 bg-[#9F7AEA]/10 rounded-full blur-3xl z-0"></div>
-  <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#38B2AC]/10 rounded-full blur-3xl z-0"></div>
-</section>
-
+    </section>
 
       
       {/* For Your Loved Ones Section */}
