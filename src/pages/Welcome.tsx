@@ -15,7 +15,7 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext
-} from "@/components/ui/carousel";
+} from "@/components/ui/carousel";    
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   Tabs, 
