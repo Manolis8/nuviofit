@@ -804,7 +804,9 @@ const howItWorks = [
                 size="lg"
                 className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white hover:from-[#5AA3D8] hover:to-[#2D9B96] text-lg px-10 py-6 rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20"
               >
-                Start My AI Plan Today →
+                <Link to="/auth/sign-up">
+                Generate Plan →
+                </Link>
               </Button>
 
               <p className="text-white/80 text-sm font-medium">Limited Early Access — Don't Miss Out.</p>
