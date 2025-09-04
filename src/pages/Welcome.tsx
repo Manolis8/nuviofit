@@ -181,92 +181,84 @@ const howItWorks = [
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Navbar - New fixed navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/10 backdrop-blur-md z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <Link to="/" className="font-bold text-xl text-white">
-                Nuviofit
-              </Link>
-            </div>
+    <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-full bg-gradient-to-r from-[#9F7AEA] via-[#63B3ED] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
+      <div className="flex items-center justify-between">
+        {/* Logo */}
+        <Link to="/" className="font-bold text-xl text-white">
+          Nuviofit
+        </Link>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link
-                to="/about-you"
-                className="text-white/90 hover:text-white transition-colors font-medium"
-              >
-                About YOU
-              </Link>
-              <Link
-                to="/about"
-                className="text-white/90 hover:text-white transition-colors font-medium"
-              >
-                Our Company
-              </Link>
-              <Button
-                variant="outline"
-                className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
-              >
-                Log In
-              </Button>
-              <Button className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6">
-                Sign Up
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-white hover:bg-white/10"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-white/20 bg-white/5 backdrop-blur-xl rounded-b-2xl">
-              <div className="px-4 py-4 space-y-4">
-                <Link
-                  to="/about-you"
-                  className="block text-white/90 hover:text-white transition-colors font-medium py-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  About YOU
-                </Link>
-                <Link
-                  to="/about"
-                  className="block text-white/90 hover:text-white transition-colors font-medium py-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Our Company
-                </Link>
-                <div className="space-y-3 pt-2">
-                  <Button
-                    variant="outline"
-                    className="w-full border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Log In
-                  </Button>
-                  <Button
-                    className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Sign Up
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center space-x-6">
+          <Link
+            to="/about-you"
+            className="text-white/90 hover:text-white transition-colors font-medium"
+          >
+            About YOU
+          </Link>
+          <Link
+            to="/about"
+            className="text-white/90 hover:text-white transition-colors font-medium"
+          >
+            Our Company
+          </Link>
+          <Button
+            variant="outline"
+            className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+          >
+            Log In
+          </Button>
+          <Button className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6">
+            Sign Up
+          </Button>
         </div>
-      </nav>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden mt-2 border-t border-white/20 rounded-b-2xl bg-white/10 backdrop-blur-lg px-4 py-4 space-y-3">
+          <Link
+            to="/about-you"
+            className="block text-white/90 hover:text-white font-medium py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            About YOU
+          </Link>
+          <Link
+            to="/about"
+            className="block text-white/90 hover:text-white font-medium py-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Our Company
+          </Link>
+          <Button
+            variant="outline"
+            className="w-full border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Log In
+          </Button>
+          <Button
+            className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            Sign Up
+          </Button>
+        </div>
+      )}
+    </nav>
       
       {/* Hero Section - With padding top to account for navbar */}
     <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
