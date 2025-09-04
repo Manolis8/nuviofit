@@ -408,90 +408,101 @@ const howItWorks = [
       </section>
       
       {/* Problem & Solution Section - Updated title */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Beyond Wellness Apps: Real Solutions for Real Health Challenges</h2>
-              <p className="text-lg text-gray-600">
-                We've identified key wellness obstacles and created innovative solutions to help you overcome them
-              </p>
-            </div>
-            
-            <div className="flex flex-col md:flex-row gap-12 items-center">
-              <div className="md:w-1/2">
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">The Problem</h3>
-                <div className="bg-red-50 rounded-xl p-6 mb-8 border border-red-100">
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                        <Zap size={16} className="text-red-500" />
-                      </div>
-                      <span>Generic wellness advice that doesn't adapt to your unique situation</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                        <Zap size={16} className="text-red-500" />
-                      </div>
-                      <span>Multiple disconnected apps for tracking different aspects of health</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                        <Zap size={16} className="text-red-500" />
-                      </div>
-                      <span>No understanding of how your mood affects your physical health and vice versa</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
-                        <Zap size={16} className="text-red-500" />
-                      </div>
-                      <span>Lack of motivation and accountability to stick with health goals</span>
-                    </li>
-                  </ul>
+<section className="py-20 bg-gradient-to-r from-white/95 via-[#F7F5FF]/95 to-white/95">
+  <div className="container mx-auto px-4">
+    <div className="max-w-4xl mx-auto">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          Beyond Generic Workouts: Real Solutions for Real Fitness Goals
+        </h2>
+        <p className="text-lg text-gray-600">
+          We've identified the key obstacles holding people back from real progress—and created AI-powered solutions to overcome them.
+        </p>
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-12 items-center">
+        {/* Problem Column */}
+        <div className="md:w-1/2">
+          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">The Problem</h3>
+          <div className="bg-[#FFE5E5] rounded-xl p-6 mb-8 border border-red-100">
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                  <Zap size={16} className="text-red-500" />
                 </div>
-              </div>
-              
-              <div className="md:w-1/2">
-                <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Solution</h3>
-                <div className="bg-green-50 rounded-xl p-6 border border-green-100">
-                  <ul className="space-y-4">
-                    <li className="flex items-start">
-                      <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                        <Sparkles size={16} className="text-green-500" />
-                      </div>
-                      <span>AI-powered personalized wellness plans that adapt to your progress</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                        <Sparkles size={16} className="text-green-500" />
-                      </div>
-                      <span>All-in-one platform for mental, physical, and nutritional health</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                        <Sparkles size={16} className="text-green-500" />
-                      </div>
-                      <span>Advanced emotion detection to help you understand your mood patterns</span>
-                    </li>
-                    <li className="flex items-start">
-                      <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
-                        <Sparkles size={16} className="text-green-500" />
-                      </div>
-                      <span>Community challenges and insights that keep you motivated</span>
-                    </li>
-                  </ul>
+                <span>Generic workout plans that don’t consider your goals, fitness level, or schedule</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                  <Zap size={16} className="text-red-500" />
                 </div>
-              </div>
-            </div>
-            
-            <div className="mt-12 text-center">
-              <p className="text-lg text-gray-700 max-w-3xl mx-auto">
-                Nuviofit combines cutting-edge artificial intelligence with the latest in behavioral science to create a wellness companion that truly understands <span className="font-semibold">you</span> — your preferences, your challenges, and your individual journey to better health.
-              </p>
-            </div>
+                <span>Hours wasted figuring out which exercises to do each day</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                  <Zap size={16} className="text-red-500" />
+                </div>
+                <span>No clear guidance on progression, so results plateau or stall</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-red-100 rounded-full p-1 mr-3 mt-1">
+                  <Zap size={16} className="text-red-500" />
+                </div>
+                <span>Low motivation and lack of accountability lead to quitting before seeing results</span>
+              </li>
+            </ul>
           </div>
         </div>
-      </section>
+        
+        {/* Solution Column */}
+        <div className="md:w-1/2">
+          <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Solution</h3>
+          <div className="bg-[#E6F7F6] rounded-xl p-6 border border-green-100">
+            <ul className="space-y-4">
+              <li className="flex items-start">
+                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                  <Sparkles size={16} className="text-green-500" />
+                </div>
+                <span>💪 <strong>AI-Powered Personalized Workouts</strong>: Tailored plans for your body, goals, and schedule</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                  <Sparkles size={16} className="text-green-500" />
+                </div>
+                <span>✅ <strong>All-in-One Platform</strong>: Follow, track, and succeed in one place</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                  <Sparkles size={16} className="text-green-500" />
+                </div>
+                <span>⚡ <strong>Progress-Focused Guidance</strong>: Clear steps so every workout counts</span>
+              </li>
+              <li className="flex items-start">
+                <div className="bg-green-100 rounded-full p-1 mr-3 mt-1">
+                  <Sparkles size={16} className="text-green-500" />
+                </div>
+                <span>🌟 <strong>Motivation & Accountability</strong>: Daily reminders and milestones to keep you consistent</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-12 text-center">
+        <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+          NuvioFit combines advanced AI with proven fitness science to create workouts that actually work for <span className="font-semibold">you</span> — no guessing, no wasted effort, just real results, faster.
+        </p>
+      </div>
+
+      <div className="mt-8 text-center">
+        <button className="bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform">
+          Get My Personalized Workout →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
       
       {/* What Makes Us Different - Moved above How It Works */}
       <section className="py-20 bg-gray-50">
