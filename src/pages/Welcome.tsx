@@ -236,27 +236,27 @@ const howItWorks = [
       </div>
 
       {/* Mobile Dropdown */}
-      {isMobileMenuOpen && (
+{isMobileMenuOpen && (
         <div
           ref={dropdownRef}
-          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[85%] rounded-full bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
+          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-4 w-[85%] bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] rounded-2xl backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
         >
           <Link
             to="/about-you"
-            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-full transition"
+            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition"
           >
             About YOU
           </Link>
           <Link
             to="/about"
-            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-full transition"
+            className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition"
           >
             Our Company
           </Link>
-          <button className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent px-4 py-2 rounded-full font-medium">
+          <button className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent px-4 py-2 rounded-lg font-medium">
             Log In
           </button>
-          <button className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-full">
+          <button className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-lg">
             Sign Up
           </button>
         </div>
