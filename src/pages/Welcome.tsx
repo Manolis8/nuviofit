@@ -509,7 +509,7 @@ const howItWorks = [
 </section>
 
       
-      {/* What Makes Us Different - Moved above How It Works */}
+      {/* What Makes Us Different - Moved above How It Works 
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -566,6 +566,7 @@ const howItWorks = [
           </div>
         </div>
       </section>
+      */}
       
       {/* Community Section - Positioned after How It Works */}
       <section className="py-20 bg-gradient-to-b from-wellness-lavender/10 to-white">
@@ -760,6 +761,54 @@ const howItWorks = [
                 <CarouselNext className="static" />
               </div>
             </Carousel>
+          </div>
+        </div>
+      </section>
+
+      <section className="relative py-16 md:py-24 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] overflow-hidden">
+        {/* Decorative blur elements */}
+        <div className="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
+
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
+          {/* Glassmorphism container */}
+          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl p-8 md:p-12 text-center">
+            {/* Main headline */}
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 text-balance leading-tight">
+              Don't Watch Others Transform While You Wait.
+            </h2>
+
+            {/* Main copy */}
+            <div className="space-y-6 mb-10">
+              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto text-pretty leading-relaxed">
+                Every day you hesitate is another day lost to guesswork and generic plans. Meanwhile, others are
+                building strength, energy, and confidence — and you can too.
+              </p>
+
+              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto text-pretty leading-relaxed">
+                With NuvioFit, your AI-personalized workouts give you a clear path to results, starting today. The
+                opportunity to be part of this early group won't last — spots are limited, and momentum waits for no
+                one.
+              </p>
+
+              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto text-pretty leading-relaxed font-semibold">
+                Step in, start smart, and watch your health, energy, and confidence grow. Your best self is waiting —
+                claim it now.
+              </p>
+            </div>
+
+            {/* CTA Section */}
+            <div className="space-y-4">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white hover:from-[#5AA3D8] hover:to-[#2D9B96] text-lg px-10 py-6 rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20"
+              >
+                Start My AI Plan Today →
+              </Button>
+
+              <p className="text-white/80 text-sm font-medium">Limited Early Access — Don't Miss Out.</p>
+            </div>
           </div>
         </div>
       </section>
