@@ -713,12 +713,12 @@ const Welcome = () => {
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
               <Link to="/auth/sign-up">
-                Begin Your Wellness Journey <ArrowRight className="ml-2" />
+                Begin YOUR Journey <ArrowRight className="ml-2" />
               </Link>
             </Button>
             
             <div className="mt-8 text-sm text-gray-600">
-              Join thousands of users already experiencing the Nuviofit difference
+              Your body. Your goals. Your AI-powered workout—start seeing results today.
             </div>
           </div>
         </div>
