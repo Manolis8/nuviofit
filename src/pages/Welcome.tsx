@@ -217,41 +217,50 @@ const howItWorks = [
       </nav>
       
       {/* Hero Section - With padding top to account for navbar */}
-<section className="relative py-20 md:py-32 mt-16 bg-gradient-to-br from-blue-50 via-purple-50 to-blue-50 overflow-hidden">
+<section className="relative py-20 md:py-32 mt-16 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] overflow-hidden">
   <div className="container mx-auto px-4">
     <div className="flex flex-col items-center text-center max-w-4xl mx-auto relative z-10">
+      {/* Top Badge */}
       <div className="inline-flex items-center bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-8 shadow-sm">
-        <Sparkles className="text-wellness-teal mr-2 h-5 w-5" />
-        <span className="text-sm font-medium">AI-Powered Wellness Journey</span>
+        <Sparkles className="text-[#38B2AC] mr-2 h-5 w-5" />
+        <span className="text-sm font-medium">AI-Powered Fitness</span>
       </div>
 
-      <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-wellness-teal via-wellness-blue to-wellness-lavender">
-        Transform Your Mind 
-        <br />
-        and Body with Nuviofit
+      {/* Headline */}
+      <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC]">
+        Transform Your Mind <br /> and Body with NuvioFit
       </h1>
 
-      <p className="text-xl md:text-2xl mb-12 text-gray-700 max-w-3xl">
-        Join the movement of wellness revolutionaries changing how we approach health. Only 50 people can join—don’t miss your chance!
+      {/* Subheadline with urgency */}
+      <p className="text-xl md:text-2xl mb-6 text-gray-700 max-w-3xl">
+        Every day you wait, progress slips further away. The body you want could have already started forming weeks ago.
       </p>
 
+      {/* Scarcity line */}
+      <div className="inline-flex items-center gap-2 bg-purple-100 border border-purple-200 rounded-full px-6 py-3 mb-8 text-purple-800 font-semibold">
+        <span className="text-orange-500">⚡</span>
+        Only 50 people can join — don’t miss your chance!
+      </div>
+
+      {/* CTA Button */}
       <div className="flex flex-col sm:flex-row gap-6 mb-8">
         <Link to="/auth/sign-up">
-<Button
-  size="lg"
-  className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"
-  onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}
->
-  Get Started <ArrowRight className="ml-2" />
-</Button>
+          <Button
+            size="lg"
+            className="text-lg px-8 py-6 bg-gradient-to-r from-[#9F7AEA] to-[#63B3ED] text-white font-bold rounded-full transition-all duration-200 hover:scale-105 hover:shadow-lg"
+            onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}
+          >
+            Get Started <ArrowRight className="ml-2" />
+          </Button>
         </Link>
       </div>
 
-      <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-gray-500">
-        <CircleCheck className="h-4 w-4 text-wellness-teal" />
+      {/* Supporting line */}
+      <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-600">
+        <CircleCheck className="h-4 w-4 text-[#38B2AC]" />
         <span>No credit card required</span>
         <span className="mx-2">•</span>
-        <CircleCheck className="h-4 w-4 text-wellness-teal" />
+        <CircleCheck className="h-4 w-4 text-[#38B2AC]" />
         <span>Free to get started</span>
       </div>
 
@@ -261,7 +270,7 @@ const howItWorks = [
           <div className="bg-red-100/70 rounded-full p-4 mb-3">
             <Heart className="text-red-400 h-6 w-6" />
           </div>
-          <p className="font-medium">Mood Tracking ()</p>
+          <p className="font-medium">Mood Tracking</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-blue-100/70 rounded-full p-4 mb-3">
@@ -285,10 +294,11 @@ const howItWorks = [
     </div>
   </div>
 
-  {/* Background decorative elements */}
-  <div className="absolute top-20 left-10 w-72 h-72 bg-wellness-blue/10 rounded-full blur-3xl z-0"></div>
-  <div className="absolute bottom-20 right-10 w-80 h-80 bg-wellness-teal/10 rounded-full blur-3xl z-0"></div>
+  {/* Decorative background */}
+  <div className="absolute top-20 left-10 w-72 h-72 bg-[#9F7AEA]/10 rounded-full blur-3xl z-0"></div>
+  <div className="absolute bottom-20 right-10 w-80 h-80 bg-[#38B2AC]/10 rounded-full blur-3xl z-0"></div>
 </section>
+
 
       
       {/* For Your Loved Ones Section */}
@@ -624,7 +634,7 @@ const howItWorks = [
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-4">How Nuviofit Works</h2>
             <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Getting started on your personalized wellness journey takes just minutes
+              Getting started on your personalized workout journey takes just minutes
             </p>
           </div>
 
