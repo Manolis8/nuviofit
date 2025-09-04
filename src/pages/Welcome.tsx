@@ -232,14 +232,15 @@ const howItWorks = [
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/10 p-2 rounded-lg"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </Button>
+<Button
+  variant="ghost"
+  size="icon"
+  className="text-white hover:bg-white/10 p-2 rounded-lg"
+  onClick={() => setIsMobileMenuOpen(prev => !prev)}
+>
+  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+</Button>
+
         </div>
       </div>
 
