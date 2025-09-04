@@ -89,7 +89,7 @@ const howItWorks = [
   {
     icon: <LineChart className="text-wellness-lavender h-6 w-6" />,
     title: "See Results",
-    description: "Stick to your plan and watch your fitness transform—your results are just a few workouts from Nuviofit away."
+    description: "Stick to your plan and watch your fitness transform—your results are just a few workouts away."
   }
 ];
 
