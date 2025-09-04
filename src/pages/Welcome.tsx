@@ -327,7 +327,9 @@ const howItWorks = [
             size="lg"
             className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
           >
+            <Link to="/auth/sing-up">
             Get Started →
+            </Link>
           </Button>
 
           {/* Supporting Text */}
@@ -496,9 +498,11 @@ const howItWorks = [
       </div>
 
       <div className="mt-8 text-center">
-        <button className="bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform">
+        <Button className="bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform">
+          <Link to="/auth/sign-up">
           Get My Personalized Workout →
-        </button>
+          </Link>
+        </Button>
       </div>
     </div>
   </div>
