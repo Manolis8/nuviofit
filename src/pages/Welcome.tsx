@@ -260,7 +260,7 @@ const Welcome = () => {
           <div className="bg-red-100/70 rounded-full p-4 mb-3">
             <Heart className="text-red-400 h-6 w-6" />
           </div>
-          <p className="font-medium">Mood Tracking</p>
+          <p className="font-medium">Mood Tracking (Comming soon!)</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-blue-100/70 rounded-full p-4 mb-3">
@@ -272,13 +272,13 @@ const Welcome = () => {
           <div className="bg-green-100/70 rounded-full p-4 mb-3">
             <Utensils className="text-green-400 h-6 w-6" />
           </div>
-          <p className="font-medium">Nutrition Guide</p>
+          <p className="font-medium">Nutrition Guide (Comming soon!)</p>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-purple-100/70 rounded-full p-4 mb-3">
             <Watch className="text-purple-400 h-6 w-6" />
           </div>
-          <p className="font-medium">Smartwatch Data</p>
+          <p className="font-medium">Smartwatch Data (Comming soon!)</p>
         </div>
       </div>
     </div>
