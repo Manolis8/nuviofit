@@ -201,70 +201,66 @@ const howItWorks = [
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Navbar - New fixed navigation */}
-<nav className="fixed top-6 md:top-8 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-2xl bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
-      <div className="flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="font-bold text-xl text-white">
-          Nuviofit
+<nav className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-2xl bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
+  <div className="flex items-center justify-between">
+    {/* Logo */}
+    <Link to="/" className="font-bold text-xl text-white">
+      Nuviofit
+    </Link>
+
+    {/* Desktop Menu */}
+    <div className="hidden md:flex items-center space-x-6">
+      <Link to="/about-you" className="text-white/90 hover:text-white font-medium">
+        About YOU
+      </Link>
+      <Link to="/about" className="text-white/90 hover:text-white font-medium">
+        Our Company
+      </Link>
+      <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent">
+        <Link to="/auth/login">Log In</Link>
+      </Button>
+      <Button asChild size="lg" className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6">
+        <Link to="/auth/sign-up">
+          Sign Up <ArrowRight className="ml-2" />
         </Link>
+      </Button>
+    </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center space-x-6">
-          <Link to="/about-you" className="text-white/90 hover:text-white font-medium">
-            About YOU
-          </Link>
-          <Link to="/about" className="text-white/90 hover:text-white font-medium">
-            Our Company
-          </Link>
-          <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent">
-            <Link to="/auth/login">Log In</Link>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6"
-          >
-            <Link to="/auth/sign-up">
-              Sign Up <ArrowRight className="ml-2" />
-            </Link>
-          </Button>
-        </div>
+    {/* Mobile Menu Button */}
+    <div className="md:hidden">
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-white hover:bg-white/10 p-2 rounded-lg"
+        onClick={() => setIsMobileMenuOpen(prev => !prev)}
+      >
+        {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      </Button>
+    </div>
+  </div>
 
-        {/* Mobile Menu Button */}
-        <div className="md:hidden">
-<Button
-  variant="ghost"
-  size="icon"
-  className="text-white hover:bg-white/10 p-2 rounded-lg"
-  onClick={() => setIsMobileMenuOpen(prev => !prev)}
->
-  {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-</Button>
+  {/* Mobile Dropdown */}
+  {isMobileMenuOpen && (
+    <div
+      ref={dropdownRef}
+      className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[85%] bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] rounded-2xl backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
+    >
+      <Link to="/about-you" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
+        About YOU
+      </Link>
+      <Link to="/about" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
+        Our Company
+      </Link>
+      <Button asChild className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent rounded-lg">
+        <Link to="/auth/login">Log In</Link>
+      </Button>
+      <Button asChild className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-lg">
+        <Link to="/auth/sign-up">Sign Up</Link>
+      </Button>
+    </div>
+  )}
+</nav>
 
-        </div>
-      </div>
-
-      {/* Mobile Dropdown */}
-      {isMobileMenuOpen && (
-        <div
-          ref={dropdownRef}
-          className="absolute top-full left-1/2 transform -translate-x-1/2 mt-6 w-[85%] bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] rounded-2xl backdrop-blur-lg shadow-xl p-6 flex flex-col space-y-4 z-40"
-        >
-          <Link to="/about-you" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
-            About YOU
-          </Link>
-          <Link to="/about" className="block text-white/90 hover:text-white font-medium py-2 px-4 rounded-lg transition">
-            Our Company
-          </Link>
-          <Button asChild className="w-full border border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent rounded-lg">
-            <Link to="/auth/login">Log In</Link>
-          </Button>
-          <Button asChild className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-4 py-2 rounded-lg">
-            <Link to="/auth/sign-up">Sign Up</Link>
-          </Button>
-        </div>
-      )}
-    </nav>
       
       {/* Hero Section - With padding top to account for navbar */}
     <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
