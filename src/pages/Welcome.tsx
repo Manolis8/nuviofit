@@ -25,10 +25,12 @@ import {
 } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import WatchConnectModal from "@/components/WatchConnectModal";
+import { X, Menu } from "lucide-react"
 
 const Welcome = () => {
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
       const [showSupport, setShowSupport] = useState(false);
+        const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Features data
   const features = [
@@ -179,40 +181,90 @@ const howItWorks = [
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Navbar - New fixed navigation */}
-      <nav className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-md shadow-sm z-50">
+      <nav className="fixed top-0 left-0 right-0 bg-white/10 backdrop-blur-md z-50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
+            {/* Logo */}
             <div className="flex items-center">
-              <Link to="/" className="font-bold text-xl text-wellness-blue">Nuviofit</Link>
+              <Link to="/" className="font-bold text-xl text-white">
+                Nuviofit
+              </Link>
             </div>
-            <div className="hidden md:flex space-x-4 items-center">
-<Link
-  to="/about-you"
-  className="hover:text-wellness-blue transition-colors"
-  onClick={trackClick('about_you_click', 'About YOU Link', 'navigation')}
->
-  About YOU
-</Link>
-<Link
-  to="/about"
-  className="hover:text-wellness-blue transition-colors"
-  onClick={trackClick('our_company_click', 'Our Company Link', 'navigation')}
->
-  Our Company
-</Link>
-              <Button asChild variant="outline" className="ml-2">
-                <Link to="/auth">Log In</Link>
+
+            {/* Desktop Menu */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link
+                to="/about-you"
+                className="text-white/90 hover:text-white transition-colors font-medium"
+              >
+                About YOU
+              </Link>
+              <Link
+                to="/about"
+                className="text-white/90 hover:text-white transition-colors font-medium"
+              >
+                Our Company
+              </Link>
+              <Button
+                variant="outline"
+                className="border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+              >
+                Log In
               </Button>
-              <Button asChild className="bg-wellness-blue hover:bg-wellness-blue/90"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
-                <Link to="/auth/sign-up">Sign Up</Link>
+              <Button className="bg-white text-[#63B3ED] hover:bg-white/90 font-semibold px-6">
+                Sign Up
               </Button>
             </div>
+
+            {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <Button variant="ghost" size="icon">
-                <User className="h-5 w-5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden border-t border-white/20 bg-white/5 backdrop-blur-xl rounded-b-2xl">
+              <div className="px-4 py-4 space-y-4">
+                <Link
+                  to="/about-you"
+                  className="block text-white/90 hover:text-white transition-colors font-medium py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  About YOU
+                </Link>
+                <Link
+                  to="/about"
+                  className="block text-white/90 hover:text-white transition-colors font-medium py-2"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Our Company
+                </Link>
+                <div className="space-y-3 pt-2">
+                  <Button
+                    variant="outline"
+                    className="w-full border-white/30 text-white hover:bg-white/10 hover:text-white bg-transparent"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    className="w-full bg-white text-[#63B3ED] hover:bg-white/90 font-semibold"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Sign Up
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
       
@@ -233,7 +285,7 @@ const howItWorks = [
         {/* Scarcity Line */}
         <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
           <span className="text-yellow-300">⚡</span>
-          Only 50 people can join — don't miss your chance!
+          Only 50 people can join tjis month — don't miss your chance!
         </div>
 
         {/* CTA Button */}
@@ -751,7 +803,7 @@ const howItWorks = [
               </a>
             </div>
           </div>
-        </div>    
+        </div>
 
         {/* Bottom bar */}
         <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
