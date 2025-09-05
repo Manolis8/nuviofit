@@ -403,7 +403,7 @@ const howItWorks = [
                   className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg transition text-lg font-semibold"
                 >
                   <Link to="/auth/sign-up">
-                  Start My Plan Today →
+                  Start My Plan NOW →
                   </Link>
                 </Button>
               </div>
@@ -487,7 +487,7 @@ const howItWorks = [
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
           <Link to="/auth/sign-up">
-          Start Your Transformation →
+          Start NOW →
           </Link>
         </Button>
       </div>
@@ -710,7 +710,7 @@ const howItWorks = [
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
           <Link to="/auth/sign-up">
-          Join the Movement Today →
+          Join NOW →
           </Link>
         </Button>
       </div>
