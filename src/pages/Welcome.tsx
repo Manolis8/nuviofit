@@ -318,7 +318,7 @@ const howItWorks = [
         {/* Scarcity Line */}
         <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
           <span className="text-yellow-300">⚡</span>
-          Only 50 people can join tjis month — don't miss your chance!
+          Only 50 people can join this month — don't miss your chance!
         </div>
 
         {/* CTA Button */}
@@ -460,27 +460,41 @@ const howItWorks = [
       </section>
       
       {/* Inspirational Quote Section - Moved below For Your Loved Ones and simplified */}
-      <section className="py-16 bg-gradient-to-r from-wellness-blue/5 to-wellness-peach/5">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center relative">
-            <div className="absolute -top-6 -left-6 text-6xl text-wellness-teal/20 font-serif">
-              "
-            </div>
-            <div className="absolute -bottom-6 -right-6 text-6xl text-wellness-teal/20 font-serif">
-              "
-            </div>
-            <p className="text-2xl md:text-3xl font-light leading-relaxed text-gray-700 italic">
-              The greatest wealth is health. Nuviofit doesn't just track your wellness—it transforms it, 
-              <span className="font-medium"> one personalized insight at a time</span>.
-            </p>
-            <div className="mt-6 flex items-center justify-center space-x-1">
-              <div className="h-1 w-1 rounded-full bg-wellness-teal"></div>
-              <div className="h-1 w-1 rounded-full bg-wellness-blue"></div>
-              <div className="h-1 w-1 rounded-full bg-wellness-peach"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+{/* Inspirational Quote Section */}
+<section className="py-16 bg-gradient-to-r from-[#63B3ED]/10 via-[#9F7AEA]/10 to-[#38B2AC]/10">
+  <div className="container mx-auto px-4">
+    <div className="max-w-3xl mx-auto text-center relative">
+      <div className="absolute -top-6 -left-6 text-6xl text-[#38B2AC]/20 font-serif">
+        "
+      </div>
+      <div className="absolute -bottom-6 -right-6 text-6xl text-[#38B2AC]/20 font-serif">
+        "
+      </div>
+      <p className="text-2xl md:text-3xl font-light leading-relaxed text-gray-800 italic">
+        The greatest wealth is health. <br />
+        <span className="font-medium">Change your body today, change your life tomorrow.</span>
+      </p>
+      <div className="mt-6 flex items-center justify-center space-x-1">
+        <div className="h-1 w-1 rounded-full bg-[#38B2AC]"></div>
+        <div className="h-1 w-1 rounded-full bg-[#63B3ED]"></div>
+        <div className="h-1 w-1 rounded-full bg-[#9F7AEA]"></div>
+      </div>
+
+      {/* CTA Button */}
+      <div className="mt-10">
+        <Button
+          size="lg"
+          className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
+        >
+          <Link to="/auth/sign-up">
+          Start Your Transformation →
+          </Link>
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
       
       {/* Problem & Solution Section - Updated title */}
 <section className="py-20 bg-gradient-to-r from-white/95 via-[#F7F5FF]/95 to-white/95">
@@ -641,47 +655,69 @@ const howItWorks = [
       */}
       
       {/* Community Section - Positioned after How It Works */}
-      <section className="py-20 bg-gradient-to-b from-wellness-lavender/10 to-white">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center bg-wellness-teal/10 rounded-full px-4 py-2 mb-4">
-              <Users className="text-wellness-teal mr-2 h-5 w-5" />
-              <span className="text-sm font-medium">Join Our Community</span>
-            </div>
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Be Part of The Wellness Revolution</h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-12">
-              Nuviofit isn't just an app—it's a growing community of people committed to transforming their health and supporting each other along the way.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="bg-wellness-peach/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Heart className="text-wellness-peach h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Daily Support</h3>
-                <p className="text-gray-600">Connect with others who share your health goals and challenges</p>
-              </div>
-              
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <div className="bg-wellness-mint/10 rounded-full p-4 w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Award className="text-wellness-mint h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">Weekly Challenges</h3>
-                <p className="text-gray-600">Join fun community challenges that keep you motivated and accountable</p>
-              </div>
-            </div>
-            
-            <div className="mt-12">
-              <Button asChild size="lg" className="bg-wellness-teal hover:bg-wellness-teal/90"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
-                <Link to="/auth/sign-up">
-                  Join Our Community <ArrowRight className="ml-2" />
-                </Link>
-              </Button>
-            </div>
-          </div>
+<section className="relative py-16 md:py-24 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] overflow-hidden">
+  {/* Subtle blur overlays for futuristic energy */}
+  <div className="absolute top-16 left-16 w-32 h-32 bg-white/40 rounded-full blur-3xl opacity-40"></div>
+  <div className="absolute bottom-20 right-20 w-40 h-40 bg-white/40 rounded-full blur-3xl opacity-40"></div>
+  <div className="absolute top-1/3 left-1/4 w-24 h-24 bg-white/40 rounded-full blur-3xl opacity-40"></div>
+
+  <div className="max-w-4xl mx-auto px-4 relative z-10">
+    <div className="backdrop-blur-sm rounded-2xl p-10 md:p-16 shadow-2xl border border-gray-200/50 bg-white/90">
+      {/* Title */}
+      <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 text-center mb-8">
+        Join the Movement. Take Back Your Health.
+      </h2>
+
+      <div className="text-gray-800 mt-4 leading-relaxed text-center max-w-2xl mx-auto space-y-6">
+        <p className="text-gray-700">For too long, people have been trapped in:</p>
+
+        <ul className="list-disc pl-6 text-gray-800 text-left max-w-xl mx-auto mt-6 space-y-2 bg-gradient-to-r from-white via-[#F9FAFB] to-[#E6FFFA] rounded-lg p-4 border border-gray-200 shadow-sm">
+          <li className="text-gray-800">
+            Generic workout plans that don't work.
+          </li>
+          <li className="text-gray-800">
+            Diet fads that drain energy.
+          </li>
+          <li className="text-gray-800">
+            Inconsistent routines that fade in weeks.
+          </li>
+        </ul>
+
+        <p className="font-semibold text-gray-900">
+          The villain? Wasted time, lost health, and declining confidence.
+        </p>
+        <p className="font-semibold text-gray-900">
+          The solution? NuvioFit's AI-personalized workouts.
+        </p>
+
+        <div className="bg-gradient-to-br from-white via-[#F9FAFB] to-[#E6FFFA] backdrop-blur-sm rounded-xl p-6 mt-8 border border-gray-200 shadow-sm">
+          <p className="mb-4 text-gray-800">When you join NuvioFit, you're not just downloading an app —</p>
+          <p className="font-semibold text-gray-900">
+            👉 You're joining a movement of people taking back control, building discipline, and creating the
+            strongest version of themselves.
+          </p>
         </div>
-      </section>
+
+        <p className="text-lg font-bold mt-8 text-gray-900">
+          "Be part of the movement. Stop guessing. Start building."
+        </p>
+      </div>
+
+      {/* CTA Button */}
+      <div className="text-center mt-8">
+        <Button
+          size="lg"
+          className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
+        >
+          <Link to="/auth/sign-up">
+          Join the Movement Today →
+          </Link>
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>
+
       
       {/* Feature Highlights Section - MOVED TO APPEAR AFTER COMMUNITY SECTION 
       <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
