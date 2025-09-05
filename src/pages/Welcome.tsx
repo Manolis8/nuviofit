@@ -469,7 +469,6 @@ const howItWorks = [
       </section>
       
       {/* Inspirational Quote Section - Moved below For Your Loved Ones and simplified */}
-{/* Inspirational Quote Section */}
 <section className="py-16 bg-gradient-to-r from-[#63B3ED]/10 via-[#9F7AEA]/10 to-[#38B2AC]/10">
   <div className="container mx-auto px-4">
     <div className="max-w-3xl mx-auto text-center relative">
@@ -598,7 +597,10 @@ const howItWorks = [
       </div>
 
       <div className="mt-8 text-center">
-        <Button className="bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform">
+        <Button                         onClick={() => {
+    trackClick('get_started_click', 'Get Started Button', 'cta');
+    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+  }} className="bg-gradient-to-r from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] text-white px-6 py-3 rounded-2xl shadow-lg hover:scale-105 transition-transform">
           <Link to="/auth/sign-up">
           Get My Personalized Workout →
           </Link>
