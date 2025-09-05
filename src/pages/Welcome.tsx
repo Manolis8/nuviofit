@@ -326,6 +326,10 @@ const howItWorks = [
         <div className="space-y-4">
           <Button
             size="lg"
+                            onClick={() => {
+    trackClick('get_started_click', 'Get Started Button', 'cta');
+    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+  }}
             className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
           >
             <Link to="/auth/sing-up">
@@ -400,6 +404,10 @@ const howItWorks = [
               {/* CTA Button */}
               <div className="text-center pt-6">
                 <Button
+                                onClick={() => {
+    trackClick('get_started_click', 'Get Started Button', 'cta');
+    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+  }}
                   size="lg"
                   className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg transition text-lg font-semibold"
                 >
@@ -484,6 +492,10 @@ const howItWorks = [
       {/* CTA Button */}
       <div className="mt-10">
         <Button
+                        onClick={() => {
+    trackClick('get_started_click', 'Get Started Button', 'cta');
+    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+  }}
           size="lg"
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
@@ -707,6 +719,10 @@ const howItWorks = [
       {/* CTA Button */}
       <div className="text-center mt-8">
         <Button
+                        onClick={() => {
+    trackClick('get_started_click', 'Get Started Button', 'cta');
+    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+  }}
           size="lg"
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
