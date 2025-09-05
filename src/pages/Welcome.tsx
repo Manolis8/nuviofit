@@ -508,6 +508,78 @@ const howItWorks = [
   </div>
 </section>
 
+<section className="relative py-16 md:py-24 bg-gradient-to-r from-[rgb(99_179_237_/_0.2)] via-white to-[#38B2AC]/20 overflow-hidden">
+        {/* Floating blur shapes */}
+        <div className="absolute top-16 left-16 w-24 h-24 bg-blue-200/30 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute bottom-20 right-20 w-32 h-32 bg-green-200/30 rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute top-1/3 right-1/4 w-20 h-20 bg-purple-200/30 rounded-full blur-3xl opacity-30"></div>
+
+        <div className="max-w-4xl mx-auto px-4 relative z-10">
+          {/* Main content container */}
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg p-6 md:p-10">
+            {/* Section title */}
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 text-center text-balance">
+              Ignore Your Health Today, Pay the Price Tomorrow.
+            </h2>
+
+            {/* Persuasive copy */}
+            <div className="space-y-6">
+              <p className="text-gray-700 leading-relaxed text-lg">
+                Every day you skip exercise, you're making a trade:
+              </p>
+
+              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+                <li>Less energy tomorrow.</li>
+                <li>Weaker body next month.</li>
+                <li>Shorter, less vibrant life years from now.</li>
+              </ul>
+
+              <p className="text-gray-700 leading-relaxed font-semibold text-lg">The truth?</p>
+
+              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+                <li>
+                  Your body is the foundation for everything you want. Career, family, confidence — none of it matters
+                  if your health fails.
+                </li>
+                <li>Exercise isn't optional anymore. It's your weapon against stress, fatigue, and decline.</li>
+                <li>
+                  Movement creates momentum. When you train your body, you train your discipline, mindset, and future.
+                </li>
+              </ul>
+
+              <p className="text-gray-700 leading-relaxed font-semibold text-lg">Waiting costs more than starting:</p>
+
+              <ul className="list-disc pl-6 text-gray-700 space-y-2">
+                <li>Friends and peers will pass you by.</li>
+                <li>Your confidence will sink.</li>
+                <li>Regret will grow every time you look back and realize you could've started earlier.</li>
+              </ul>
+
+              <div className="bg-gray-50 rounded-xl p-6 mt-8">
+                <p className="text-gray-800 leading-relaxed text-lg font-medium mb-4">
+                  👉 You have two choices right now:
+                </p>
+                <ol className="list-decimal pl-6 text-gray-700 space-y-2">
+                  <li>Do nothing — and watch your health, energy, and confidence slip.</li>
+                  <li>Take the first step — and unlock the stronger, sharper, healthier you.</li>
+                </ol>
+              </div>
+
+              {/* CTA Button */}
+              <div className="text-center pt-6">
+                <Button
+                  size="lg"
+                  className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg transition text-lg font-semibold"
+                >
+                  <Link to="/auth/sign-up">
+                  Start My AI Plan Today →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       
       {/* What Makes Us Different - Moved above How It Works 
       <section className="py-20 bg-gray-50">
@@ -611,7 +683,7 @@ const howItWorks = [
         </div>
       </section>
       
-      {/* Feature Highlights Section - MOVED TO APPEAR AFTER COMMUNITY SECTION */}
+      {/* Feature Highlights Section - MOVED TO APPEAR AFTER COMMUNITY SECTION 
       <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -625,7 +697,7 @@ const howItWorks = [
             </p>
           </div>
 
-          {/* Features carousel for mobile */}
+          {/* Features carousel for mobile 
           <div className="md:hidden">
             <Carousel className="w-full">
               <CarouselContent>
@@ -650,9 +722,10 @@ const howItWorks = [
                 <CarouselNext className="static" />
               </div>
             </Carousel>
-          </div>
+          </div>*/}
           
-          {/* Features grid for desktop */}
+          
+          {/* Features grid for desktop 
           <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-4 gap-6">
             {features.map((feature, index) => (
               <Card key={index} className="border-none shadow-lg hover:shadow-xl transition-all hover:translate-y-[-5px]">
@@ -676,6 +749,7 @@ const howItWorks = [
           </div>
         </div>
       </section>
+      */}
       
       {/* How It Works - MOVED BELOW POWERFUL FEATURES AND ABOVE SUCCESS STORIES */}
       <section className="py-20 bg-white">
