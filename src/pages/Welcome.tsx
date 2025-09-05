@@ -8,7 +8,6 @@ import {
   User, Users, Clock, LineChart, Settings, CircleCheck, Lightbulb, Quote
 } from "lucide-react";
 import { trackClick } from "../analytics";
-import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   Carousel,
@@ -27,13 +26,14 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import WatchConnectModal from "@/components/WatchConnectModal";
 import { X, Menu } from "lucide-react"
+import { useNavigate } from "react-router-dom";
 
 const Welcome = () => {
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
       const [showSupport, setShowSupport] = useState(false);
         const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
           const dropdownRef = useRef<HTMLDivElement>(null)
-          const navigate = useNavigate();
+const navigate = useNavigate();
   // Close dropdown on outside click or scroll
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -911,17 +911,18 @@ const howItWorks = [
 
             {/* CTA Section */}
             <div className="space-y-4">
-<Button
-  size="lg"
-  className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white hover:from-[#5AA3D8] hover:to-[#2D9B96] text-lg px-10 py-6 rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20 flex items-center justify-center"
-  onClick={() => {
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white hover:from-[#5AA3D8] hover:to-[#2D9B96] text-lg px-10 py-6 rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20"
+                onClick={() => {
     trackClick('get_started_click', 'Get Started Button', 'cta');
     navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
   }}
->
-  Generate Plan <ArrowRight className="ml-2" />
-</Button>
-
+              >
+                <Link to="/auth/sign-up">
+                Generate Plan →
+                </Link>
+              </Button>
               <p className="text-white/80 text-sm font-medium">Limited Early Access — Don't Miss Out.</p>
             </div>
           </div>
