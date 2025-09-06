@@ -338,7 +338,7 @@ const howItWorks = [
           </Button>
 
           {/* Supporting Text */}
-          <p className="text-white/80 text-sm">No credit card required • Free to get started</p>
+          <p className="text-white/80 text-sm">No credit card required • FREE</p>
         </div>
       </div>
     </section>
