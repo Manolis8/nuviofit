@@ -230,9 +230,8 @@ setIsLoading(false)
                     NuvioFit is More Than Fitness
                   </h3>
                   <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    We're building the future of health — AI-generated workouts, smart coaching, integrated mindset
-                    tracking, and deep personalization based on your energy, goals, and schedule. Join thousands who are
-                    already transforming their lives with intelligent fitness technology.
+                    We're building the future of health — AI-generated workouts, is just the START. Join the community who is
+                    already transforming lives with intelligent fitness technology.
                   </p>
                 </CardContent>
               </Card>
