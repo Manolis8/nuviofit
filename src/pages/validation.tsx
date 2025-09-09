@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { Instagram, Linkedin, Twitter } from "lucide-react";
 import {
   ArrowLeft,
   Mail,
@@ -427,6 +428,17 @@ setIsLoading(false)
                 >
                   Share Your Interest
                 </Button>
+                <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+                  <span className="text-white text-sm sm:text-base">Contact us at <a 
+                  href="mailto:contact@nuviofit.com" 
+                  className="underline hover:text-white"
+                >
+                  contact@nuviofit.com
+                </a>
+                or   <a href="https://www.instagram.com/nuviofit" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+                                <Instagram size={22} />
+                              </a> </span>
+                </div>
               </CardContent>
             </Card>
           </div>
