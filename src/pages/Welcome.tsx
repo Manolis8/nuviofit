@@ -942,7 +942,7 @@ const howItWorks = [
   }}
               >
                 <Link to="/auth/sign-up">
-                Show your interest →
+                Join Now →
                 </Link>
               </Button>
             </div>
