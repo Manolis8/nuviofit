@@ -193,8 +193,7 @@ export default function Validation() {
                 <div className="mb-6 sm:mb-8">
                   <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3 sm:mb-4">Show Your Interest</h2>
                   <p className="text-white leading-relaxed text-sm sm:text-base">
-                    Help us validate this concept. If enough people are interested, we'll build it. If not, we'll save
-                    everyone time and money.
+                    Help us validate this concept. If enough people are interested, we'll build it. Give us your opinion! We would love to hear from you!
                   </p>
                 </div>
 
@@ -348,7 +347,7 @@ export default function Validation() {
               className="text-2xl sm:text-3xl font-bold text-center text-white mb-8 sm:mb-12"
               style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
             >
-              Honest Questions & Answers
+              Frequently Asked Questions
             </h2>
             <div className="space-y-3 sm:space-y-4">
               {[
@@ -405,14 +404,14 @@ export default function Validation() {
                   Help Us Make the Right Decision
                 </h2>
                 <p className="text-lg sm:text-xl text-white mb-6 sm:mb-8 max-w-2xl mx-auto">
-                  Your interest (or lack thereof) helps us decide whether to invest time and money into building this.
+                  Your interest (or opinion) helps us decide whether to invest time and money into building this.
                 </p>
                 <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8">
                   <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                   <span className="text-white text-sm sm:text-base">Validation phase - be part of the decision</span>
                 </div>
                 <Button
-                  onClick={() => document.querySelector("form")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => document.querySelector("h2")?.scrollIntoView({ behavior: "smooth" })}
                   className="bg-black/30 backdrop-blur-sm text-white hover:bg-black/40 border border-white/30 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold w-full sm:w-auto"
                 >
                   Share Your Interest
