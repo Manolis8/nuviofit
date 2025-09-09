@@ -691,9 +691,6 @@ const howItWorks = [
             Generic workout plans that don't work.
           </li>
           <li className="text-gray-800">
-            Diet fads that drain energy.
-          </li>
-          <li className="text-gray-800">
             Inconsistent routines that fade in weeks.
           </li>
         </ul>
@@ -806,7 +803,7 @@ const howItWorks = [
       </section>
       */}
       
-      {/* How It Works - MOVED BELOW POWERFUL FEATURES AND ABOVE SUCCESS STORIES */}
+      {/* How It Works - MOVED BELOW POWERFUL FEATURES AND ABOVE SUCCESS STORIES
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -822,7 +819,6 @@ const howItWorks = [
 
           <div className="max-w-5xl mx-auto">
             <div className="relative">
-              {/* Connector line */}
               <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gray-200 -translate-y-1/2 z-0"></div>
               
               <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -852,7 +848,7 @@ const howItWorks = [
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       
       {/* Testimonials - MOVED BELOW HOW IT WORKS 
       <section className="py-20 bg-white">
