@@ -309,14 +309,8 @@ const howItWorks = [
 
     {/* Subheadline */}
     <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-      Join the waitlist today and help us shape the future of fitness.
+      Help Us Decide If We Build The Future Of Fitness.
     </p>
-
-    {/* Scarcity Line */}
-    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
-      <span className="text-yellow-300">⚡</span>
-      Limited spots: Only 50 people can join this month!
-    </div>
 
     {/* Email Signup Form */}
     <form
@@ -515,7 +509,7 @@ const howItWorks = [
 </section>
 
       
-      {/* Problem & Solution Section - Updated title */}
+      {/* Problem & Solution Section - Updated title 
 <section className="py-20 bg-gradient-to-r from-white/95 via-[#F7F5FF]/95 to-white/95">
   <div className="container mx-auto px-4">
     <div className="max-w-4xl mx-auto">
@@ -529,7 +523,6 @@ const howItWorks = [
       </div>
       
       <div className="flex flex-col md:flex-row gap-12 items-center">
-{/* Problem Column */}
 <div className="md:w-1/2">
   <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">The Problem</h3>
   <div className="bg-[#FFE5E5] rounded-xl p-6 mb-8 border border-red-100">
@@ -562,7 +555,7 @@ const howItWorks = [
   </div>
 </div>
 
-{/* Solution Column */}
+
 <div className="md:w-1/2">
   <h3 className="text-2xl md:text-3xl font-bold mb-6 text-center md:text-left">Our Solution</h3>
   <div className="bg-[#E6F7F6] rounded-xl p-6 border border-green-100">
@@ -615,7 +608,7 @@ const howItWorks = [
       </div>
     </div>
   </div>
-</section>
+</section>  */}
       
       {/* What Makes Us Different - Moved above How It Works 
       <section className="py-20 bg-gray-50">
@@ -944,7 +937,6 @@ const howItWorks = [
                 Generate Plan →
                 </Link>
               </Button>
-              <p className="text-white/80 text-sm font-medium">Limited Early Access — Don't Miss Out.</p>
             </div>
           </div>
         </div>
@@ -962,7 +954,7 @@ const howItWorks = [
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
               <Link to="/auth/sign-up">
-                Begin YOUR Journey <ArrowRight className="ml-2" />
+                Join the Waitlist <ArrowRight className="ml-2" />
               </Link>
             </Button>
             
@@ -987,7 +979,7 @@ const howItWorks = [
             </p>
           </div>
 
-          {/* Features */}
+          {/* Features
           <div>
             <h4 className="font-bold mb-4">Features</h4>
             <ul className="space-y-2">
@@ -996,7 +988,7 @@ const howItWorks = [
               <li><Link to="/nutrition" className="text-gray-400 hover:text-white transition-colors">Nutrition Guide</Link></li>
               <li><Link to="/goals" className="text-gray-400 hover:text-white transition-colors">Goal Setting</Link></li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Company */}
           <div>
