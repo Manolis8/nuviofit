@@ -1,5 +1,4 @@
-"use client"
-
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -22,6 +21,7 @@ import {
 import Link from "next/link"
 
 export default function Validation() {
+const { getClient } = useSupabaseClientWithAuth();
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [interestedInPaying, setInterestedInPaying] = useState("")
@@ -35,12 +35,23 @@ export default function Validation() {
 
     setIsLoading(true)
 
-    console.log("Waitlist signup:", { name, email, interestedInPaying })
+const displayName = name.trim() === '' ? 'user' : name.trim()
 
-    setTimeout(() => {
-      setIsSubmitted(true)
-      setIsLoading(false)
-    }, 1500)
+        const supabaseAuthClient = await getClient();
+
+const { data, error } = await supabaseAuthClient
+  .from('waitlist')
+  .insert([{ email: email.trim(), name: displayName }])
+
+if (error) {
+  console.error(error)
+  alert('Something went wrong. Please try again later.')
+  setIsLoading(false)
+  return
+}
+
+setIsSubmitted(true)
+setIsLoading(false)
   }
 
   const toggleFaq = (index: number) => {
