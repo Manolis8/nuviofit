@@ -7,6 +7,7 @@ import {
   BarChart, Smile, LayoutDashboard, Timer, Calendar,
   User, Users, Clock, LineChart, Settings, CircleCheck, Lightbulb, Quote
 } from "lucide-react";
+import { Input } from "@/components/ui/input"
 import { trackClick } from "../analytics";
 import { Button } from "@/components/ui/button";
 import { 
@@ -27,6 +28,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import WatchConnectModal from "@/components/WatchConnectModal";
 import { X, Menu } from "lucide-react"
 import { useNavigate } from "react-router-dom";
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 const Welcome = () => {
   const [isWatchModalOpen, setIsWatchModalOpen] = useState(false);
@@ -52,6 +54,37 @@ const navigate = useNavigate();
     }
   }
 )
+
+const [email, setEmail] = useState("")
+  const [name, setName] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
+
+  const { getClient } = useSupabaseClientWithAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+
+    setIsLoading(true)
+
+    const displayName = name.trim() === '' ? 'user' : name.trim()
+    const supabaseAuthClient = await getClient()
+
+    const { data, error } = await supabaseAuthClient
+      .from('waitlist')
+      .insert([{ email: email.trim(), name: displayName }])
+
+    if (error) {
+      console.error(error)
+      alert('Something went wrong. Please try again later.')
+      setIsLoading(false)
+      return
+    }
+
+    setIsSubmitted(true)
+    setIsLoading(false)
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -218,6 +251,22 @@ const howItWorks = [
     }
   ];
 
+  if (isSubmitted) {
+    return (
+      <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
+            You're on the List! 🎉
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+            Thank you for showing interest and helping us validate this idea. We'll keep you updated and give you early access once we're ready.
+          </p>
+        </div>
+      </section>
+    )
+  }
+
+
   return (
     <div className="min-h-screen overflow-x-hidden">
       {/* Navbar - New fixed navigation
@@ -300,48 +349,66 @@ const howItWorks = [
       
       {/* Hero Section - With padding top to account for navbar */}
 <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
-  <div className="max-w-4xl mx-auto text-center space-y-8">
+      <div className="max-w-4xl mx-auto text-center space-y-8">
 
-    {/* Main Headline */}
-    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
-      Your AI Personal Trainer — Workouts That Adapt to You
-    </h1>
+        {/* Main Headline */}
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
+          Personalized AI Workouts for a Stronger, Healthier You
+        </h1>
 
-    {/* Subheadline */}
-    <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-      Help Us Decide If We Build The Future Of Fitness.
-    </p>
+        {/* Subheadline */}
+        <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+          Join the waitlist to show interest and help us decide if we build the future of fitness.
+        </p>
 
-    {/* Email Signup Form */}
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const email = (e.target as any).email.value;
-        trackClick('waitlist_signup', 'Waitlist Hero Form', 'cta');
-        console.log("Submitted email:", email);
-        // TODO: send email to backend / API
-      }}
-      className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6"
-    >
-      <input
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        required
-        className="px-6 py-4 rounded-full text-lg w-full sm:w-96 focus:outline-none focus:ring-4 focus:ring-purple-300"
-      />
-      <button
-        type="submit"
-        className="bg-white text-black hover:bg-white/90 text-lg px-8 py-4 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
-      >
-        Join the Waitlist 🚀
-      </button>
-    </form>
+        {/* Scarcity Line */}
+        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold mx-auto">
+          <span className="text-yellow-300">⚡</span>
+          Only 50 early spots this month — secure yours now!
+        </div>
 
-    {/* Supporting Text */}
-    <p className="text-white/80 text-sm">No credit card required • Free to join</p>
-  </div>
-</section>
+        {/* Email Signup Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6"
+        >
+          <Input
+            type="text"
+            placeholder="Your name (optional)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="px-6 py-4 rounded-full text-lg w-full sm:w-72 focus:outline-none focus:ring-4 focus:ring-purple-300"
+          />
+          <Input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="px-6 py-4 rounded-full text-lg w-full sm:w-96 focus:outline-none focus:ring-4 focus:ring-purple-300"
+          />
+          <Button
+            type="submit"
+            disabled={!email || isLoading}
+            className="bg-white text-black hover:bg-white/90 text-lg px-8 py-4 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg w-full sm:w-auto"
+          >
+            {isLoading ? "Submitting..." : "Join the Waitlist 🚀"}
+          </Button>
+        </form>
+
+        {/* Supporting Text */}
+        <p className="text-white/80 text-sm max-w-md mx-auto">
+          Your interest helps us validate this idea and decide if we build it — no credit card required, free to join.
+        </p>
+
+        {/* Emotional Push */}
+        <p className="text-white/90 text-sm max-w-xl mx-auto mt-4">
+          Imagine being part of the first group to shape AI-powered workouts that actually adapt to you — your feedback matters, and your future self will thank you.
+        </p>
+
+      </div>
+    </section>
 
 
       {/* Health benefits */}
@@ -407,12 +474,12 @@ const howItWorks = [
                 <Button
                                 onClick={() => {
     trackClick('get_started_click', 'Get Started Button', 'cta');
-    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+    navigate("/validate-idea"); // import { useNavigate } from 'react-router-dom';
   }}
                   size="lg"
                   className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg transition text-lg font-semibold"
                 >
-                  <Link to="/auth/sign-up">
+                  <Link to="/validate-idea">
                   Show Your Interest →
                   </Link>
                 </Button>
@@ -497,12 +564,12 @@ const howItWorks = [
         <Button
                         onClick={() => {
     trackClick('get_started_click', 'Get Started Button', 'cta');
-    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+    navigate("/validate-idea"); // import { useNavigate } from 'react-router-dom';
   }}
           size="lg"
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
-          <Link to="/auth/sign-up">
+          <Link to="/validate-idea">
           Join NOW →
           </Link>
         </Button>
@@ -726,12 +793,12 @@ const howItWorks = [
         <Button
                         onClick={() => {
     trackClick('get_started_click', 'Get Started Button', 'cta');
-    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+    navigate("/validate-idea"); // import { useNavigate } from 'react-router-dom';
   }}
           size="lg"
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
-          <Link to="/auth/sign-up">
+          <Link to="/validate-idea">
            Join the waitlist →
           </Link>
         </Button>
@@ -938,10 +1005,10 @@ const howItWorks = [
                 className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white hover:from-[#5AA3D8] hover:to-[#2D9B96] text-lg px-10 py-6 rounded-full font-bold transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 border-white/20"
                 onClick={() => {
     trackClick('get_started_click', 'Get Started Button', 'cta');
-    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
+    navigate("/validate-idea"); // import { useNavigate } from 'react-router-dom';
   }}
               >
-                <Link to="/auth/sign-up">
+                <Link to="/validate-idea">
                 Join Now →
                 </Link>
               </Button>
@@ -961,7 +1028,7 @@ const howItWorks = [
               Take the first step toward a healthier, happier you. Your future self—and the people who love you—will thank you for it.
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6 bg-gradient-to-r from-wellness-teal to-wellness-blue hover:opacity-90 transition-all shadow-md hover:shadow-lg"   onClick={trackClick('get_started_click', 'Get Started Button', 'cta')}>
-              <Link to="/auth/sign-up">
+              <Link to="/validate-idea">
                 Join the Waitlist <ArrowRight className="ml-2" />
               </Link>
             </Button>
