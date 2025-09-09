@@ -413,7 +413,7 @@ const howItWorks = [
                   className="bg-gray-900 text-white hover:bg-gray-800 px-6 py-3 rounded-2xl shadow-lg transition text-lg font-semibold"
                 >
                   <Link to="/auth/sign-up">
-                  Start My Plan NOW →
+                  Show Your Interest →
                   </Link>
                 </Button>
               </div>
@@ -488,7 +488,10 @@ const howItWorks = [
         <div className="h-1 w-1 rounded-full bg-[#63B3ED]"></div>
         <div className="h-1 w-1 rounded-full bg-[#9F7AEA]"></div>
       </div>
-
+                <p className="text-1xl md:text-3xl font-light leading-relaxed text-gray-800 italic">
+        Help Us Decide If We Should Built This Idea By Joining The Waitlist!
+       
+      </p>
       {/* CTA Button */}
       <div className="mt-10">
         <Button
@@ -500,7 +503,7 @@ const howItWorks = [
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-8 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
           <Link to="/auth/sign-up">
-          Start NOW →
+          Join NOW →
           </Link>
         </Button>
       </div>
@@ -713,6 +716,9 @@ const howItWorks = [
         <p className="text-lg font-bold mt-8 text-gray-900">
           "Be part of the movement. Stop guessing. Start building."
         </p>
+                <p className="text-lg font-bold mt-8 text-gray-900">
+          "By joining the waitlsit you help us decide if we should built it!"
+        </p>
       </div>
 
       {/* CTA Button */}
@@ -726,7 +732,7 @@ const howItWorks = [
           className="bg-gradient-to-r from-[#63B3ED] to-[#38B2AC] text-white font-semibold px-6 py-3 rounded-2xl shadow-lg hover:opacity-90 transition text-lg"
         >
           <Link to="/auth/sign-up">
-          Join NOW →
+           Join the waitlist →
           </Link>
         </Button>
       </div>
@@ -922,7 +928,9 @@ const howItWorks = [
                 claim it now.
               </p>
             </div>
-
+              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto text-pretty leading-relaxed font-semibold">
+               IF YOU WANT TO USE THAT PRODUCT SHOW YOUR INTEREST!
+              </p>
             {/* CTA Section */}
             <div className="space-y-4">
               <Button
@@ -934,7 +942,7 @@ const howItWorks = [
   }}
               >
                 <Link to="/auth/sign-up">
-                Generate Plan →
+                Show your interest →
                 </Link>
               </Button>
             </div>
