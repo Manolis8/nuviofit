@@ -220,14 +220,13 @@ const howItWorks = [
 
   return (
     <div className="min-h-screen overflow-x-hidden">
-      {/* Navbar - New fixed navigation */}
+      {/* Navbar - New fixed navigation
  <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 w-[90%] md:w-[80%] rounded-2xl bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] backdrop-blur-lg shadow-lg z-50 px-6 py-3">
       <div className="flex items-center justify-between">
         <Link to="/" className="font-bold text-xl text-white">
           Nuviofit
         </Link>
 
-        {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6">
           <Link to="/about-you" className="text-white/90 hover:text-white font-medium">
             About YOU
@@ -245,7 +244,6 @@ const howItWorks = [
           </Button>
         </div>
 
-        {/* Mobile Menu Button */}
 <div className="md:hidden">
   <Button
     variant="ghost"
@@ -253,11 +251,10 @@ const howItWorks = [
     className="text-white hover:bg-white/10 p-2 rounded-lg"
     onClick={() => setIsMobileMenuOpen(prev => !prev)}
   >
-    <Menu className="h-6 w-6" /> {/* Always shows hamburger icon */}
+    <Menu className="h-6 w-6" />
   </Button>
 </div>
 
-{/* Mobile Dropdown */}
 {isMobileMenuOpen && (
   <div
     ref={dropdownRef}
@@ -279,7 +276,6 @@ const howItWorks = [
 )}
       </div>
 
-      {/* Mobile Dropdown */}
       {isMobileMenuOpen && (
         <div
           ref={dropdownRef}
@@ -299,49 +295,60 @@ const howItWorks = [
           </Button>
         </div>
       )}
-    </nav>
+    </nav>  */}
 
       
       {/* Hero Section - With padding top to account for navbar */}
-    <section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
-      <div className="max-w-4xl mx-auto text-center space-y-8">
-        
-        {/* Main Headline */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
-          Personalized AI Workouts for a Stronger, Healthier You.
-        </h1>
+<section className="relative py-20 md:py-32 bg-gradient-to-br from-[#63B3ED] via-[#9F7AEA] to-[#38B2AC] flex items-center justify-center px-4">
+  <div className="max-w-4xl mx-auto text-center space-y-8">
 
-        {/* Subheadline with subtle urgency */}
-        <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
-          Every day you wait, progress slips further away.
-        </p>
+    {/* Main Headline */}
+    <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white text-balance leading-tight">
+      Your AI Personal Trainer — Workouts That Adapt to You
+    </h1>
 
-        {/* Scarcity Line */}
-        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
-          <span className="text-yellow-300">⚡</span>
-          Only 50 people can join this month — don't miss your chance!
-        </div>
+    {/* Subheadline */}
+    <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+      Join the waitlist today and help us shape the future of fitness.
+    </p>
 
-        {/* CTA Button */}
-        <div className="space-y-4">
-          <Button
-            size="lg"
-                            onClick={() => {
-    trackClick('get_started_click', 'Get Started Button', 'cta');
-    navigate("/auth/sign-up"); // import { useNavigate } from 'react-router-dom';
-  }}
-            className="bg-white text-black hover:bg-white/90 text-lg px-8 py-6 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
-          >
-            <Link to="/auth/sing-up">
-            Get Started →
-            </Link>
-          </Button>
+    {/* Scarcity Line */}
+    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-semibold">
+      <span className="text-yellow-300">⚡</span>
+      Limited spots: Only 50 people can join this month!
+    </div>
 
-          {/* Supporting Text */}
-          <p className="text-white/80 text-sm">No credit card required • FREE</p>
-        </div>
-      </div>
-    </section>
+    {/* Email Signup Form */}
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const email = (e.target as any).email.value;
+        trackClick('waitlist_signup', 'Waitlist Hero Form', 'cta');
+        console.log("Submitted email:", email);
+        // TODO: send email to backend / API
+      }}
+      className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-6"
+    >
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        required
+        className="px-6 py-4 rounded-full text-lg w-full sm:w-96 focus:outline-none focus:ring-4 focus:ring-purple-300"
+      />
+      <button
+        type="submit"
+        className="bg-white text-black hover:bg-white/90 text-lg px-8 py-4 rounded-full font-bold transition-all duration-200 hover:scale-105 hover:shadow-lg"
+      >
+        Join the Waitlist 🚀
+      </button>
+    </form>
+
+    {/* Supporting Text */}
+    <p className="text-white/80 text-sm">No credit card required • Free to join</p>
+  </div>
+</section>
+
 
       {/* Health benefits */}
       <section className="relative py-16 md:py-24 bg-gradient-to-r from-[rgb(99_179_237_/_0.2)] via-white to-[#38B2AC]/20 overflow-hidden">
