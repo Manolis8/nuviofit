@@ -1,17 +1,20 @@
 // /api/unsubscribe.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import fetch from 'node-fetch';
+import { APP_URL, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY as SUPABASE_API_KEY, missingEnv } from './_lib/config.js';
 
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL!;
-const SUPABASE_API_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET!;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const token = req.query.token as string;
 
   if (!token) {
     return res.status(400).send('Missing token.');
+  }
+
+  const missing = missingEnv({ SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY: SUPABASE_API_KEY, UNSUBSCRIBE_SECRET });
+  if (missing.length) {
+    return res.status(500).send(`Server is missing env: ${missing.join(', ')}`);
   }
 
   try {
@@ -92,7 +95,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         <div class="card">
           <h1>✅ You have been unsubscribed</h1>
           <p>You will no longer receive marketing emails from us.</p>
-          <a href="https://nuviofit.com/dashboard" class="button">Go to Dashboard</a>
+          <a href="${APP_URL}/dashboard" class="button">Go to Dashboard</a>
         </div>
       </body>
       </html>

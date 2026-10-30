@@ -1,7 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import jwt from "jsonwebtoken";
+import { APP_URL, CONTACT_EMAIL, EMAIL_FROM, EMAIL_FROM_NAME, missingEnv } from "./_lib/config.js";
 
-export default async function sendEmails(req: NextApiRequest, res: NextApiResponse) {
+export default async function sendEmails(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     console.warn("⛔ Invalid method:", req.method);
     return res.status(405).json({ message: "Only POST method is allowed" });
@@ -18,14 +19,21 @@ export default async function sendEmails(req: NextApiRequest, res: NextApiRespon
     return res.status(400).json({ message: "Missing email or username" });
   }
 
-  // ✅ Generate secure unsubscribe token
-  const token = jwt.sign(
-    { email },
-    process.env.UNSUBSCRIBE_SECRET ?? "supersecret",
-    { expiresIn: "7d" }
-  );
+  const missing = missingEnv({
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    EMAIL_FROM,
+    UNSUBSCRIBE_SECRET: process.env.UNSUBSCRIBE_SECRET,
+  });
+  if (missing.length) {
+    // Signup should still work without email set up, so report it instead of crashing.
+    console.warn("Welcome email skipped, missing env:", missing.join(", "));
+    return res.status(200).json({ message: "Email not configured, skipped", missing });
+  }
 
-const unsubscribeUrl = `https://nuviofit.com/api/unsubscribe?token=${encodeURIComponent(token)}`;
+  // ✅ Generate secure unsubscribe token
+  const token = jwt.sign({ email }, process.env.UNSUBSCRIBE_SECRET!, { expiresIn: "30d" });
+
+const unsubscribeUrl = `${APP_URL}/api/unsubscribe?token=${encodeURIComponent(token)}`;
 
 const htmlContent = `
 <!DOCTYPE html>
@@ -71,7 +79,7 @@ const htmlContent = `
       <p style="font-size: 16px; margin-bottom: 30px;">
         Start your personalized journey now by visiting your dashboard.
       </p>
-      <a href="https://www.nuviofit.com/dashboard" target="_blank" rel="noopener noreferrer"
+      <a href="${APP_URL}/dashboard" target="_blank" rel="noopener noreferrer"
          style="
            display: inline-block; 
            background: linear-gradient(90deg, #63B3ED 0%, #38B2AC 100%);
@@ -96,8 +104,8 @@ const htmlContent = `
     <!-- Contact + Unsubscribe -->
     <p style="text-align: center; font-size: 14px; color: #888;">
       Need help? Contact us at 
-      <a href="mailto:contact@nuviofit.com" style="color: #3182CE; text-decoration: underline;">
-        contact@nuviofit.com
+      <a href="mailto:${CONTACT_EMAIL}" style="color: #3182CE; text-decoration: underline;">
+        ${CONTACT_EMAIL}
       </a>
     </p>
     <p style="text-align: center; font-size: 14px; color: #888;">
@@ -113,11 +121,11 @@ const htmlContent = `
     const response = await fetch("https://api.brevo.com/v3/smtp/email", {
       method: "POST",
       headers: {
-        "api-key": process.env.BREVO_API_KEY ?? "",
+        "api-key": process.env.BREVO_API_KEY!,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        sender: { name: "NuvioFit", email: "movement@nuviofit.com" },
+        sender: { name: EMAIL_FROM_NAME, email: EMAIL_FROM },
         to: [{ email, name: username }],
         subject: "Welcome to the Club!",
         htmlContent,

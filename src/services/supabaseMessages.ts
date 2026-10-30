@@ -1,15 +1,12 @@
-import { supabase } from "@/components/lib/supabaseClient";
-import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function decrementMessagesLeft(userId: string) {
+export async function decrementMessagesLeft(supabaseAuthClient: SupabaseClient, userId: string) {
   if (!userId) {
     console.error("User ID is required");
     return;
   }
 
   // Fetch current messages_left
-      const { getClient } = useSupabaseClientWithAuth();
-              const supabaseAuthClient = await getClient();
   const { data, error } = await supabaseAuthClient
     .from("onboarding_responses") // double-check table name here!
     .select("messages_left")

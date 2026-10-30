@@ -1,9 +1,7 @@
-import { supabase } from "@/components/lib/supabaseClient";
-import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getMessagesLeft(userId: string) {
-      const { getClient } = useSupabaseClientWithAuth();
-              const supabaseAuthClient = await getClient();
+// Pass in the client from useSupabaseClientWithAuth().getClient() — hooks can't be called in here.
+export async function getMessagesLeft(supabaseAuthClient: SupabaseClient, userId: string) {
   const { data, error } = await supabaseAuthClient
     .from("onboarding_responses")
     .select("messages_left")

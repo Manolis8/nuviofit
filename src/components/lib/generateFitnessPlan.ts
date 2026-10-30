@@ -1,5 +1,4 @@
-import { supabase } from "@/components/lib/supabaseClient";
-
+// Column names match what GettingStarted.tsx saves to onboarding_responses (snake_case).
 export async function generateFitnessPlan( supabaseAuthClient: any, userId: string) {
   // ✅ 1. Fetch onboarding data
 
@@ -29,20 +28,20 @@ Use the following onboarding data to perform 3 tasks:
 2. Generate a 7-day fitness program using the exact structure below. It must be consistent, parseable, and must NEVER skip any required part of the structure (especially Workout Focus, Mindset Tip, Total Exercises, Duration, Calories). These must appear without exception.
 
 --- USER PROFILE ---
-- Workout Level: ${data.WorkoutLevel}
-- Training Methods: ${data.TrainingMethod?.join(", ")}
-- Training Frequency (how many times per week to exercise; not more, only what user picked): ${data.TrainingFrequency}
-- Training Duration per session: ${data.TrainingDuration}
-- Past Workout History: ${data.workoutHistory}
+- Workout Level: ${data.workout_level}
+- Training Methods: ${data.training_method}
+- Training Frequency (how many times per week to exercise; not more, only what user picked): ${data.training_frequency}
+- Training Duration per session: ${data.training_duration}
+- Past Workout History: ${data.workout_history}
 - Achievements: ${data.achievements}
-- Motivation (Why Fitness Matters): ${data.fitnessWhy?.join(", ")}, ${data.otherWhy}
-- Future Vision: ${data.futureVision}
-- Resilience Trigger: ${data.resilienceTrigger}
-- Mental Barriers: ${data.consistencyBlocker}, ${data.customBlocker}
+- Motivation (Why Fitness Matters): ${data.fitness_why}, ${data.other_why}
+- Future Vision: ${data.future_vision}
+- Resilience Trigger: ${data.resilience_trigger}
+- Mental Barriers: ${data.consistency_blocker}, ${data.custom_blocker}
 - Physical Barriers (Injuries or conditions): ${data.injuries}
-- Comfort Zone Limit: ${data.pushingComfort}
-- Support System: ${data.supportSystem} (${data.customSupport})
-- Areas to Improve: ${data.WhatToImprove?.join(", ")}
+- Comfort Zone Limit: ${data.pushing_comfort}
+- Support System: ${data.support_system} (${data.custom_support})
+- Areas to Improve: ${data.what_to_imporve}
 - Personal Recommendations: ${data.recommedations}
 
 --- PROGRAM STRUCTURE FORMAT ---
@@ -156,11 +155,6 @@ if (!result.reply) {
   console.error("❌ No 'reply' in response:", result);
   throw new Error("No plan returned from backend.");
 }
-
-  if (!result.reply) {
-    console.error("❌ No response from OpenAI or serverless function:", result);
-    throw new Error("No plan returned from backend.");
-  }
 
   const generatedPlan = result.reply;
 

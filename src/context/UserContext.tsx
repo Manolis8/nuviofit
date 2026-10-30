@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Exercise } from "@/components/lib/frontendOpenai";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useUser } from "@clerk/clerk-react";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
@@ -7,6 +6,8 @@ import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 export interface UserProfile {
   setupFinished?: boolean;
 }
+
+type Exercise = Record<string, any>;
 
 type FitnessPlan = {
   exercises: Exercise[];

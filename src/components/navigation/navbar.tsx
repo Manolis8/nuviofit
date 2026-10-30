@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { Link } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 import { Menu, X, Sparkles, Lock, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,7 @@ const navItems = [
 ]
 
 export function Navbar() {
-  const pathname = usePathname()
+  const { pathname } = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [showCompactNav, setShowCompactNav] = useState(false)
@@ -51,7 +51,7 @@ useEffect(() => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link to="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500">
                 <Sparkles className="h-4 w-4 text-white" />
               </div>
@@ -87,7 +87,7 @@ useEffect(() => {
                           {navItems.map((item) => (
                             <Link
                               key={item.href}
-                              href={item.href}
+                              to={item.href}
                               onClick={() => setIsMobileMenuOpen(false)}
                               className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                                 isActive(item.href) && !item.locked
@@ -114,7 +114,7 @@ useEffect(() => {
                     <Tooltip key={item.href}>
                       <TooltipTrigger asChild>
                         <Link
-                          href={item.href}
+                          to={item.href}
                           className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                             isActive(item.href)
                               ? "bg-gradient-to-r from-blue-50 via-cyan-50 to-emerald-50 text-gray-900 dark:from-blue-950/50 dark:via-cyan-950/50 dark:to-emerald-950/50 dark:text-white"
@@ -151,7 +151,7 @@ useEffect(() => {
       <nav className="md:hidden fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-200 dark:bg-gray-950/90 dark:border-gray-800">
         <div className="flex items-center justify-between h-16 px-4">
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link to="/dashboard" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 to-emerald-500">
               <Sparkles className="h-4 w-4 text-white" />
             </div>
@@ -188,7 +188,7 @@ useEffect(() => {
                   ].map((item) => (
                     <Link
                       key={item.href}
-                      href={item.href}
+                      to={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-3 p-3 rounded-lg text-sm font-medium transition-all ${
                         isActive(item.href) && !item.locked

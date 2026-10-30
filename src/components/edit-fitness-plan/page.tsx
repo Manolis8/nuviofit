@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Send, Zap, Calendar, Clock, Target, Save, X } from "lucide-react"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 import { supabase } from "@/components/lib/supabaseClient";
-import { useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/clerk-react";
 import { aiEditFitnessPlan } from "@/components/lib/EditFitnessPlan";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
@@ -273,7 +273,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
       <div className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4">
           <div className="flex items-center gap-2 sm:gap-4">
-            < Link href="/workout-page">
+            <Link to="/workout-page">
             <Button
               variant="outline"
               size="sm"
@@ -338,7 +338,7 @@ const handleSavePlanToSupabase = async (planToSave: string) => {
   Save Plan
 </Button>
 
-    <Link href="/workout-page">
+    <Link to="/workout-page">
       <Button
         variant="outline"
         className="border-gray-300 hover:border-red-400 hover:bg-red-50 hover:text-red-600 px-6 sm:px-8 py-2.5 sm:py-2 bg-transparent text-sm sm:text-base"

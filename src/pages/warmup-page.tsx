@@ -385,7 +385,7 @@ const [todayExercises, setTodayExercises] = useState<
     aiTip?: string;
   }[]
 >([]);
-const currentExercise = todayExercises[currentExerciseIndex] || {}
+const currentExercise = todayExercises[currentExerciseIndex] || ({} as any)
 
 const isLastExercise = currentExerciseIndex === todayExercises.length - 1
 const [workoutLevel, setWorkoutLevel] = useState("");
@@ -899,7 +899,6 @@ const parsedRestDuration =
                         </Card>
                       </motion.div>
                     </motion.div>
-                  )}
                 </AnimatePresence>
               )}
 

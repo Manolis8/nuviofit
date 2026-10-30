@@ -22,14 +22,12 @@
   <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
   <!-- Preconnects / dns-prefetch -->
-  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-  <link rel="preconnect" href="https://cdn.nuviofit.com" crossorigin />
   <link rel="dns-prefetch" href="//www.nuviofit.com" />
 
   <!-- Theme & Favicons -->
   <meta name="theme-color" content="#ffffff" />
-  <link rel="icon" href="https://www.nuviofit.com/nuviofit-logo.png" type="image/png" />
-  <link rel="apple-touch-icon" href="https://www.nuviofit.com/nuviofit-logo.png" />
+  <link rel="icon" href="/nuviofit-logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/nuviofit-logo.png" />
 
   <!-- Open Graph -->
   <meta property="og:locale" content="en_US" />
@@ -96,29 +94,13 @@
   }
   </script>
 
-  <!-- Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PW2WCQ85PZ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-PW2WCQ85PZ', { 'anonymize_ip': true });
-  </script>
 
-  <!-- Identity -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
-  <!-- Main Scripts -->
-  <script type="module" src="/src/main.tsx" defer></script>
 </head>
 
 <body>
   <!-- Root mount -->
   <div id="root"></div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
   <script type="module" src="/src/main.tsx"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>

@@ -222,7 +222,8 @@ const handleReauthClick = async () => {
       if (!isLoaded || !user) return;
   
       async function fetchMessages() {
-        const count = await getMessagesLeft(user.id);
+        const supabaseAuthClient = await getClient();
+        const count = await getMessagesLeft(supabaseAuthClient, user.id);
         setMessagesLeft(count);
       }
   

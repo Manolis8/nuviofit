@@ -4,7 +4,7 @@ import { Flame, Target, TrendingUp } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/clerk-react"
 import { supabase } from "@/components/lib/supabaseClient";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 

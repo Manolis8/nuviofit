@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Mail, User, Zap, MessageCircle, Lock, Instagram, Twitter, Youtube } from "lucide-react"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 export default function WaitlistPage() {
@@ -46,7 +46,7 @@ setIsLoading(false)
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
           {/* Back Button */}
           <Link
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 sm:mb-8 transition-colors text-sm sm:text-base"
           >
             <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -81,7 +81,7 @@ setIsLoading(false)
             </Card>
 
             <div className="mt-6 sm:mt-8 px-3 sm:px-0">
-              <Link href="/">
+              <Link to="/">
                 <Button className="w-full sm:w-auto bg-gradient-to-r from-violet-500 to-teal-500 hover:from-violet-600 hover:to-teal-600 text-white px-6 sm:px-8 py-3 rounded-full text-base sm:text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-300">
                   Back
                 </Button>
@@ -98,7 +98,7 @@ setIsLoading(false)
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Back Button */}
         <Link
-          href="/"
+          to="/"
           className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 sm:mb-8 transition-colors text-sm sm:text-base"
         >
           <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />

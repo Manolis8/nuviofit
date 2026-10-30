@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { getMessagesLeft } from "@/components/lib/getMessagesLeft"
 import { decrementMessagesLeft } from "@/services/supabaseMessages"
 import { useUser } from "@clerk/clerk-react"
+import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
 
 type Message = {
@@ -17,6 +18,7 @@ export function AIChatBox() {
 
 const { user } = useUser();
 const userId = user?.id;
+const { getClient } = useSupabaseClientWithAuth();
 
 
   function wordCount(text: string): number {
@@ -51,7 +53,8 @@ const handleSend = async () => {
   }
 
   // 🧠 Check messages left before sending
-  const messagesLeft = await getMessagesLeft(userId);
+  const supabaseAuthClient = await getClient();
+  const messagesLeft = await getMessagesLeft(supabaseAuthClient, userId);
 
   if (messagesLeft <= 0) {
     alert("You have no messages left. Please upgrade or wait.");
@@ -87,7 +90,7 @@ const handleSend = async () => {
     setMessages(newMessages);
 
     // ✅ Decrement only after success
-    await decrementMessagesLeft(userId);
+    await decrementMessagesLeft(supabaseAuthClient, userId);
   } catch (err) {
     console.error(err);
 

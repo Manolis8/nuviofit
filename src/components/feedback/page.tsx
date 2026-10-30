@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useUser} from "@clerk/nextjs";
+import { useUser} from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"

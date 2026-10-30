@@ -178,7 +178,7 @@ const [activeTab, setActiveTab] = useState("today")
   const [warmUpCompleted, setWarmUpCompleted] = useState(false)
   const { fullPlan: parsedFullPlan, weeklyPlan: parsedWeeklyPlan } = useFullFitnessPlan(user);
   const [warmUpExercises, setWarmUpExercises] = useState<
-  { name: string; duration: string; description?: string }[]
+  { name: string; duration: string; description?: string; emoji?: string }[]
 >([]);
 const todayPlan = parsedFullPlan.find(day => day.isToday);
 const isTodayRestDayed = !todayPlan || todayPlan.exercises.length === 0;
