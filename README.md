@@ -1,5 +1,7 @@
 # NuvioFit
 
+> **Status: no longer maintained.** NuvioFit was a real product I built and launched, then paused. The nuviofit.com domain, the production Clerk instance and the other hosted services have been shut down, so the deployed site now shows errors (for example `failed_to_load_clerk_js` from `clerk.nuviofit.com`) and sign-in doesn't work. The code is kept here as a portfolio piece. Everything below explains how it worked and how to run it again with your own keys.
+
 AI fitness coach that turns a short onboarding quiz into a personalized 7-day training plan, then guides you through each workout with a live session screen, a warm-up flow, progress tracking and an AI coach chat.
 
 **Stack:** React 18 + TypeScript + Vite, Tailwind + shadcn/ui, Clerk (auth), Supabase (Postgres + row level security), OpenAI (plan generation and coach chat), Brevo (emails), Vercel (hosting, serverless API, cron).
