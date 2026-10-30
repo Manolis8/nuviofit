@@ -159,6 +159,12 @@ useEffect(() => {
 
 
 
+useEffect(() => {
+  if (setupFinished) {
+    navigate("/dashboard", { replace: true });
+  }
+}, [setupFinished]);
+
 if (!isLoaded) return <div>Loading...</div>;
 
 
@@ -231,16 +237,10 @@ const generatePlan = async () => {
 const nextStep = async () => {
   if (step < totalSteps - 1) {
     setStep(step + 1);
-  } else if (step === totalSteps - 1) {
   }
 };
 
 
-useEffect(() => {
-  if (setupFinished) {
-    navigate("/dashboard", { replace: true });
-  }
-}, [setupFinished]);
 
 
 

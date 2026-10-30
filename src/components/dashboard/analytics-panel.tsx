@@ -90,7 +90,7 @@ function parseSteps(text) {
 
   text.split("\n").forEach(line => {
     const [day, value] = line.split(":").map(s => s.trim());
-    if (day && result.hasOwnProperty(day)) {
+    if (day && Object.prototype.hasOwnProperty.call(result, day)) {
       result[day] = value;
     }
   });
@@ -104,11 +104,11 @@ const handleSubmit = async () => {
     return;
   }
 
-  let stepsObj = {
+  const stepsObj = {
     Monday: "", Tuesday: "", Wednesday: "", Thursday: "", Friday: "", Saturday: "", Sunday: ""
   };
-  let moodObj = { ...stepsObj };
-  let energyObj = { ...stepsObj };
+  const moodObj = { ...stepsObj };
+  const energyObj = { ...stepsObj };
 
   const today = new Date();
   const dayIndex = today.getDay(); // Sunday = 0

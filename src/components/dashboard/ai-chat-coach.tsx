@@ -6,7 +6,7 @@ import { useAutoRenewMessages } from "@/components/lib/useAutoRenewMessages"
 import { AIChatBox } from "@/components/ai-chat-box"
 import { useUser } from "@clerk/clerk-react"
 import { addDays } from "date-fns";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { supabase } from "@/components/lib/supabaseClient";
 import { useSupabaseClientWithAuth } from "@/components/lib/supabaseAuthClient"
 
@@ -200,7 +200,7 @@ async function sendFeedback(formData: { name: string; email: string; message: st
       {/* Messages Left Info */}
       <div className="flex flex-col items-center mt-4 px-6 py-3 bg-white rounded-lg shadow-sm text-gray-700 text-sm font-medium">
   <div className="flex items-center space-x-3">
-<Link href="/user-info#ai-messages" scroll={false}>
+<Link to="/user-info#ai-messages">
   <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium cursor-pointer hover:bg-indigo-200 transition">
     👉 view credits left
   </span>

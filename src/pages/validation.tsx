@@ -19,7 +19,7 @@ import {
   ChevronUp,
   DollarSign,
 } from "lucide-react"
-import Link from "next/link"
+import { Link } from "react-router-dom"
 
 export default function Validation() {
 const { getClient } = useSupabaseClientWithAuth();
@@ -67,7 +67,7 @@ setIsLoading(false)
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
           <Link
-            href="/"
+            to="/"
             className="inline-flex items-center gap-2 text-white hover:text-white/80 mb-6 sm:mb-8 transition-colors text-sm sm:text-base"
             style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
           >
@@ -121,7 +121,7 @@ setIsLoading(false)
             </Card>
 
             <div className="mt-6 sm:mt-8 px-4 sm:px-0">
-              <Link href="/">
+              <Link to="/">
                 <Button className="bg-black/30 backdrop-blur-sm text-white hover:bg-black/40 border border-white/30 px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg font-medium w-full sm:w-auto">
                   Back to Home
                 </Button>
@@ -140,7 +140,7 @@ setIsLoading(false)
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         <Link
-          href="/"
+          to="/"
           className="inline-flex items-center gap-2 text-white hover:text-white/80 mb-6 sm:mb-8 transition-colors text-sm sm:text-base"
           style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
         >

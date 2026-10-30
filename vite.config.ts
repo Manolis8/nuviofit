@@ -6,10 +6,10 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 3001,  // <-- frontend on 3001 to avoid clash with backend on 8080
+    port: 3001,
     proxy: {
       "/api": {
-        target: "http://localhost:8080",  // backend API running locally on 8080
+        target: "http://localhost:8080",  // scripts/dev-api.ts (npm run dev starts both)
         changeOrigin: true,
         secure: false,
       },
@@ -26,11 +26,5 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-  },
-  define: {
-    'process.env': {},
-  },
-  optimizeDeps: {
-    include: ["process"],
   },
 }));

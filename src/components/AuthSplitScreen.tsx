@@ -46,6 +46,16 @@ const signupSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 type SignupFormValues = z.infer<typeof signupSchema>;
 
+// Holds show/hide state for a password field (hooks can't live inside a render prop).
+const PasswordToggle = ({
+  children,
+}: {
+  children: (show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>>) => React.ReactNode;
+}) => {
+  const [show, setShow] = useState(false);
+  return <>{children(show, setShow)}</>;
+};
+
 const AuthSplitScreen = () => {
 const location = useLocation();
 
@@ -237,10 +247,9 @@ const onSignupSubmit = async (data: SignupFormValues) => {
                   <FormField
   control={signupForm.control}
   name="password"
-  render={({ field }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    return (
+  render={({ field }) => (
+    <PasswordToggle>
+      {(showPassword, setShowPassword) => (
       <FormItem>
         <FormLabel>Password</FormLabel>
         <FormControl>
@@ -262,8 +271,9 @@ const onSignupSubmit = async (data: SignupFormValues) => {
         </FormControl>
         <FormMessage />
       </FormItem>
-    );
-  }}
+      )}
+    </PasswordToggle>
+  )}
 />
 
                   {/* Terms of Service Checkbox */}
@@ -351,10 +361,9 @@ const onSignupSubmit = async (data: SignupFormValues) => {
                   <FormField
   control={loginForm.control}
   name="password"
-  render={({ field }) => {
-    const [showPassword, setShowPassword] = React.useState(false);
-
-    return (
+  render={({ field }) => (
+    <PasswordToggle>
+      {(showPassword, setShowPassword) => (
       <FormItem>
         <FormLabel>Password</FormLabel>
         <FormControl>
@@ -376,8 +385,9 @@ const onSignupSubmit = async (data: SignupFormValues) => {
         </FormControl>
         <FormMessage />
       </FormItem>
-    );
-  }}
+      )}
+    </PasswordToggle>
+  )}
 />
 
 <div className="flex justify-end">

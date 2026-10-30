@@ -1,23 +1,35 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import OpenAI from "openai";
 
-// Make sure you have your API key in .env as OPENAI_API_KEY
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const MODEL = process.env.OPENAI_MODEL || "gpt-4.1-nano";
+const MAX_MESSAGES = 40;
+const MAX_TOTAL_CHARS = 60_000;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 
-  const { messages } = req.body;
+  if (!process.env.OPENAI_API_KEY) {
+    return res.status(500).json({ error: "OPENAI_API_KEY is not set on the server." });
+  }
 
-  if (!messages || !Array.isArray(messages)) {
+  const { messages } = req.body ?? {};
+
+  if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({ error: "Invalid messages array" });
   }
 
+  // Basic abuse guard: this endpoint spends OpenAI credits, so cap the request size.
+  const totalChars = messages.reduce((sum, m) => sum + String(m?.content ?? "").length, 0);
+  if (messages.length > MAX_MESSAGES || totalChars > MAX_TOTAL_CHARS) {
+    return res.status(413).json({ error: "Request too large" });
+  }
+
   try {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const completion = await openai.chat.completions.create({
-      model: "gpt-4.1-nano", // or "gpt-3.5-turbo" if you're not using GPT-4
+      model: MODEL,
       messages,
       temperature: 0.7,
     });
