@@ -49,6 +49,9 @@ Everything below has a free tier. You don't need a custom domain or a phone numb
 ### 2. Clerk (sign in), required
 1. Create an application at [dashboard.clerk.com](https://dashboard.clerk.com) with email + Google sign-in.
 2. Copy the publishable key into `VITE_CLERK_PUBLISHABLE_KEY`.
+   - **Use the Development key (`pk_test_...`) unless you own a domain.** A Production key (`pk_live_...`) is tied to a domain and loads Clerk from `clerk.yourdomain.com`. If that domain's DNS is gone (as with the old nuviofit.com setup), the browser shows `GET https://clerk.nuviofit.com/... net::ERR_NAME_NOT_RESOLVED` / `failed_to_load_clerk_js`: sign-in and every protected page stop working, while the public pages still load.
+   - Development keys load Clerk from `*.clerk.accounts.dev` and work on localhost and `*.vercel.app` with no domain. They show a small "Development mode" badge and have user limits, which is fine for a portfolio demo.
+   - On Vercel, set `VITE_CLERK_PUBLISHABLE_KEY` for both Production and Preview, then **redeploy** (`VITE_` variables are baked in at build time).
 3. Connect Clerk to Supabase so row level security knows who the user is. The app requests a token with `getToken({ template: "supabase" })`, so either:
    - **Clerk → JWT templates → New → Supabase**, name it `supabase`, and paste your Supabase **JWT secret** (Project settings → API → JWT settings), or
    - use Clerk's native Supabase integration (Supabase → Authentication → Third-party auth → Clerk). If you do this, change `getToken({ template: "supabase" })` to `getToken()` in `src/components/lib/supabaseAuthClient.ts`.
@@ -71,6 +74,7 @@ Brevo may ask for a phone number when you activate the account; that's Brevo's o
 
 ### 6. Custom domain, optional (not set up)
 The old `nuviofit.com` domain is not connected. When you buy a domain:
+- create a Clerk **Production** instance for it, add the DNS records Clerk lists (including `clerk.yourdomain.com`), and swap in the `pk_live_...` key;
 - add it in Vercel (**Settings → Domains**) and set `APP_URL=https://yourdomain.com`;
 - authenticate it in Brevo (SPF/DKIM) and switch `EMAIL_FROM` to e.g. `hello@yourdomain.com`;
 - update the hardcoded SEO URLs in `index.html` (canonical, Open Graph, JSON-LD);
